@@ -9,12 +9,12 @@ class User(models.Model):
         Instructor = 'Instructor'
         TA = 'TA'
 
-    email = models.CharField(max_length=30, unique=True)
-    username = models.CharField(max_length=30, unique=True)
-    password = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    phone_number = models.CharField(max_length=10, unique=True)
-    home_address = models.CharField(max_length=30)
-    user_type = models.CharField(choices=UserTypes.choices, default='TA')
-
+    #Blank is used to denote if its required or not.
+    email = models.CharField(max_length=30, unique=True, blank=False, null=False)
+    username = models.CharField(max_length=30, unique=True, blank=False, null=False)
+    password = models.CharField(max_length=30, blank=False, null=False)
+    first_name = models.CharField(max_length=30, blank=False, null=False)
+    last_name = models.CharField(max_length=30, blank=False, null=False)
+    phone_number = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    home_address = models.CharField(max_length=30, blank=True, null=True)
+    user_type = models.CharField(choices=UserTypes.choices, default='TA', blank=False, null=False)

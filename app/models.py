@@ -10,6 +10,7 @@ class User(models.Model):
         TA = 'TA'
 
     #Blank/Null is used to denote if its required or not.
+    account_ID = models.AutoField(primary_key=True,Unique=True, db_index=True, auto_created=True)
     email = models.CharField(max_length=30, unique=True, blank=False, null=False)
     username = models.CharField(max_length=30, unique=True, blank=False, null=False, db_index=True)
     password = models.CharField(max_length=30, blank=False, null=False)
@@ -28,3 +29,5 @@ class Instructor(models.Model):
 
 class TA(models.Model):
     account_ID = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
+
+class Course(models.Model):

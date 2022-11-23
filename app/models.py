@@ -54,3 +54,20 @@ class Section(models.Model):
 
     UniqueConstraint(fields=[course_ID,section_num], name="SectionCompPK") #Functions similar to a unique Comp PK
 
+class InstructorAssignments:
+    #NOTE THERE IS AN AUTOGEN ID FOR THIS MODEL.
+    account_ID = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=False, null=False)
+    course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=False)
+    UniqueConstraint(fields=[course_ID, account_ID], name="CompPK")
+
+class TASectionAssignments:
+    #NOTE THERE IS AN AUTOGEN ID FOR THIS MODEL.
+    account_ID = models.ForeignKey(TA, on_delete=models.CASCADE, blank=False, null=False)
+    section_ID = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=False)
+    UniqueConstraint(fields=[section_ID, account_ID], name="CompPK") #Functions similar to a unique Comp PK
+
+class TACourseAssignments:
+    #NOTE THERE IS AN AUTOGEN ID FOR THIS MODEL.
+    account_ID = models.ForeignKey(TA, on_delete=models.CASCADE, blank=False, null=False)
+    course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=False)
+    UniqueConstraint(fields=[course_ID, account_ID], name="CompPK")#Functions similar to a unique Comp PK

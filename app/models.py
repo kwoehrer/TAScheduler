@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 
 
 # Create your models here.
@@ -44,3 +45,12 @@ class Course(models.Model):
     year = models.IntegerField(max_length=4, blank=False, null=False, default=2022) #Need to validate
     description = models.CharField(max_length=30, blank=False, null=False)
     credits = models.IntegerField(max_length=1, blank=False, null=False, default=3) #Need to validate
+
+class Section(models.Model):
+    #NOTE THERE IS AN AUTOGEN ID FOR THIS MODEL.
+    course_ID = models.ForeignKey(User, on_delete=models.CASCADE)
+    section_num = models.AutoField(blank=False, null=False, auto_created=True)
+    MeetingTimes = models.CharField(maxlength=50, blank=False, null=False)
+
+    UniqueConstraint(fields=[course_ID,section_num], name="SectionCompPK") #Functions similar to a unique Comp PK
+

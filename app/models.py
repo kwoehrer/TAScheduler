@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import UniqueConstraint
-
+from django.core.validators import validate_email
 
 # Create your models here.
 
@@ -12,8 +12,8 @@ class User(models.Model):
 
     #Blank/Null is used to denote if its required or not.
     account_ID = models.AutoField(primary_key=True,Unique=True, db_index=True, auto_created=True)
-    email = models.CharField(max_length=30, unique=True, blank=False, null=False) #Need to validate
-    username = models.CharField(max_length=30, unique=True, blank=False, null=False, db_index=True) #Need to validate
+    email = models.CharField(max_length=30, unique=True, blank=False, null=False, validators=validate_email)
+    username = models.CharField(max_length=30, unique=True, blank=False, null=False, db_index=True)
     password = models.CharField(max_length=30, blank=False, null=False) #Need to validate
     first_name = models.CharField(max_length=30, blank=False, null=False, db_index=True)
     last_name = models.CharField(max_length=30, blank=False, null=False)

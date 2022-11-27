@@ -8,12 +8,9 @@
     <script src="{% static 'bootstrap.min.js' %}"></script>
 </head>
 <body>
-<div class = "container">
-    <div class="row">
-        <div class="col">
 
-        </div>
-    </div>
-</div>
+{% autoescape on %}
+ {{ HomeState }}
+{%  endautoescape %}
 </body>
 </html>

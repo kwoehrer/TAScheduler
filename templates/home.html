@@ -8,9 +8,14 @@
     <script src="{% static 'bootstrap.min.js' %}"></script>
 </head>
 <body>
-
-{% autoescape on %}
- {{ HomeState }}
-{%  endautoescape %}
+{% csrf_token %}
+    <div class = "pageH1Container">
+        <h1>
+            TA Scheduling App Home Page
+        </h1>
+    </div>
+    {% autoescape on %}
+     {{ HomeState }}
+    {%  endautoescape %}
 </body>
 </html>

@@ -4,8 +4,27 @@
     <meta charset="UTF-8">
     <title>TA Scheduling App Login</title>
     <style>
+        .container{
+            width: 50%;
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        label{
+            float:left;
+            font-size:24px;
+        }
+        input{
+            width:100%;
+        }
+
+        input:focus{
+            outline: 2px solid dodgerblue;
+        }
         button {
-            background-color: #04AA6D;
+            background-color: dodgerblue;
             color: white;
             font-weight: bold;
             padding: 14px 20px;
@@ -24,7 +43,7 @@
 <h1>TA Scheduling App Login</h1>
 <form action="/" method="post">
     {% csrf_token %}
-    <div>
+    <div class="container">
         <label for="username"><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>
 

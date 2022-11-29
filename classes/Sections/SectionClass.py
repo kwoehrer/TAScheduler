@@ -13,7 +13,7 @@ class AbstractSection(abc):
         pass
 
     @abc.abstractmethod
-    def getSectionNumber(self):
+    def setSectionNumber(self):
         pass
 
     @abc.abstractmethod

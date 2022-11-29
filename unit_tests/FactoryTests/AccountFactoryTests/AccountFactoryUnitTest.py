@@ -52,11 +52,11 @@ class TestCreateAccount(TestCase):
             self.acc_fact.create_account(self.admin)
 
     def test_good_attribute_TA_user(self):
-        with self.assertRaises(ValueError, msg='TA User should not be able to create another account'):
+        with self.assertRaises(TypeError, msg='TA User should not be able to create another account'):
             self.acc_fact.create_account(self.admin, self.good_account_attributes)
 
     def test_good_attribute_Instructor_user(self):
-        with self.assertRaises(ValueError, msg='Instructor User should not be able to create another account'):
+        with self.assertRaises(TypeError, msg='Instructor User should not be able to create another account'):
             self.acc_fact.create_account(self.instr, self.good_account_attributes)
 
     def test_good_attribute_admin_user_creates_ta(self):
@@ -120,7 +120,7 @@ class TestCreateAccount(TestCase):
                                msg='Cannot create an account that does not meet password requirements'):
             self.acc_fact.create_account(self.admin, self.good_account_attributes)
 
-class TestDeleteCourse(TestCase):
+class TestDeleteAccount(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',

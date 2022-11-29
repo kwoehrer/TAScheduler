@@ -1,5 +1,6 @@
 from django.test import TestCase
 from app.models import Section, Course
+from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 
 
 class SectionTest(TestCase):
@@ -8,8 +9,13 @@ class SectionTest(TestCase):
 
 class TestGetParent(TestCase):
     def setUp(self) -> None:
-        Course.objects.create(course_ID=101, name='Intro to Nonsense', semester='Spring', year=2022)
-        Section.objects.filter(course_ID=101)
+        course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
+                                       description="idk lol", credits=4)
+        section_model = Section.objects.create(course.course_ID)
+        self.wrapper : AbstractSection = ConcreteSection(section_model)
+
+    def test_success(self):
+    def test_delete_model(self):
 
 
 class TestGetSectionNum(TestCase):
@@ -20,17 +26,17 @@ class TestSetSectionNum(TestCase):
     pass
 
 
-class test_get_TA(TestCase):
+class TestGetTA(TestCase):
     pass
 
 
-class test_set_TA(TestCase):
+class TestSetTA(TestCase):
     pass
 
 
-class test_get_meet_time(TestCase):
+class TestGetMeetTime(TestCase):
     pass
 
 
-class test_set_meet_time(TestCase):
+class TestSetMeetTime(TestCase):
     pass

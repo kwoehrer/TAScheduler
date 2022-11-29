@@ -10,22 +10,6 @@ class AbstractAccountFactory(ABC):
     def delete_account(self, deletor: User, newAccountAttrbitutes: []):
         pass
 
-    @abstractmethod
-    def edit_account(self, editor: User, newAccountAttrbitutes: []):
-        pass
-
-    @abstractmethod
-    def edit_username(self, editee: User, newAccountAttrbitutes: []):
-        pass
-
-    @abstractmethod
-    def edit_password(self, editee: User, newAccountAttrbitutes: []):
-        pass
-
-    @abstractmethod
-    def get_all_users(self, editee: User, newAccountAttrbitutes: []):
-        pass
-
 
 class ConcreteAccountFactory(AbstractAccountFactory):
 
@@ -33,16 +17,4 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         pass
 
     def delete_account(self, deletor: User, newAccountAttrbitutes: []):
-        pass
-
-    def edit_account(self, editor: User, newAccountAttrbitutes: []):
-        pass
-
-    def edit_username(self, editee: User, newAccountAttrbitutes: []):
-        pass
-
-    def edit_password(self, editee: User, newAccountAttrbitutes: []):
-        pass
-
-    def get_all_users(self, editee: User, newAccountAttrbitutes: []):
         pass

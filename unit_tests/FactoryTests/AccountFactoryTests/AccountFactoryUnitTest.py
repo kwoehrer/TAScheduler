@@ -199,19 +199,3 @@ class TestDeleteCourse(TestCase):
         User.objects.filter(account_ID=acc_id).delete()
         with self.assertRaises(ValueError, msg='Cannot delete an account that was already deleted'):
             self.acc_fact.delete_account(self.admin, self.del_admin)
-
-
-class TestEditCourse(unittest.TestCase):
-    pass
-
-
-class TestGetAllCourses(unittest.TestCase):
-    pass
-
-
-class TestFilterCourses(unittest.TestCase):
-    pass
-
-
-if __name__ == '__main__':
-    unittest.main()

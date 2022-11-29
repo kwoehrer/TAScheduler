@@ -1,6 +1,7 @@
-from app.models import Section, TA, TASectionAssignments, Course
+from app.models import Section, TA, Course
 from classes.Courses import Course
 import abc
+
 
 class AbstractSection(abc):
     @abc.abstractmethod
@@ -10,12 +11,13 @@ class AbstractSection(abc):
     @abc.abstractmethod
     def getSectionNumber(self):
         pass
+
     @abc.abstractmethod
     def getSectionNumber(self):
         pass
 
     @abc.abstractmethod
-    def getTA(self)->AbstractUser:
+    def getTA(self) -> AbstractUser:
         pass
 
     @abc.abstractmethod
@@ -29,31 +31,37 @@ class AbstractSection(abc):
     @abc.abstractmethod
     def setMeetTime(self, newTime):
         pass
+
+
 class ConcreteSection(AbstractSection):
-    def __init__(self, section:Section):
+    def __init__(self, section: Section):
         self.section = section
 
-    def getParentCourse(self)->AbstractCourse:
+    def getParentCourse(self) -> AbstractCourse:
         return ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):
         return self.section.section_num
 
-    def getTA(self)->AbstractUser:
-        ta_pk = TASectionAssignments.Objects.get(section_ID= self.section.ID).account_ID
-        ta = TA.objects.get(account_ID=ta_pk)
+    def getTA(self) -> AbstractUser:
+        ta = TA.objects.get(account_ID=self.section.ta_account_id)
         return TA_User(ta)
 
-    def setTA(self, newTA:AbstractUser):
+    def setTA(self, newTA: AbstractUser):
         if isinstance(newTA, TA_User):
             ta_id = newTA.getID()
+            self.section.ta_account_id = ta_id
+            self.section.save()
 
         else:
-            raise TypeError
+            raise TypeError("User was not a TA but was assigned to section as a TA.")
 
+    def getMeetTime(self) -> str:
+        return self.section.MeetingTimes
 
-    def getMeetTime(self):
-        return self.meetTime
+    def setMeetTime(self, new_meeting_time: str):
+        if len(newMeetingTime) > 50:
+            raise ValueError("Meeting time must be below 50 chars")
 
-    def setMeetTime(self, newTime):
-        self.meetTime = newTime
+        self.section.MeetingTimes = new_meeting_time
+        self.section.save()

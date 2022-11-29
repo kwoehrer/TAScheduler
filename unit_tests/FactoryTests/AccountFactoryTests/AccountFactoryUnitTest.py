@@ -1,34 +1,71 @@
-import unittest
+from django.test import TestCase
+
+from app.models import Admin, User, TA, Instructor
+from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
 
 
-class TestCreateCourse(unittest.TestCase):
+class TestCreateAccount(TestCase):
 
     def setUp(self) -> None:
-        acc_fact :AbstractAccountFactory = AccountFactory()
-    def test_no_arg(self):
-        with self.assertRaises(TypeError, msg="Three Argument failed to throw value error"):
-            a = self.acc_fact
+        User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin')
+        admin_user_model = Admin.objects.filter(username='testadmin')[0]
+        admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
-    def test_only_course_attributes(self):
-        with self.assertRaises(TypeError, msg="Three Argument failed to throw value error"):
-            a = AccountFactory()
+        User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='TA')
+        ta_user_model = TA.objects.filter(username='ta')[0]
+        ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
+
+        User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor')
+        instr_user_model = Instructor.objects.filter(username='instructor')[0]
+        instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
+
+        self.acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
+        self.good_account_attributes = dict()
+        self.good_account_attributes['username'] = 'username'
+        self.good_account_attributes['password'] = 'password1'
+        self.good_account_attributes['first_name'] = 'John'
+        self.good_account_attributes['last_name'] = 'Doe'
+        self.good_account_attributes['phone_number'] = '2622622662'
+        self.good_account_attributes['home_address'] = '123 Mary Jane Lane'
+        self.good_account_attributes['user_type'] = 'TA'
+        self.admin: User = Admin_User(admin_model)
+        self.ta: User = Ta_User(admin_model)
+        self.instr: User = Instructor_User(admin_model)
+
+    def test_no_arg(self):
+        with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
+            self.acc_fact.create_account()
+
+    def test_only_Account_attributes(self):
+        with self.assertRaises(TypeError, msg="Only account arguments failed to throw type error"):
+            self.acc_fact.create_account()
 
     def test_only_admin_user(self):
-        self.assertEqual(True, False)  # add assertion here
+        with self.assertRaises(TypeError, msg="Only creater argument failed to throw TypeError"):
+            self.acc_fact.create_account(self.admin)
 
     def test_good_attribute_TA_user(self):
-        self.assertEqual(True, False)  # add assertion here
+        with self.assertRaises(ValueError, msg='TA User should not be able to create another account'):
+            self.acc_fact.create_account(self.admin, self.good_account_attributes)
 
     def test_good_attribute_Instructor_user(self):
-        self.assertEqual(True, False)  # add assertion her
+        with self.assertRaises(ValueError, msg='Instructor User should not be able to create another account'):
+            self.acc_fact.create_account(self.instr, self.good_account_attributes)
 
     def test_good_attribute_admin_user(self):
-        self.assertEqual(True, False)  # add assertion her
+        self.acc_fact.create_account(self.admin, self.good_account_attributes)
+        User.objects.get(username=self.good_account_attributes['username'])
+        self.assert
 
     def test_existing_username(self):
         self.assertEqual(True, False)  # add assertion her
+
     def test_existing_email(self):
         self.assertEqual(True, False)  # add assertion her
+
 
 class TestDeleteCourse(unittest.TestCase):
     pass

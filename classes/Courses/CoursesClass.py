@@ -1,72 +1,196 @@
-class CoursesClass:
+from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
+from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 
-    def __init__(self, course_id, course_name, description, credit, semester, year):
-        self.course_id = course_id
-        self.course_name = course_name
-        self.description = description
-        self.credits = credit
-        self.semester = semester
-        self.year = year
-        self.instructor = None
-        self.ta = []
-        self.section = []
 
+class AbstractCourse(abc):
+    @abc.abstractmethod
     def get_course_id(self):
-        return self.course_id
+        pass
 
+    @abc.abstractmethod
     def get_course_name(self):
-        return self.course_name
+        pass
 
+    @abc.abstractmethod
     def set_course_name(self, course_name):
-        self.course_name = course_name
+        pass
 
+    @abc.abstractmethod
     def get_description(self):
-        return self.description
+        pass
 
+    @abc.abstractmethod
     def set_description(self, description):
-        self.description = description
+        pass
 
+    @abc.abstractmethod
     def get_credits(self):
-        return self.credits
+        pass
 
+    @abc.abstractmethod
     def set_credits(self, credit):
-        self.credits = credit
+        pass
 
+    @abc.abstractmethod
     def get_semester(self):
-        return self.semester
+        pass
 
+    @abc.abstractmethod
     def set_semester(self, semester):
-        self.semester = semester
+        pass
 
+    @abc.abstractmethod
     def get_year(self):
-        return self.year
+        pass
 
+    @abc.abstractmethod
     def set_year(self, year):
-        self.year = year
+        pass
 
+    @abc.abstractmethod
     def get_instructor(self):
-        return self.instructor
+        pass
 
+    @abc.abstractmethod
     def set_instructor(self, instructor):
-        self.instructor = instructor
+        pass
 
+    @abc.abstractmethod
     def get_tas(self):
-        return self.ta
+        pass
 
+    @abc.abstractmethod
     def add_ta(self, ta):
-        self.ta.append(ta)
+        pass
 
+    @abc.abstractmethod
     def remove_ta(self, ta):
-        if ta in self.ta:
-            self.ta.remove(ta)
+        pass
 
+    @abc.abstractmethod
     def get_section(self):
-        return self.section
+        pass
 
+    @abc.abstractmethod
     def add_section(self, section):
-        self.section.append(section)
+        pass
 
+    @abc.abstractmethod
     def remove_section(self, section):
+        pass
+class ConcreteCourse:
+
+    def __init__(self, course :Course):
+        self.course = course
+
+    def get_course_id(self) -> int:
+        return self.course.course_ID
+
+    def get_course_name(self) -> str:
+        return self.course.name
+
+    def set_course_name(self, course_name: str):
+        self.course.name = course_name
+        self.course.save()
+
+    def get_description(self) -> str:
+        return self.course.description
+
+    def set_description(self, description: str):
+        self.course.description = description
+
+    def get_credits(self) -> int:
+        return self.course.credits
+
+    def set_credits(self, credit: int):
+        self.course.credits = credit
+        self.course.save()
+
+    def get_semester(self) -> str:
+        return self.course.semester
+
+    def set_semester(self, semester: str):
+        if semester not in Course.SemesterTypes:
+            raise ValueError("Incorrect semester type provided to course")
+
+        self.course.semester = semester
+        self.course.save()
+
+    def get_year(self) -> int:
+        return self.course.year
+
+    def set_year(self, year: int):
+        self.course.year = year
+        self.course.save()
+
+    def get_instructors(self) -> [AbstractUser]:
+        instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
+        instr_pk_list = instructors.values_list('account_ID', flat=True)
+        instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)
+
+        result_list = [AbstractUser]
+        for instr in instr_table:
+            result_list.append(Instructor_User(instr))
+
+        return result_list
+
+
+    def add_instructor(self, newInstructor:AbstractUser):
+        if isinstance(newInstructor, Instructor_User):
+            instr_id = newInstructor.getID()
+            row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
+            row.save()
+        else:
+            raise TypeError("newInstructor was not an instructor object.")
+
+    def get_tas(self) -> [TA_User]:
+        ta_models = TACourseAssignments.objects.filter(course_ID=self.course.course_ID)
+        ta_pk_list = ta_models.values_list('account_ID', flat=True)
+        ta_table = TA.objects.filter(account_ID__ta__in=ta_pk_list)
+
+        result_list = [AbstractUser]
+        for ta in ta_table:
+            result_list.append(TA_User(ta))
+
+        return result_list
+
+    def add_ta(self, newta: AbstractUser):
+        if isinstance(newta, TA_User):
+            ta_id = newta.getID()
+            row = InstructorAssignments(account_ID=ta_id, course_ID=self.course_ID)
+            row.save()
+        else:
+            raise TypeError("New TA was not a TA_User.")
+
+    def remove_ta(self, oldta: AbstractUser) -> bool:
+        if isinstance(oldta, TA_User):
+            ta_id = oldta.getID()
+            TACourseAssignments.objects.filter(account_ID=ta_id, course_ID=self.course_ID).delete()
+        else:
+            raise TypeError("Old TA was not a TA_User.")
+
+    def get_sections(self) -> [AbstractSection]:
+        section_table = Section.objects.filter(course_ID=self.course.course_ID)
+        section_list = [AbstractSection]
+
+        for section in section_table:
+            section_list.append(ConcreteSection(section))
+
+        return section_list
+
+    #Factory method, creates a section related to this course.
+    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes:str):
+        if len(TA.objects.filter(account_ID=sectionTA_ID)) != 1:
+            raise ValueError("TA Id was not a valid TA ID.")
+        if sectionNumber in self.get_sections():
+            raise ValueError("Cannot have duplicate course sections")
+
+        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes, ta_account_id=sectionTA_ID)
+        newSection.save()
+
+
+
+    def remove_section(self, section: AbstractSection) -> bool:
         if section in self.section:
             self.section.remove(section)
 

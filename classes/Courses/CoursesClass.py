@@ -98,6 +98,7 @@ class ConcreteCourse:
 
     def set_description(self, description: str):
         self.course.description = description
+        self.course.save()
 
     def get_credits(self) -> int:
         return self.course.credits
@@ -191,9 +192,8 @@ class ConcreteCourse:
 
 
     def remove_section(self, section: AbstractSection) -> bool:
-        if section in self.section:
-            self.section.remove(section)
-
-
-
-
+        if isinstance(section, ConcreteSection):
+            section_id = section.getSectionNumber()
+            Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
+        else:
+            raise ValueError("Section is not included, cannot be deleted")

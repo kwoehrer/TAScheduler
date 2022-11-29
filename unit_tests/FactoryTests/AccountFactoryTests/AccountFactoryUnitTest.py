@@ -8,17 +8,17 @@ class TestCreateAccount(TestCase):
 
     def setUp(self) -> None:
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
-                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin')
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin', email='adminemail@aol.com')
         admin_user_model = Admin.objects.filter(username='testadmin')[0]
         admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
-                            phone_number=1234567890, home_address='123 Hell Lane', user_type='TA')
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='TA', email='taemail@aol.com')
         ta_user_model = TA.objects.filter(username='ta')[0]
         ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
 
         User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
-                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor')
+                            phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor', email='instremail@aol.com')
         instr_user_model = Instructor.objects.filter(username='instructor')[0]
         instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
 
@@ -30,10 +30,11 @@ class TestCreateAccount(TestCase):
         self.good_account_attributes['last_name'] = 'Doe'
         self.good_account_attributes['phone_number'] = '2622622662'
         self.good_account_attributes['home_address'] = '123 Mary Jane Lane'
+        self.good_account_attributes['email'] = 'newemail@aol.com'
         self.good_account_attributes['user_type'] = 'TA'
         self.admin: User = Admin_User(admin_model)
-        self.ta: User = Ta_User(admin_model)
-        self.instr: User = Instructor_User(admin_model)
+        self.ta: User = Ta_User(ta_model)
+        self.instr: User = Instructor_User(instr_model)
 
     def test_no_arg(self):
         with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
@@ -55,16 +56,53 @@ class TestCreateAccount(TestCase):
         with self.assertRaises(ValueError, msg='Instructor User should not be able to create another account'):
             self.acc_fact.create_account(self.instr, self.good_account_attributes)
 
-    def test_good_attribute_admin_user(self):
+    def test_good_attribute_admin_user_creates_ta(self):
         self.acc_fact.create_account(self.admin, self.good_account_attributes)
-        User.objects.get(username=self.good_account_attributes['username'])
-        self.assert
+        length_match = len(User.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+        length_match = len(TA.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+
+    def test_good_attribute_admin_user_creates_instructor(self):
+        self.good_account_attributes['user_type'] = 'Instructor'
+        self.acc_fact.create_account(self.admin, self.good_account_attributes)
+        length_match = len(User.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+        length_match = len(TA.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+
+    def test_good_attribute_admin_user_creates_admin(self):
+        self.good_account_attributes['user_type'] = 'Admin'
+        self.acc_fact.create_account(self.admin, self.good_account_attributes)
+        length_match = len(User.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+        length_match = len(TA.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
 
     def test_existing_username(self):
-        self.assertEqual(True, False)  # add assertion her
+        self.good_account_attributes['username'] = 'testadmin'
+        with self.assertRaises(ValueError, msg='Cannot create an account where an existing account shares the username'):
+            self.acc_fact.create_account(self.admin, self.good_account_attributes)
 
     def test_existing_email(self):
-        self.assertEqual(True, False)  # add assertion her
+        self.good_account_attributes['email'] = 'adminemail@aol.com'
+        with self.assertRaises(ValueError,
+                               msg='Cannot create an account where an existing account shares the same email'):
+            self.acc_fact.create_account(self.admin, self.good_account_attributes)
+
+    def test_missing_required_attribute(self):
+        self.good_account_attributes.pop('username')
+        with self.assertRaises(ValueError,
+                               msg='Cannot create an account without a username attribute specified'):
+            self.acc_fact.create_account(self.admin, self.good_account_attributes)
+
+    def test_missing_optional_attribute(self):
+        self.good_account_attributes.pop('home_address')
+        self.acc_fact.create_account(self.admin, self.good_account_attributes)
+        length_match = len(User.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
+        length_match = len(TA.objects.get(username=self.good_account_attributes['username']))
+        self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
 
 
 class TestDeleteCourse(unittest.TestCase):
@@ -72,10 +110,6 @@ class TestDeleteCourse(unittest.TestCase):
 
 
 class TestEditCourse(unittest.TestCase):
-    pass
-
-
-class TestDeleteCourse(unittest.TestCase):
     pass
 
 

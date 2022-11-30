@@ -1,7 +1,8 @@
 from django.test import TestCase
 from app.models import Section, Course
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
-from classes.Courses.CourseClass import AbstractCourse, ConcreteCourse  # TODO check name for course class
+from classes.Courses.CourseClass import AbstractCourse, ConcreteCourse
+# TODO check name for course class after merge
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -22,8 +23,8 @@ class TestGetParent(TestCase):
         self.wrapper2: AbstractSection = ConcreteSection(section2)
 
     def test_success(self):
-        self.assertEqual(self.course.getCourseID(),
-                         self.wrapper.getParentCourse())  # TODO check getCourseID after merge
+        self.assertEqual(self.course.getCourseID(), self.wrapper.getParentCourse())
+        # TODO check getCourseID after merge
 
     def test_delete_course(self):
         self.course_model.delete()
@@ -34,6 +35,7 @@ class TestGetParent(TestCase):
         self.section2.delete()
         with self.assertRaises(ObjectDoesNotExist, msg="Section does not exist"):
             self.wrapper2.getParentCourse()
+
     # TODO add test for invalid course if needed
     # TODO add more tests if needed
 
@@ -54,10 +56,13 @@ class TestGetSectionNum(TestCase):
         self.assertEqual(100, self.wrapper.getSectionNumber())
 
     def test_no_number(self):
-        self.assertRaises(TypeError, self.wrapper2.getSectionNumber())  # TODO check if correct error type
+        self.assertRaises(TypeError, self.wrapper2.getSectionNumber())
+        # TODO check if correct error type
 
     def test_invalid_number(self):
-        self.assertRaises(ValueError, self.wrapper3.getSectionNumber())  # TODO check if correct error type
+        self.assertRaises(ValueError, self.wrapper3.getSectionNumber())
+        # TODO check if correct error type
+
     # TODO add more tests if needed
 
 class TestSetSectionNum(TestCase):
@@ -75,6 +80,23 @@ class TestSetSectionNum(TestCase):
     def test_success(self):
         self.wrapper.setSectionNumber(400)
         self.assertEquals(400, self.wrapper.getSectionNumber())
+
+    def test_set_long(self):
+        self.wrapper2.setSectionNumber(11111111111111111111)
+        self.assertEqual(200, self.wrapper2.getSectionNumber())
+        # TODO make sure section num is not changed when given long value
+
+    def test_set_none(self):
+        self.wrapper3.setSectionNumber(None)
+        self.assertEqual(300, self.wrapper3.getSectionNumber())
+        # TODO make sure section num is not changed when given no value
+
+    def test_invalid(self):
+        self.wrapper.setSectionNumber('WRONG')
+        self.assertEqual(400, self.wrapper.getSectionNumber())
+        # TODO make sure section num is not changed when given invalid value
+
+    # TODO add more tests if needed
 
 class TestGetTA(TestCase):
     pass

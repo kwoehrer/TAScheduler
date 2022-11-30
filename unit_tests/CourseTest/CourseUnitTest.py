@@ -1,37 +1,8 @@
+from django.contrib.auth.models import AbstractUser
 from django.test import TestCase
 from app.models import Course, User, Section
 from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
-
-
-class TestCourseCredits(TestCase):
-
-    def setUp(self) -> None:
-
-        Course.objects.create(name="course1", semester="Spring", year="2022",
-                              description="first course", credits="0")
-        f_course_model = Course.objects.filter(name='course1')[0]
-        self.first_course_model = Course.objects.create(course_ID=f_course_model.course_ID)
-
-        Course.objects.create(name="course2", semester="Spring", year="2022",
-                              description="second course", credits="1")
-        s_course_model = Course.objects.filter(name='course2')[0]
-        self.second_course_model = Course.objects.create(course_ID=s_course_model.course_ID)
-
-        Course.objects.create(name="course3", semester="Spring", year="2022",
-                              description="second course", credits="4")
-        t_course_model = Course.objects.filter(name='course3')[0]
-        self.third_course_model = Course.objects.create(course_ID=t_course_model.course_ID)
-
-
-        self.course: AbstractCourse = ConcreteCourse()
-
-    def course_credits_less(self):
-        with self.assertRaises(ValueError, msg="Course credits should be bigger than 0"):
-            self.course.get_credits()
-
-
-
 
 class TestAddInstructor(TestCase):
 
@@ -162,8 +133,61 @@ class TestremoveTA(TestCase):
 class TestaddSection(TestCase):
 
     def setUp(self) -> None:
-        self.section: AbstractSection = ConcreteSection()
-        Section.objects.create()
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022", description="test",
+                                             credits="3")
+
+        section_model = Section.objects.create(course_model.course_ID, section_num=100, MeetingTime="9:00")
+
+
+        self.course: AbstractCourse = ConcreteCourse(course_model)
+        self.section: AbstractSection = ConcreteSection(section_model)
+    def add_section_no_arg(self):
+        with self.assertRaises(TypeError, msg="add_section - More than zero arg is required"):
+            self.course.add_section()
+
+    def add_secion_one_arg(self):
+        with self.assertRaises(TypeError, msg="add_section - More than one arg is required"):
+            self.course.add_section(self.section.getTA())
+
+    def add_secion_two_arg(self):
+        with self.assertRaises(TypeError, msg="add_section - More than two arg is required"):
+            self.course.add_section(self.section.getTA(), self.section.getSectionNumber())
+
+    def add_section_more_arg(self):
+        with self.assertRaises(TypeError, msg="add_section - Too many arg was added"):
+            self.course.add_section(self.section.getTA(), self.section.getSectionNumber(), self.section.getMeetTime(),
+                                    self.course.get_course_id)
+
+    def add_section_not_saved(self):
+        self.course.add_section(self.section.getTA(), self.section.getSectionNumber(), self.section.getSectionNumber())
+        length = len(Section.objects.filter(section_num=100))
+        self.assertNotEqual(0,length, msg="Section was not added")
+
+
+class TestremoveSection(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022", description="test",
+                                             credits="3")
+
+        section_model = Section.objects.create(course_model.course_ID, section_num=100, MeetingTime="9:00")
+
+        self.course: AbstractCourse = ConcreteCourse(course_model)
+        self.section: AbstractSection = ConcreteSection(section_model)
+
+    def remove_section_no_arg(self):
+        with self.assertRaises(TypeError, msg="remove_section - More than zero arg is required"):
+            self.course.remove_section()
+
+    def add_section_more_arg(self):
+        with self.assertRaises(TypeError, msg="add_section - Too many arg was added"):
+            self.course.add_section(self.section, self.course)
+
+    def remove_section_not_deleted(self):
+        self.course.remove_section(self.section)
+        length = len(Section.objects.filter(section_num=100))
+        self.assertEqual(0, length, msg="Section was not deleted, it still exists")
+
 
 
 

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from app.models import Section, Course
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
+from classes.Courses.CourseClass import AbstractCourse, ConcreteCourse  # TODO check name for course class
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -16,7 +17,7 @@ class TestGetParent(TestCase):
                                                    description="", credits=4)
         section = Section.objects.create(self.course_model.course_ID, section_num=100, MeetingTimes='12:00')
         section2 = Section.objects.create(self.course_model2.course_ID, section_num=200, MeetingTimes='1:00')
-        self.course: AbstractCourse = ConcreteCourse(course)
+        self.course: AbstractCourse = ConcreteCourse(self.course_model)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)
 
@@ -42,11 +43,12 @@ class TestGetSectionNum(TestCase):
         course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                        description="idk lol", credits=4)
         section = Section.objects.create(course.course_ID, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course.course_ID, section_num=None, MeetingTimes='12:00')
-        section2 = Section.objects.create(course.course_ID, section_num=11111111111111111, MeetingTimes='12:00')
+        section2 = Section.objects.create(course.course_ID, section_num=None, MeetingTimes='1:00')
+        section3 = Section.objects.create(course.course_ID, section_num=11111111111111111, MeetingTimes='2:00')
         self.course: AbstractCourse = ConcreteCourse(course)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)
+        self.wrapper3: AbstractSection = ConcreteSection(section3)
 
     def test_success(self):
         self.assertEqual(100, self.wrapper.getSectionNumber())
@@ -56,12 +58,23 @@ class TestGetSectionNum(TestCase):
 
     def test_invalid_number(self):
         self.assertRaises(ValueError, self.wrapper3.getSectionNumber())  # TODO check if correct error type
-
     # TODO add more tests if needed
 
 class TestSetSectionNum(TestCase):
-    pass
+    def setUp(self) -> None:
+        course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
+                                       description="idk lol", credits=4)
+        section = Section.objects.create(course.course_ID, section_num=100, MeetingTimes='12:00')
+        section2 = Section.objects.create(course.course_ID, section_num=200, MeetingTimes='1:00')
+        section3 = Section.objects.create(course.course_ID, section_num=300, MeetingTimes='2:00')
+        self.course: AbstractCourse = ConcreteCourse(course)
+        self.wrapper: AbstractSection = ConcreteSection(section)
+        self.wrapper2: AbstractSection = ConcreteSection(section2)
+        self.wrapper3: AbstractSection = ConcreteSection(section2)
 
+    def test_success(self):
+        self.wrapper.setSectionNumber(400)
+        self.assertEquals(400, self.wrapper.getSectionNumber())
 
 class TestGetTA(TestCase):
     pass

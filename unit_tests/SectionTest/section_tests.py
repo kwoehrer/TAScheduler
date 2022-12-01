@@ -2,7 +2,6 @@ from django.test import TestCase
 from app.models import Section, Course, User
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
-# TODO check name for course class after merge
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -79,8 +78,9 @@ class TestSetSectionNum(TestCase):
         self.wrapper3: AbstractSection = ConcreteSection(section2)
 
     def test_success(self):
-        self.wrapper.setSectionNumber(400)
-        self.assertEquals(400, self.wrapper.getSectionNumber())
+        new = self.wrapper.setSectionNumber(400)
+        self.assertEquals(1, new)
+        # TODO fix these
 
     def test_set_long(self):
         self.wrapper2.setSectionNumber(11111111111111111111)
@@ -104,7 +104,8 @@ class TestGetTA(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
-        self.ta = User.objects.create(first_name='Luke', last_name='Hodory', )
+        self.ta = User.objects.create(user_type="TA", first_name='Luke', last_name='Hodory', password="password",
+                                      email="profhod@gmail.com", username='lhodory')
         section = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='12:00')
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)

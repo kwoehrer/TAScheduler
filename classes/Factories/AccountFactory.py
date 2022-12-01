@@ -52,7 +52,7 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         if not (isinstance(deletor, AdminUser)):
             raise TypeError("Only admin user accounts can delete accounts.")
 
-        deletee_id = deletee.get_id() #TODO MIGHT NEED TO FIX
+        deletee_id = deletee.get_id()
 
         User.objects.filter(account_ID=deletee_id).delete() #should propagate to subtable due to cascade effects
 

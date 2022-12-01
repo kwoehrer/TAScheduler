@@ -167,11 +167,11 @@ class TestDeleteCourse(TestCase):
             self.acc_fact.delete_account(self.admin, self.admin, self.admin)
 
     def test_TA_user(self):
-        with self.assertRaises(ValueError, msg='TA User should not be able to delete another account'):
+        with self.assertRaises(TypeError, msg='TA User should not be able to delete another account'):
             self.acc_fact.delete_account(self.ta, self.instr)
 
     def test_instr_user(self):
-        with self.assertRaises(ValueError, msg='Instructor User should not be able to delete another account'):
+        with self.assertRaises(TypeError, msg='Instructor User should not be able to delete another account'):
             self.acc_fact.delete_account(self.instr, self.ta)
 
     def test_delete_ta(self):
@@ -198,5 +198,5 @@ class TestDeleteCourse(TestCase):
     def test_delete_deleted_account(self):
         acc_id = Admin.objects.filter(username='deladmin')[0]
         User.objects.filter(account_ID=acc_id).delete()
-        with self.assertRaises(ValueError, msg='Cannot delete an account that was already deleted'):
+        with self.assertRaises(TypeError, msg='Cannot delete an account that was already deleted'):
             self.acc_fact.delete_account(self.admin, self.del_admin)

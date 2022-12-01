@@ -1,21 +1,22 @@
 from abc import ABC, abstractmethod
 
 from app.models import User
+from classes.Users.users import InstructorUser, TAUser, AdminUser, AbstractUser
 
 
 class AbstractAccountFactory(ABC):
     @abstractmethod
-    def create_account(self, creator: User, newAccountAttrbitutes: []):
+    def create_account(self, creator: AbstractUser, newAccountAttrbitutes: []):
         pass
 
     @abstractmethod
-    def delete_account(self, deletor: User, newAccountAttrbitutes: []):
+    def delete_account(self, deletor: AbstractUser, newAccountAttrbitutes: []):
         pass
 
 
 class ConcreteAccountFactory(AbstractAccountFactory):
 
-    def create_account(self, creator: User, newAccountAttributes: []):
+    def create_account(self, creator: AbstractUser, newAccountAttributes: []):
         # Verify creator is an admin
         if not (isinstance(creator, Admin_User)):
             raise TypeError("Only admin user accounts can create accounts.")
@@ -38,17 +39,17 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         # look at type of user and create a reference to the user in its sub-table
         new_subtype = None
         if user_type == "Admin":
-            new_subtype = Admin(new_user.account_ID)
+            new_subtype = AdminUser(new_user.account_ID)
         elif user_type == "TA":
-            new_subtype = TA(new_user.account_ID)
+            new_subtype = TAUser(new_user.account_ID)
         elif user_type == "Instructor":
-            new_subtype = Instructor(new_user.account_ID)
+            new_subtype = InstructorUser(new_user.account_ID)
 
         new_subtype.save()  # Should throw erorr if usertype was not correct.
 
-    def delete_account(self, deletor: User, deletee: User):
+    def delete_account(self, deletor: AbstractUser, deletee: AbstractUser):
         #verify our logged in user/deletor can delete accounts
-        if not (isinstance(deletor, Admin_User)):
+        if not (isinstance(deletor, AdminUser)):
             raise TypeError("Only admin user accounts can delete accounts.")
 
         deletee_id = deletee.get_id() #TODO MIGHT NEED TO FIX

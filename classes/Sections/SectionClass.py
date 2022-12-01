@@ -12,14 +12,6 @@ class AbstractSection(ABC):
         pass
 
     @abc.abstractmethod
-    def getSectionNumber(self):
-        pass
-
-    @abc.abstractmethod
-    def setSectionNumber(self):
-        pass
-
-    @abc.abstractmethod
     def getTA(self) -> AbstractUser:
         pass
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models import User
+from app.models import User, Admin, TA, Instructor
 from classes.Users.users import InstructorUser, TAUser, AdminUser, AbstractUser
 
 
@@ -18,7 +18,7 @@ class ConcreteAccountFactory(AbstractAccountFactory):
 
     def create_account(self, creator: AbstractUser, newAccountAttributes: []):
         # Verify creator is an admin
-        if not (isinstance(creator, Admin_User)):
+        if not (isinstance(creator, AdminUser)):
             raise TypeError("Only admin user accounts can create accounts.")
         # Verify newAccountAttributes is correct
         username = newAccountAttributes['username']
@@ -39,11 +39,11 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         # look at type of user and create a reference to the user in its sub-table
         new_subtype = None
         if user_type == "Admin":
-            new_subtype = AdminUser(new_user.account_ID)
+            new_subtype = Admin(account_ID=new_user)
         elif user_type == "TA":
-            new_subtype = TAUser(new_user.account_ID)
+            new_subtype = TA(account_ID=new_user)
         elif user_type == "Instructor":
-            new_subtype = InstructorUser(new_user.account_ID)
+            new_subtype = Instructor(account_ID=new_user)
 
         new_subtype.save()  # Should throw erorr if usertype was not correct.
 

@@ -1,11 +1,12 @@
 from app.models import Section, TA, Course
 import classes.Courses.CoursesClass as CourseClass
+from abc import ABC
 import abc
 
-from classes.Users.users import TAUser
+from classes.Users.users import TAUser, AbstractUser
 
 
-class AbstractSection(abc):
+class AbstractSection(ABC):
     @abc.abstractmethod
     def getParentCourse(self):
         pass
@@ -39,17 +40,17 @@ class ConcreteSection(AbstractSection):
     def __init__(self, section: Section):
         self.section = section
 
-    def getParentCourse(self) -> CourseClass.AbstractCourse:
+    def getParentCourse(self):
         CourseClass.ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):
         return self.section.section_num
 
-    def getTA(self) -> CourseClass.AbstractUser:
+    def getTA(self) -> AbstractUser:
         ta = TA.objects.get(account_ID=self.section.ta_account_id)
         return TAUser(ta)
 
-    def setTA(self, newTA: CourseClass.AbstractUser):
+    def setTA(self, newTA: AbstractUser):
         if isinstance(newTA, TAUser):
             ta_id = newTA.getID()
             self.section.ta_account_id = ta_id

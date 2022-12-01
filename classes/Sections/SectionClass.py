@@ -2,6 +2,8 @@ from app.models import Section, TA, Course
 from classes.Courses import Course
 import abc
 
+from classes.Users.users import TAUser, AbstractUser
+
 
 class AbstractSection(abc):
     @abc.abstractmethod
@@ -48,7 +50,7 @@ class ConcreteSection(AbstractSection):
         return TA_User(ta)
 
     def setTA(self, newTA: AbstractUser):
-        if isinstance(newTA, TA_User):
+        if isinstance(newTA, TAUser):
             ta_id = newTA.getID()
             self.section.ta_account_id = ta_id
             self.section.save()

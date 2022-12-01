@@ -10,19 +10,19 @@ class TestCreateAccount(TestCase):
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='adminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='testadmin')[0]
+        admin_user_model = User.objects.filter(username='testadmin')[0]
         admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='TA',
                             email='taemail@aol.com')
-        ta_user_model = TA.objects.filter(username='ta')[0]
+        ta_user_model = User.objects.filter(username='ta')[0]
         ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
 
         User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor',
                             email='instremail@aol.com')
-        instr_user_model = Instructor.objects.filter(username='instructor')[0]
+        instr_user_model = User.objects.filter(username='instructor')[0]
         instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
 
         self.acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
@@ -125,25 +125,25 @@ class TestDeleteAccount(TestCase):
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='adminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='testadmin')[0]
+        admin_user_model = User.objects.filter(username='testadmin')[0]
         admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='TA',
                             email='taemail@aol.com')
-        ta_user_model = TA.objects.filter(username='ta')[0]
+        ta_user_model = User.objects.filter(username='ta')[0]
         ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
 
         User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor',
                             email='instremail@aol.com')
-        instr_user_model = Instructor.objects.filter(username='instructor')[0]
+        instr_user_model = User.objects.filter(username='instructor')[0]
         instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
 
         User.objects.create(username='deladmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='deladminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='deladmin')[0]
+        admin_user_model = User.objects.filter(username='deladmin')[0]
         del_admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         self.acc_fact: AbstractAccountFactory = ConcreteAccountFactory()

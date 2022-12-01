@@ -16,8 +16,8 @@ class TestGetParent(TestCase):
                                                   description="", credits=4)
         self.course_model2 = Course.objects.create(name='Advanced Nonsense', semester='Spring', year=2022,
                                                    description="", credits=4)
-        section = Section.objects.create(course_ID=self.course_model.course_ID, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course_ID=self.course_model2.course_ID, section_num=200, MeetingTimes='1:00')
+        section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='12:00')
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, MeetingTimes='1:00')
         self.course: AbstractCourse = ConcreteCourse(self.course_model)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)
@@ -44,9 +44,9 @@ class TestGetSectionNum(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course_ID=self.course.course_ID, section_num=None, MeetingTimes='1:00')
-        section3 = Section.objects.create(course_ID=self.course.course_ID, section_num=11111111111111111,
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00')
+        section2 = Section.objects.create(course_ID=self.course, section_num=None, MeetingTimes='1:00')
+        section3 = Section.objects.create(course_ID=self.course, section_num=11111111111111111,
                                           MeetingTimes='2:00')
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
@@ -71,7 +71,7 @@ class TestSetSectionNum(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00')
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00')
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
 
@@ -104,13 +104,13 @@ class TestGetTA(TestCase):
                                             description="idk lol", credits=4)
         self.ta = User.objects.create(user_type="TA", first_name='Luke', last_name='Hodory', password="password",
                                       email="profhod@gmail.com", username='lhodory')
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00',
-                                         ta_account_id=self.ta.account_ID)
-        section2 = Section.objects.create(course_ID=self.course.course_ID, section_num=200, MeetingTimes='12:00',
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00',
+                                         ta_account_id=self.ta)
+        section2 = Section.objects.create(course_ID=self.course, section_num=200, MeetingTimes='12:00',
                                           ta_account_id=123)
-        section3 = Section.objects.create(course_ID=self.course.course_ID, section_num=300, MeetingTimes='12:00',
+        section3 = Section.objects.create(course_ID=self.course, section_num=300, MeetingTimes='12:00',
                                           ta_account_id='WRONG')
-        section4 = Section.objects.create(course_ID=self.course.course_ID, section_num=400, MeetingTimes='12:00',
+        section4 = Section.objects.create(course_ID=self.course, section_num=400, MeetingTimes='12:00',
                                           ta_account_id=None)
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.ta: AbstractUser = TAUser(self.ta)
@@ -143,8 +143,8 @@ class TestSetTA(TestCase):
                                       email="proflhod@gmail.com", username='lhodory')
         self.ta2 = User.objects.create(user_type="TA", first_name='Jake', last_name='Hodory', password="password",
                                       email="profjhod@gmail.com", username='jhodory')
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00',
-                                         ta_account_id=self.ta.account_ID)
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00',
+                                         ta_account_id=self.ta)
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.ta: AbstractUser = TAUser(self.ta)
         self.wrapper: AbstractSection = ConcreteSection(section)
@@ -168,10 +168,10 @@ class TestGetMeetTime(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='')
-        section3 = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes=123)
-        section4 = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes=None)
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00')
+        section2 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='')
+        section3 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes=123)
+        section4 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes=None)
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)
@@ -197,8 +197,8 @@ class TestSetMeetTime(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
-        section = Section.objects.create(course_ID=self.course.course_ID, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course_ID=self.course.course_ID, section_num=200, MeetingTimes='12:00')
+        section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00')
+        section2 = Section.objects.create(course_ID=self.course, section_num=200, MeetingTimes='12:00')
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)

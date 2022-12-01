@@ -1,7 +1,7 @@
 from django.test import TestCase
 from app.models import Section, Course, User
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
-from classes.Courses.CourseClass import AbstractCourse, ConcreteCourse
+from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 # TODO check name for course class after merge
 from django.core.exceptions import ObjectDoesNotExist
 

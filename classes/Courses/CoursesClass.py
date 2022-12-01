@@ -1,6 +1,6 @@
 from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
-
+import abc
 
 class AbstractCourse(abc):
     @abc.abstractmethod
@@ -80,7 +80,7 @@ class AbstractCourse(abc):
         pass
 class ConcreteCourse:
 
-    def __init__(self, course :Course):
+    def __init__(self, course: Course):
         self.course = course
 
     def get_course_id(self) -> int:

@@ -50,15 +50,14 @@ class Course(models.Model):
     course_ID = models.AutoField(primary_key=True, db_index=True, auto_created=True)
     name = models.CharField(max_length=30, blank=False, null=False)
     semester = models.CharField(choices=SemesterTypes.choices, max_length=10, default='Spring', blank=False, null=False, db_index=True)
-    year = models.IntegerField(max_length=4, blank=False, null=False, default=2022,
-                               validators=[MaxValueValidator(datetime.date.today().year + 10,
-                                                            message="Course.year cannot be more than 10 years into " +
-                                                                    "the future.")])
+    year = models.IntegerField(blank=False, null=False, default=2022,
+                               validators=[MinValueValidator(datetime.date.today().year - 10,message="Course.year cannot be more than 10 years into " +" the past."),
+                               MaxValueValidator(datetime.date.today().year + 10, message="Course.year cannot be more than 10 years into " +" the future.")])
     # Above validator validates that they don't add anything more than 10 years in the future
     description = models.CharField(max_length=30, blank=False, null=False)
-    credits = models.IntegerField(max_length=1, blank=False, null=False, default=3,
-                                  validators=[MinValueValidator(1,
-                                                               message="Course.credit field must be greater than 1.")])
+    credits = models.IntegerField(blank=False, null=False, default=3,
+                                  validators=[MaxValueValidator(9,message="Course.credit field must be less than 10."),
+                                    MinValueValidator(1,message="Course.credit field must be greater than 1.")])
 
 
 class Section(models.Model):

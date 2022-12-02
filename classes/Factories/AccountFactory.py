@@ -49,7 +49,7 @@ class ConcreteAccountFactory(AbstractAccountFactory):
 
     def delete_account(self, deletor: AbstractUser, deletee: AbstractUser):
         #verify our logged in user/deletor can delete accounts
-        if not (isinstance(deletor, AdminUser)):
+        if not isinstance(deletor, AdminUser) or deletor.getUserType() != "Admin":
             raise TypeError("Only admin user accounts can delete accounts.")
 
         #verify account is not already deleted

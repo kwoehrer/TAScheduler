@@ -172,7 +172,7 @@ class TestDeleteCourse(TestCase):
 
     def test_instr_user(self):
         with self.assertRaises(TypeError, msg='Instructor User should not be able to delete another account'):
-            self.acc_fact.delete_account(self.instr, self.ta)
+            self.acc_fact.delete_account(deletor=self.instr, deletee=self.ta)
 
     def test_delete_ta(self):
         self.acc_fact.delete_account(self.admin, self.ta)

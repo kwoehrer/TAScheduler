@@ -55,7 +55,7 @@ class TAUser(AbstractUser):
         self.model = model
 
     def getID(self) -> int:
-        return self.model.account_ID
+        return self.model.account_ID.account_ID
 
     def getFirstName(self) -> str:
         return (User.objects.get(account_ID=self.model.account_ID)).first_name
@@ -108,7 +108,7 @@ class InstructorUser(AbstractUser):
         self.model = model
 
     def getID(self) -> int:
-        return self.model.account_ID
+        return self.model.account_ID.account_ID
 
     def getFirstName(self) -> str:
         return (User.objects.get(account_ID=self.model.account_ID)).first_name
@@ -161,7 +161,7 @@ class AdminUser(AbstractUser):
         self.model = model
 
     def getID(self) -> int:
-        return self.model.account_ID
+        return self.model.account_ID.account_ID
 
     def getFirstName(self) -> str:
         return (User.objects.get(account_ID=self.model.account_ID)).first_name

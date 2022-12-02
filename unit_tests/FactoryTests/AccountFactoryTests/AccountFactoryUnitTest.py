@@ -176,27 +176,27 @@ class TestDeleteCourse(TestCase):
 
     def test_delete_ta(self):
         self.acc_fact.delete_account(self.admin, self.ta)
-        length_match = len(User.objects.get(username='ta'))
+        length_match = len(User.objects.filter(username='ta'))
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the user table.')
-        length_match = len(TA.objects.get(account_ID__username=self.good_account_attributes['username']))
+        length_match = len(TA.objects.filter(account_ID__username='ta'))
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the TA table')
 
     def test_delete_instructor(self):
         self.acc_fact.delete_account(self.admin, self.instr)
-        length_match = len(User.objects.get(username='instructor'))
+        length_match = len(User.objects.filter(username='instructor'))
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the user table.')
-        length_match = len(Instructor.objects.get(account_ID__username=self.good_account_attributes['username']))
+        length_match = len(Instructor.objects.filter(account_ID__username='instructor'))
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the instructor table')
 
     def test_delete_admin(self):
         self.acc_fact.delete_account(self.admin, self.del_admin)
-        length_match = len(User.objects.get(username='deladmin'))
-        self.assertEqual(0, length_match, msg='Account was not successfully deleted from the user table.')
-        length_match = len(Admin.objects.get(account_ID__username=self.good_account_attributes['username']))
-        self.assertEqual(0, length_match, msg='Account was not successfully deleted from the admin table')
+        with self.assertRaises(User.DoesNotExist, msg='Account was not successfully deleted from the user table'):
+            length_match = User.objects.filter(username='deladmin')
+        with self.assertRaises(User.DoesNotExist, msg='Account was not successfully deleted from the admin table'):
+            Admin.objects.filter(account_ID__username='deladmin')
 
     def test_delete_deleted_account(self):
-        acc_id = User.objects.filter(username='deladmin')[0]
-        User.objects.filter(account_ID=acc_id).delete()
-        with self.assertRaises(TypeError, msg='Cannot delete an account that was already deleted'):
+        acc = User.objects.filter(username='deladmin')[0]
+        User.objects.filter(account_ID=acc.account_ID).delete()
+        with self.assertRaises(ValueError, msg='Cannot delete an account that was already deleted'):
             self.acc_fact.delete_account(self.admin, self.del_admin)

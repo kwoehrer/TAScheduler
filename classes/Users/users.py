@@ -200,7 +200,7 @@ class AdminUser(AbstractUser):
         user_obj.save()
 
     def getUserType(self) -> str:
-        return (User.objects.get(account_ID=self.model.account_ID)).email
+        return (User.objects.get(account_ID=self.model.account_ID)).user_type
 
     def setUserType(self, new_user_type: str):
         acc_id = self.model.account_ID

@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <title>TA Scheduling App Home Page</title>
     {% load static %}
-    <link href="{% static 'css/bootstrap.css' %}" >
+    <link href="{% static 'css/bootstrap.css' %}">
     <script src="{% static 'bootstrap.min.js' %}"></script>
 </head>
 <body>
+{% load static %}
+<img class="img-fluid rounded mx-auto d-block imgMaxHeight" src="{% static 'custom/logo-no-background.svg' %}">
 {% csrf_token %}
-    <div class = "pageH1Container">
-        <h1>
-            TA Scheduling App Home Page
-        </h1>
-    </div>
-    {% autoescape on %}
-     {{ HomeState }}
-    {%  endautoescape %}
+
+{% autoescape on %}
+    {{ HomeState }}
+{% endautoescape %}
 </body>
 </html>

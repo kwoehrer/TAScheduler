@@ -182,7 +182,7 @@ class AdminUser(AbstractUser):
         user_obj.save()
 
     def getPhoneNumber(self) -> str:
-        return (User.objects.get(account_ID=self.model.account_ID)).phone_number
+        return self.model.account_ID.phone_number
 
     def setPhoneNumber(self, phone_number: str):
         acc_id = self.model.account_ID
@@ -191,7 +191,7 @@ class AdminUser(AbstractUser):
         user_obj.save()
 
     def getHomeAddress(self) -> str:
-        return (User.objects.get(account_ID=self.model.account_ID)).home_address
+        return self.model.account_ID.home_address
 
     def setHomeAddress(self, new_address: str):
         acc_id = self.model.account_ID
@@ -200,7 +200,7 @@ class AdminUser(AbstractUser):
         user_obj.save()
 
     def getUserType(self) -> str:
-        return (User.objects.get(account_ID=self.model.account_ID)).user_type
+        return self.model.account_ID.user_type
 
     def setUserType(self, new_user_type: str):
         acc_id = self.model.account_ID

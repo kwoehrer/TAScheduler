@@ -21,15 +21,27 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         if not (isinstance(creator, AdminUser)):
             raise TypeError("Only admin user accounts can create accounts.")
         # Verify newAccountAttributes is correct
+
         username = newAccountAttributes['username']
+        if len(User.objects.filter(username=username)) != 0:
+            raise ValueError("A user with this username already exists.")
+
         password = newAccountAttributes['password']
         if password == "" or len(password) < 8:
             raise ValueError("Password must be more than 8 characters long.")
+
         first_name = newAccountAttributes['first_name']
         last_name = newAccountAttributes['last_name']
+
         phone_number = newAccountAttributes['phone_number']
+        if len(User.objects.filter(phone_number=phone_number)) != 0:
+            raise ValueError("A user withy this phone number already exists.")
+
         home_address = newAccountAttributes['home_address']
         email = newAccountAttributes['email']
+        if len(User.objects.filter(email=email)) != 0:
+            raise ValueError("A user with this email already exists.")
+
         user_type = newAccountAttributes['user_type']
 
         new_user = User(username=username, password=password, first_name=first_name, last_name=last_name,

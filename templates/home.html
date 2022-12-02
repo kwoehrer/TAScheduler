@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'bootstrap.min.js' %}"></script>
+</head>
+<body>
+{% load static %}
+<img class="img-fluid rounded mx-auto d-block imgMaxHeight" src="{% static 'custom/logo-no-background.svg' %}">
+{% csrf_token %}
+
+{% autoescape on %}
+    {{ HomeState }}
+{% endautoescape %}
+</body>
+</html>

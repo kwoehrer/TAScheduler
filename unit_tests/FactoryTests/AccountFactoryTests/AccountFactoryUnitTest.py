@@ -104,9 +104,9 @@ class TestCreateAccount(TestCase):
     def test_missing_optional_attribute(self):
         self.good_account_attributes.pop('home_address')
         self.acc_fact.create_account(self.admin, self.good_account_attributes)
-        length_match = len(User.objects.get(username=self.good_account_attributes['username']))
+        length_match = len(User.objects.filter(username=self.good_account_attributes['username']))
         self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
-        length_match = len(TA.objects.get(username=self.good_account_attributes['username']))
+        length_match = len(TA.objects.filter(account_ID__username=self.good_account_attributes['username']))
         self.assertEqual(1, length_match, msg='Account was not successfully created in user table.')
 
     def empty_password(self):

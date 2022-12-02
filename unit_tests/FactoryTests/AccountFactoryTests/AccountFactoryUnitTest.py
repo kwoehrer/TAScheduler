@@ -196,7 +196,7 @@ class TestDeleteCourse(TestCase):
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the admin table')
 
     def test_delete_deleted_account(self):
-        acc_id = Admin.objects.filter(username='deladmin')[0]
+        acc_id = User.objects.filter(username='deladmin')[0]
         User.objects.filter(account_ID=acc_id).delete()
         with self.assertRaises(TypeError, msg='Cannot delete an account that was already deleted'):
             self.acc_fact.delete_account(self.admin, self.del_admin)

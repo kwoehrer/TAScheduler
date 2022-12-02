@@ -147,7 +147,7 @@ class InstructorUser(AbstractUser):
         user_obj.save()
 
     def getUserType(self) -> str:
-        return self.model.account_ID..user_type
+        return self.model.account_ID.user_type
 
     def setUserType(self, new_user_type):
         acc_id = self.model.account_ID

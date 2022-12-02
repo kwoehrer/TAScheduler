@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" >
+    <script src="{% static 'bootstrap.min.js' %}"></script>
+</head>
+<body>
+{% csrf_token %}
+    <div class = "pageH1Container">
+        <h1>
+            TA Scheduling App Home Page
+        </h1>
+    </div>
+    {% autoescape on %}
+     {{ HomeState }}
+    {%  endautoescape %}
+</body>
+</html>

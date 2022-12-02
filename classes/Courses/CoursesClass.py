@@ -83,7 +83,7 @@ class AbstractCourse(ABC):
     def remove_section(self, section):
         pass
 class ConcreteCourse(AbstractCourse):
-    def __init__(self, course :Course):
+    def __init__(self, course: Course):
         self.course = course
 
     def get_course_id(self) -> int:
@@ -93,8 +93,14 @@ class ConcreteCourse(AbstractCourse):
         return self.course.name
 
     def set_course_name(self, course_name: str):
-        self.course.name = course_name
-        self.course.save()
+        if len(course_name) <= 30:
+            self.course.name = course_name
+            self.course.save()
+        else:
+            raise ValueError("The name is too long")
+
+
+
 
     def get_description(self) -> str:
         return self.course.description
@@ -124,10 +130,13 @@ class ConcreteCourse(AbstractCourse):
         return self.course.year
 
     def set_year(self, year: int):
-        self.course.year = year
-        self.course.save()
+        if year <= (2022 + 10):
+            self.course.year = year
+            self.course.save()
+        else:
+            raise ValueError("No more than 10 years after this year should be included")
 
-    def get_instructors(self) -> [AbstractUser]:
+    def get_instructor(self) -> [AbstractUser]:
         instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
         instr_pk_list = instructors.values_list('account_ID', flat=True)
         instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)

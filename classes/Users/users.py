@@ -54,7 +54,7 @@ class TAUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-    def getID(self) -> User:
+    def getID(self) -> int:
         return self.model.account_ID
 
     def getFirstName(self) -> str:
@@ -107,7 +107,7 @@ class InstructorUser(AbstractUser):
     def __init__(self, model: Instructor):
         self.model = model
 
-    def getID(self) -> User:
+    def getID(self) -> int:
         return self.model.account_ID
 
     def getFirstName(self) -> str:
@@ -160,7 +160,7 @@ class AdminUser(AbstractUser):
     def __init__(self, model: Admin):
         self.model = model
 
-    def getID(self) -> User:
+    def getID(self) -> int:
         return self.model.account_ID
 
     def getFirstName(self) -> str:

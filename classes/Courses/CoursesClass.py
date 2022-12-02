@@ -1,8 +1,12 @@
 from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
-from classes.Sections.SectionClass import AbstractSection, ConcreteSection
+import classes.Sections.SectionClass as Sections
+from abc import ABC
 import abc
 
-class AbstractCourse(abc):
+from classes.Users.users import AbstractUser, InstructorUser, TAUser
+
+
+class AbstractCourse(ABC):
     @abc.abstractmethod
     def get_course_id(self):
         pass
@@ -48,11 +52,11 @@ class AbstractCourse(abc):
         pass
 
     @abc.abstractmethod
-    def get_instructor(self):
+    def get_instructors(self):
         pass
 
     @abc.abstractmethod
-    def set_instructor(self, instructor):
+    def add_instructor(self, instructor):
         pass
 
     @abc.abstractmethod
@@ -68,7 +72,7 @@ class AbstractCourse(abc):
         pass
 
     @abc.abstractmethod
-    def get_section(self):
+    def get_sections(self):
         pass
 
     @abc.abstractmethod
@@ -78,9 +82,8 @@ class AbstractCourse(abc):
     @abc.abstractmethod
     def remove_section(self, section):
         pass
-class ConcreteCourse:
-
-    def __init__(self, course: Course):
+class ConcreteCourse(AbstractCourse):
+    def __init__(self, course :Course):
         self.course = course
 
     def get_course_id(self) -> int:
@@ -131,32 +134,32 @@ class ConcreteCourse:
 
         result_list = [AbstractUser]
         for instr in instr_table:
-            result_list.append(Instructor_User(instr))
+            result_list.append(InstructorUser(instr))
 
         return result_list
 
 
     def add_instructor(self, newInstructor:AbstractUser):
-        if isinstance(newInstructor, Instructor_User):
+        if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
             row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
             row.save()
         else:
             raise TypeError("newInstructor was not an instructor object.")
 
-    def get_tas(self) -> [TA_User]:
+    def get_tas(self) -> [TAUser]:
         ta_models = TACourseAssignments.objects.filter(course_ID=self.course.course_ID)
         ta_pk_list = ta_models.values_list('account_ID', flat=True)
         ta_table = TA.objects.filter(account_ID__ta__in=ta_pk_list)
 
         result_list = [AbstractUser]
         for ta in ta_table:
-            result_list.append(TA_User(ta))
+            result_list.append(TAUser(ta))
 
         return result_list
 
     def add_ta(self, newta: AbstractUser):
-        if isinstance(newta, TA_User):
+        if isinstance(newta, TAUser):
             ta_id = newta.getID()
             row = InstructorAssignments(account_ID=ta_id, course_ID=self.course_ID)
             row.save()
@@ -164,18 +167,18 @@ class ConcreteCourse:
             raise TypeError("New TA was not a TA_User.")
 
     def remove_ta(self, oldta: AbstractUser) -> bool:
-        if isinstance(oldta, TA_User):
+        if isinstance(oldta, TAUser):
             ta_id = oldta.getID()
             TACourseAssignments.objects.filter(account_ID=ta_id, course_ID=self.course_ID).delete()
         else:
             raise TypeError("Old TA was not a TA_User.")
 
-    def get_sections(self) -> [AbstractSection]:
+    def get_sections(self) -> [Sections.AbstractSection]:
         section_table = Section.objects.filter(course_ID=self.course.course_ID)
-        section_list = [AbstractSection]
+        section_list = [Sections.AbstractSection]
 
         for section in section_table:
-            section_list.append(ConcreteSection(section))
+            section_list.append(Sections.ConcreteSection(section))
 
         return section_list
 
@@ -191,8 +194,8 @@ class ConcreteCourse:
 
 
 
-    def remove_section(self, section: AbstractSection) -> bool:
-        if isinstance(section, ConcreteSection):
+    def remove_section(self, section: Sections.AbstractSection) -> bool:
+        if isinstance(section, Sections.ConcreteSection):
             section_id = section.getSectionNumber()
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:

@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <title>TA Scheduling App Login</title>
     <style>
-        h1{
-            font-size:48px;
-            text-align:center;
+        .imgMaxHeight{
+            height:25vh;
+
+            max-height: 250px;
         }
         .container{
             width: 50%;
@@ -51,10 +52,18 @@
     </style>
 </head>
 <body>
-<h1>TA Scheduling App Login</h1>
+{% load static %}
+<img class = "img-fluid rounded mx-auto d-block imgMaxHeight" src="{% static 'custom/logo-no-background.svg'%}">
 <form action="/" method="post">
     {% csrf_token %}
     <div class="container">
+        {% if message %}
+            <div class="alert alert-danger text-center margTop" role="alert">
+              <hr>
+              <h4 class="alert-heading">{{ message }}</h4>
+              <hr>
+            </div>
+        {% endif %}
         <label for="username"><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>
 
@@ -63,12 +72,5 @@
         <input type ="submit" value="Login"></button>
     </div>
 </form>
-{% if message %}
-<div class="alert alert-danger text-center margTop" role="alert">
-  <hr>
-  <h4 class="alert-heading">{{ message }}</h4>
-  <hr>
-</div>
-{% endif %}
 </body>
 </html>

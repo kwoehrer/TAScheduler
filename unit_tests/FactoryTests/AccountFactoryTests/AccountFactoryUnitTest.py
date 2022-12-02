@@ -191,9 +191,9 @@ class TestDeleteCourse(TestCase):
     def test_delete_admin(self):
         self.acc_fact.delete_account(self.admin, self.del_admin)
         with self.assertRaises(User.DoesNotExist, msg='Account was not successfully deleted from the user table'):
-            length_match = User.objects.filter(username='deladmin')
-        with self.assertRaises(User.DoesNotExist, msg='Account was not successfully deleted from the admin table'):
-            Admin.objects.filter(account_ID__username='deladmin')
+            length_match = User.objects.get(username='deladmin')
+        with self.assertRaises(Admin.DoesNotExist, msg='Account was not successfully deleted from the admin table'):
+            Admin.objects.get(account_ID__username='deladmin')
 
     def test_delete_deleted_account(self):
         acc = User.objects.filter(username='deladmin')[0]

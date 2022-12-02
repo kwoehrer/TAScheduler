@@ -12,7 +12,7 @@ class TestCreateAccount(TestCase):
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='adminemail@aol.com')
         admin_user_model = User.objects.filter(username='testadmin')[0]
-        admin_model = User.objects.create(account_ID=admin_user_model)
+        admin_model = Admin.objects.create(account_ID=admin_user_model)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
                             phone_number=2345678901, home_address='123 Hell Lane', user_type='TA',

@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.template.loader import get_template
 from django.views import View
+from django.core import serializers
 
 from app.models import Instructor, Admin, User
-from classes.Users.users import TAUser, AbstractUser
-
+from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
 
 class Login(View):
@@ -24,9 +24,9 @@ class Login(View):
             if user_type == "TA":
                 logged_user = TAUser(logged_user_model)
             elif user_type == "Instructor":
-                logged_user = Instructor(logged_user_model)
+                logged_user = InstructorUser(logged_user_model)
             elif user_type == "Admin":
-                logged_user = Admin(logged_user_model)
+                logged_user = AdminUser(logged_user_model)
         else:
             return render(request,"login.html",{'message': "Invalid Username or Password."})
 
@@ -34,12 +34,12 @@ class Login(View):
             return render(request,"login.html",{'message': "An unknown error has occurred."})
 
         #Store as logged user
-        request.session["current_user"] = logged_user
+        request.session["current_user_model"] = serializers.serialize('json', [query[0] ])
 
         context = {}
 
         t = None
-        user_type = request.session['current_user'].get
+        user_type = User(request.session['current_user_model']).user_type
         if user_type == "TA":
             t = get_template('./homeStates/TAHome.html')
         elif user_type == "Instructor":
@@ -47,7 +47,7 @@ class Login(View):
         elif user_type == "Admin":
             t = get_template('./homeStates/AdminHome.html')
 
-        if(t == None):
+        if t == None:
             return render(request,"login.html",{'message': "An unknown error has occurred."})
         else:
             HomeState = t.render(context=context)

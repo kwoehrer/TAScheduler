@@ -28,7 +28,7 @@ class Login(View):
         else:
             return render(request,"login.html",{'message': "Invalid Username or Password."})
 
-        if loggedUser == None:
+        if logged_user == None:
             return render(request,"login.html",{'message': "An unknown error has occurred."})
 
         #Store as logged user

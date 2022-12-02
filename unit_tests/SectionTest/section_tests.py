@@ -131,9 +131,6 @@ class TestGetTA(TestCase):
     def test_none(self):
         self.assertRaises(ValueError, self.wrapper4.getTA())
 
-    def test_delete_ta(self):
-        pass
-
 
 class TestSetTA(TestCase):
     def setUp(self) -> None:
@@ -143,10 +140,14 @@ class TestSetTA(TestCase):
                                       email="proflhod@gmail.com", username='lhodory')
         self.ta2 = User.objects.create(user_type="TA", first_name='Jake', last_name='Hodory', password="password",
                                       email="profjhod@gmail.com", username='jhodory')
+        self.inst = User.objects.create(user_type="Instructor", first_name='Max', last_name='Hodory', password="password",
+                                       email="profmhod@gmail.com", username='mhodory')
         section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00',
                                          ta_account_id=self.ta)
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.ta: AbstractUser = TAUser(self.ta)
+        self.ta2: AbstractUser = TAUser(self.ta2)
+        self.inst: AbstractUser = TAUser(self.inst)
         self.wrapper: AbstractSection = ConcreteSection(section)
 
     def test_success(self):
@@ -158,10 +159,12 @@ class TestSetTA(TestCase):
         self.assertEqual(0, new)
 
     def test_not_ta(self):
-        pass
+        new = self.wrapper.setTA(self.inst)
+        self.assertEqual(0, new)
 
     def test_assigned_ta(self):
-        pass
+        new = self.wrapper.setTA(self.ta)
+        self.assertEqual(0, new)
 
 
 class TestGetMeetTime(TestCase):

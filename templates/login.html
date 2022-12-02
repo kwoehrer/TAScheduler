@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <meta charset="UTF-8">
     <title>TA Scheduling App Login</title>
     <style>
@@ -27,7 +30,7 @@
         input:focus{
             outline: 2px solid dodgerblue;
         }
-        button {
+        input[type=submit]{
             background-color: dodgerblue;
             color: white;
             font-weight: bold;
@@ -41,6 +44,10 @@
         button:hover {
             opacity: 0.8;
         }
+
+        .margTop{
+            margin-top:5vh;
+        }
     </style>
 </head>
 <body>
@@ -53,22 +60,15 @@
 
         <label for="password"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="password" required>
-        <button type = "button">Login</button>
+        <input type ="submit" value="Login"></button>
     </div>
 </form>
 {% if message %}
-    <div class="modal fade" id="invalidLogin" tabindex="-1" role="dialog" aria-labelledby="invalidLogin" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{message}}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="alert alert-danger text-center margTop" role="alert">
+  <hr>
+  <h4 class="alert-heading">{{ message }}</h4>
+  <hr>
+</div>
 {% endif %}
 </body>
 </html>

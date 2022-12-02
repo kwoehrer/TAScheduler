@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.template.loader import get_template
 from django.views import View
 
+from app.models import Instructor, Admin, User
 from classes.Users.users import TAUser, AbstractUser
-from models import User, Instructor, Admin
+
 
 
 class Login(View):
@@ -15,6 +16,7 @@ class Login(View):
         query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])
 
         logged_user: AbstractUser = None
+        print(query)
         if len(query) > 0:
             logged_user_model: User = query[0]
             user_type = logged_user_model.user_type

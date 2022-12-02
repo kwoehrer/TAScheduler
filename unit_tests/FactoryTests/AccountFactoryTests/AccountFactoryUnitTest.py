@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from app.models import Admin, User, TA, Instructor
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
+from classes.Users.users import AdminUser, InstructorUser, TAUser, AbstractUser
 
 
 class TestCreateAccount(TestCase):
@@ -10,19 +11,19 @@ class TestCreateAccount(TestCase):
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='adminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='testadmin')[0]
-        admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
+        admin_user_model = User.objects.filter(username='testadmin')[0]
+        admin_model = User.objects.create(account_ID=admin_user_model.account_ID)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='TA',
                             email='taemail@aol.com')
-        ta_user_model = TA.objects.filter(username='ta')[0]
+        ta_user_model = User.objects.filter(username='ta')[0]
         ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
 
         User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor',
                             email='instremail@aol.com')
-        instr_user_model = Instructor.objects.filter(username='instructor')[0]
+        instr_user_model = User.objects.filter(username='instructor')[0]
         instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
 
         self.acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
@@ -35,9 +36,9 @@ class TestCreateAccount(TestCase):
         self.good_account_attributes['home_address'] = '123 Mary Jane Lane'
         self.good_account_attributes['email'] = 'newemail@aol.com'
         self.good_account_attributes['user_type'] = 'TA'
-        self.admin: AbstractUser = Admin_User(admin_model)
-        self.ta: AbstractUser = Ta_User(ta_model)
-        self.instr: AbstractUser = Instructor_User(instr_model)
+        self.admin: AbstractUser = AdminUser(admin_model)
+        self.ta: AbstractUser = TAUser(ta_model)
+        self.instr: AbstractUser = InstructorUser(instr_model)
 
     def test_no_arg(self):
         with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
@@ -125,33 +126,33 @@ class TestDeleteCourse(TestCase):
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='adminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='testadmin')[0]
+        admin_user_model = User.objects.filter(username='testadmin')[0]
         admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='TA',
                             email='taemail@aol.com')
-        ta_user_model = TA.objects.filter(username='ta')[0]
+        ta_user_model = User.objects.filter(username='ta')[0]
         ta_model = TA.objects.create(account_ID=ta_user_model.account_ID)
 
         User.objects.create(username='instructor', password='password1', first_name="instr", last_name='instr',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Instrutor',
                             email='instremail@aol.com')
-        instr_user_model = Instructor.objects.filter(username='instructor')[0]
+        instr_user_model = User.objects.filter(username='instructor')[0]
         instr_model = Instructor.objects.create(account_ID=instr_user_model.account_ID)
 
         User.objects.create(username='deladmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
                             email='deladminemail@aol.com')
-        admin_user_model = Admin.objects.filter(username='deladmin')[0]
+        admin_user_model = User.objects.filter(username='deladmin')[0]
         del_admin_model = Admin.objects.create(account_ID=admin_user_model.account_ID)
 
         self.acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
 
-        self.admin: AbstractUser = Admin_User(admin_model)
-        self.del_admin: AbstractUser = Admin_User(del_admin_model)
-        self.ta: AbstractUser = Ta_User(ta_model)
-        self.instr: AbstractUser = Admin_User(instr_model)
+        self.admin: AbstractUser = AdminUser(admin_model)
+        self.del_admin: AbstractUser = AdminUser(del_admin_model)
+        self.ta: AbstractUser = TAUser(ta_model)
+        self.instr: AbstractUser = AdminUser(instr_model)
 
     def test_no_arg(self):
         with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
@@ -195,7 +196,7 @@ class TestDeleteCourse(TestCase):
         self.assertEqual(0, length_match, msg='Account was not successfully deleted from the admin table')
 
     def test_delete_deleted_account(self):
-        acc_id = Admin.objects.filter(username='deladmin')[0]
+        acc_id = User.objects.filter(username='deladmin')[0]
         User.objects.filter(account_ID=acc_id).delete()
         with self.assertRaises(ValueError, msg='Cannot delete an account that was already deleted'):
             self.acc_fact.delete_account(self.admin, self.del_admin)

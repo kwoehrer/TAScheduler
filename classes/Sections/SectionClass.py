@@ -1,20 +1,21 @@
 from app.models import Section, TA, Course
-from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 from classes.Users.users import AbstractUser, TAUser
-import abc
+import classes.Courses.CoursesClass as CourseClass
+from abc import ABC
+
+from classes.Users.users import TAUser, AbstractUser
 
 
-class AbstractSection(abc):
-    @abc.abstractmethod
-    def getParentCourse(self):
-        pass
-
+class AbstractSection(ABC):
     @abc.abstractmethod
     def getSectionNumber(self):
         pass
 
     @abc.abstractmethod
     def setSectionNumber(self, newSection):
+        pass
+
+    def getParentCourse(self):
         pass
 
     @abc.abstractmethod

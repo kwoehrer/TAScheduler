@@ -1,7 +1,7 @@
 from django.test import TestCase
 from app.models import Section, Course, User
-from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
+from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 from classes.Users.users import AbstractUser, TAUser
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -50,15 +50,10 @@ class TestGetSectionNum(TestCase):
                                           MeetingTimes='2:00')
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
         self.wrapper3: AbstractSection = ConcreteSection(section3)
 
     def test_success(self):
         self.assertEqual(100, self.wrapper.getSectionNumber())
-
-    def test_no_number(self):
-        self.assertRaises(TypeError, self.wrapper2.getSectionNumber())
-        # TODO check if correct error type
 
     def test_invalid_number(self):
         self.assertRaises(ValueError, self.wrapper3.getSectionNumber())
@@ -172,26 +167,20 @@ class TestGetMeetTime(TestCase):
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                             description="idk lol", credits=4)
         section = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='12:00')
-        section2 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes='')
-        section3 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes=123)
-        section4 = Section.objects.create(course_ID=self.course, section_num=100, MeetingTimes=None)
+        section2 = Section.objects.create(course_ID=self.course, section_num=200, MeetingTimes='')
+        section3 = Section.objects.create(course_ID=self.course, section_num=300, MeetingTimes=123)
+        section4 = Section.objects.create(course_ID=self.course, section_num=400, MeetingTimes=None)
         self.course: AbstractCourse = ConcreteCourse(self.course)
         self.wrapper: AbstractSection = ConcreteSection(section)
         self.wrapper2: AbstractSection = ConcreteSection(section2)
         self.wrapper3: AbstractSection = ConcreteSection(section3)
-        self.wrapper4: AbstractSection = ConcreteSection(section4)
 
     def test_success(self):
         self.assertEqual('12:00', self.wrapper.getMeetTime())
 
-    def test_empty(self):
-        self.assertRaises(ValueError, self.wrapper2.getMeetTime())
-
     def test_invalid(self):
         self.assertRaises(TypeError, self.wrapper3.getMeetTime())
 
-    def test_none(self):
-        self.assertRaises(TypeError, self.wrapper4.getMeetTime())
 
     # TODO add more tests if needed
 

@@ -210,11 +210,14 @@
                            placeholder="First_Name Last_Name">
                     <small id="passHelp" class="form-text text-muted">Format is "First_Name Last_Name".</small>
                 </div>
-                <select class="form-control" id="user_type" name="user_type" required>
-                    <option>TA</option>
-                    <option>Instructor</option>
-                    <option>Admin</option>
-                </select>
+                <div class="form-group">
+                    <label for="user_type">Type of User Account</label>
+                    <select class="form-select" id="user_type" name="user_type" required>
+                        <option>TA</option>
+                        <option>Instructor</option>
+                        <option>Admin</option>
+                    </select>
+                </div>
                 <input type="submit" class="btn btn-primary margTop float-right w-100" value="Search For Account">
             </form>
             <a class="min-vw-100" href="/AccountManagement/">

@@ -160,12 +160,14 @@
                        pattern="[A-Za-z0-9'\.\-\s\,]">
                 <small id="addressHelp" class="form-text text-muted">The address field is not required.</small>
             </div>
-            <label for="user_type">Type of User Account</label>
-            <select class="form-control" id="user-type" name="user_type" required>
-                <option>TA</option>
-                <option>Instructor</option>
-                <option>Admin</option>
-            </select>
+            <div class="form-group">
+                <label for="user_type">Type of User Account</label>
+                <select class="form-control form-select" id="user-type" name="user_type" required>
+                    <option>TA</option>
+                    <option>Instructor</option>
+                    <option>Admin</option>
+                </select>
+            </div>
             <input type="submit" class="btn btn-primary margTop float-right w-100" value="Create Account">
         </form>
         <a class="min-vw-100" href="/AccountManagement/">

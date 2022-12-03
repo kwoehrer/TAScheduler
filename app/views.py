@@ -4,6 +4,7 @@ from django.views import View
 from django.core import serializers
 
 from app.models import Instructor, Admin, User
+from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
 
@@ -124,4 +125,27 @@ class AccountFactoryCreate(View):
         pass
 
     def post(self, request):
-        pass
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+
+        acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
+        # Can make this assumption due to narrowing conversion above.
+        curr_user: AbstractUser = AdminUser(User.objects.get(account_ID=request.session['current_user_account_id']))
+        new_user_attributes = dict()
+
+        #Initialize values based on form input.
+        new_user_attributes['email'] = request.POST.get('email')
+        new_user_attributes['username'] = request.POST.get('username')
+        new_user_attributes['password'] = request.POST.get('password')
+        new_user_attributes['first_name'] = request.POST.get('first_name')
+        new_user_attributes['last_name'] = request.POST.get('last_name')
+        new_user_attributes['phone_number'] = request.POST.get('phone_number')
+        new_user_attributes['home_address'] = request.POST.get('home_address')
+        new_user_attributes['user_type'] = request.POST.get('user_type')
+        try:
+            acc_fact.create_account(curr_user, new_user_attributes)
+        except Exception as e:
+            return render(request, "AccountCreate.html", {"message": e.__str__})
+
+        return render(request, "AccountCreate.html", {"message": "Success"})

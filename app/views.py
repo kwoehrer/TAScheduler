@@ -163,7 +163,7 @@ class DeleteAccount(View):
             return render(request, "login.html",
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
         else:
-            return render(request, "AccountDelete.html", {"page-state-title": "Query For An Account To Delete"})
+            return render(request, "AccountDelete.html", {"page_state_title": "Query For An Account To Delete"})
 
     def post(self, request):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
@@ -201,25 +201,23 @@ class DeleteAccount(View):
                 total_query = total_query.filter(user_type=user_type_query)
 
         # GET A LIST OF ALL USERS
-        acc_model_list = total_query.values_list()
-        acc_list = list()
+        acc_model_list = list(total_query)
+        acc_list = []
 
         for account_model in acc_model_list:
             # Evaluate user type and create the correct subtype. Then append to list.
-            if account_model.user_type == Admin:
+            if user_type_query == "Admin":
                 curr_obj = Admin.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(AdminUser(curr_obj))
-            elif account_model.user_type == Instructor:
+            elif user_type_query == "Instructor":
                 curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(InstructorUser(curr_obj))
-            elif account_model.user_type == TA:
+            elif user_type_query == "TA":
                 curr_obj = TA.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(TAUser(curr_obj))
 
-        # INSERT INTO TEMPLATE
-
         return render(request, "AccountDelete.html",
-                      {"page-state-title": "Select An Account To Delete", 'query_accounts': acc_list})
+                      {"page_state_title": "Select An Account To Delete", 'query_accounts': acc_list})
 
 
 class AccountFactoryDelete(View):

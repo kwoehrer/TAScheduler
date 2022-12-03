@@ -13,6 +13,14 @@ class AbstractUser(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def getUsername(self):
+        pass
+
+    @abc.abstractmethod
+    def getEmail(self) -> str:
+        pass
+
+    @abc.abstractmethod
     def getLastName(self):
         pass
 
@@ -53,6 +61,12 @@ class TAUser(AbstractUser):
 
     def __init__(self, model: TA):
         self.model = model
+
+    def getUsername(self) -> str:
+        return self.model.account_ID.username
+
+    def getEmail(self) -> str:
+        return self.model.account_ID.email
 
     def getID(self) -> int:
         return self.model.account_ID.account_ID
@@ -110,6 +124,12 @@ class InstructorUser(AbstractUser):
     def getID(self) -> int:
         return self.model.account_ID.account_ID
 
+    def getUsername(self) -> str:
+        return self.model.account_ID.username
+
+    def getEmail(self) -> str:
+        return self.model.account_ID.email
+
     def getFirstName(self) -> str:
         return self.model.account_ID.first_name
 
@@ -162,6 +182,12 @@ class AdminUser(AbstractUser):
 
     def getID(self) -> int:
         return self.model.account_ID.account_ID
+
+    def getUsername(self) -> str:
+        return self.model.account_ID.username
+
+    def getEmail(self) -> str:
+        return self.model.account_ID.email
 
     def getFirstName(self) -> str:
         return self.model.account_ID.first_name

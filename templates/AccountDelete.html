@@ -97,51 +97,79 @@
     </a>
 </div>
 <div class='d-flex margTop'>
-    <div class="mx-auto">
-        <h1>Query For An Account To Delete</h1>
-        <form class='mx-auto' method="POST" action="/DeleteAccount/">
-            {% if bad_message %}
-                <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
-                    <hr>
-                    <h4 class="alert-heading">{{ bad_message }}</h4>
-                    <hr>
+    {% if query_accounts %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Account ID</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Account Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for acc in query_accounts %}
+            <tr>
+                <th scope="row">{{ acc.getID}}</th>
+                <td>{{ acc.getUsername}}</td>
+                <td>{{ acc.getEmail }}</td>
+                <td>{{ acc.getFirstName }}</td>
+                <td>{{ acc.getLastName }}</td>
+                <td>{{ acc.getUserType }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ query_accounts }}
+    {% else %}
+        <div class="mx-auto">
+            <h1>{{ page_state_title }}</h1>
+            <form class='mx-auto' method="POST" action="/DeleteAccount/">
+                {% if bad_message %}
+                    <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                        <hr>
+                        <h4 class="alert-heading">{{ bad_message }}</h4>
+                        <hr>
+                    </div>
+                {% endif %}
+                {% if good_message %}
+                    <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                        <hr>
+                        <h4 class="alert-heading">{{ good_message }}</h4>
+                        <hr>
+                    </div>
+                {% endif %}
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
+                           placeholder="Enter an Email">
                 </div>
-            {% endif %}
-            {% if good_message %}
-                <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
-                    <hr>
-                    <h4 class="alert-heading">{{ good_message }}</h4>
-                    <hr>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username"
+                           placeholder="Enter a Username">
                 </div>
-            {% endif %}
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
-                       placeholder="Enter an Email">
-            </div>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                       placeholder="Enter a Username">
-            </div>
-            <div class="form-group">
-                <label for="name">First Name and Last Name of User</label>
-                <input type="text" class="form-control" id="name" name="name"
-                       placeholder="First_Name Last_Name">
-                <small id="passHelp" class="form-text text-muted">Format is "First_Name Last_Name".</small>
-            </div>
-            <select class="form-control" id="user_type" name="user_type" required>
-                <option>TA</option>
-                <option>Instructor</option>
-                <option>Admin</option>
-            </select>
-            <input type="submit" class="btn btn-primary margTop float-right w-100" value="Search For Account">
-        </form>
-        <a class="min-vw-100" href="/AccountManagement/">
-            <input class="btn btn-danger redButton" type="submit" value="Return To Account Management Page">
-        </a>
-    </div>
+                <div class="form-group">
+                    <label for="name">First Name and Last Name of User</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                           placeholder="First_Name Last_Name">
+                    <small id="passHelp" class="form-text text-muted">Format is "First_Name Last_Name".</small>
+                </div>
+                <select class="form-control" id="user_type" name="user_type" required>
+                    <option>TA</option>
+                    <option>Instructor</option>
+                    <option>Admin</option>
+                </select>
+                <input type="submit" class="btn btn-primary margTop float-right w-100" value="Search For Account">
+            </form>
+            <a class="min-vw-100" href="/AccountManagement/">
+                <input class="btn btn-danger redButton" type="submit" value="Return To Account Management Page">
+            </a>
+        </div>
+    {% endif %}
 </div>
 </body>
 </html>

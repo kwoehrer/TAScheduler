@@ -13,20 +13,37 @@
             url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
         }
 
+        .fullwidthBar{
+            width:100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
         .imgMaxHeight {
-            height: 10vh;
+            height: 25vh;
 
             max-height: 250px;
         }
 
-        .container {
+        .homeContainer {
             width: 50%;
             margin: 0;
             position: absolute;
-            top: 50%;
+            top: 60%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        .homeButtons{
+            height: 15vh;
+            width:20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family:Archivo;
+            margin:1vh;
+            border:2px black solid;
+        }
+
 
         label {
             float: left;
@@ -68,9 +85,14 @@
 </head>
 <body>
 {% load static %}
-<img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/logo-no-background.svg' %}">
+<div class = "fullwidthBar">
+    <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+</div>
+<div class = 'homeContainer'>
 {% csrf_token %}
 
 {% include HomeState %}
+
+</div>
 </body>
 </html>

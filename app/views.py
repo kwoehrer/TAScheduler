@@ -87,5 +87,5 @@ class AccountManagement(View):
         if t == None:
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
-            return render(request,"home.html",{'HomeState':t})
+            return render(request,"AccountManagement.html",{'State':t})
 

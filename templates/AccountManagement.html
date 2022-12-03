@@ -48,8 +48,8 @@
             text-shadow:2px 4px 3px rgba(0,0,0,0.3)
         }
 
-        .logOutButton{
-            background-color: #FF0000;
+        .redButton{
+            background-color: #FF0000 !important;
         }
 
         input:hover {
@@ -62,14 +62,14 @@
 <body>
 {% load static %}
 <div class = "fullwidthBar">
-    <a href="{{ home }}">
+    <a href="/home/">
         <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
     </a>
 </div>
 <div class = 'homeContainer'>
 {% csrf_token %}
 
-{% include HomeState %}
+{% include State %}
 
 </div>
 </body>

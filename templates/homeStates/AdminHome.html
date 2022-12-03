@@ -1,26 +1,30 @@
 <div class = "container">
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">View My Personal Profile</button>
+            <a href ="#" class="btn btn-primary homeButtons">View My Personal Profile</a>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Course Management</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Send Notification</button>
-        </div>
-        <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Account Management</button>
+            <a href ="#" class="btn btn-primary homeButtons">Course Management</a>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Search For Users or Courses</button>
+            <a href ="#" class="btn btn-primary homeButtons">Send Notification</a>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-danger homeButtons logOutButton">Log Out</button>
+            <a href ="#"class="btn btn-primary homeButtons">Account Management</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href ="#" class="btn btn-primary homeButtons">Search For Users or Courses</a>
+        </div>
+        <div class="col">
+            <form method="post" action="/logout/">
+                {% csrf_token %}
+
+                <input class="btn btn-danger homeButtons logOutButton" type="submit" value="Log Out">
+            </form>
         </div>
     </div>
 </div>

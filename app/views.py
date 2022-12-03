@@ -56,7 +56,7 @@ class Home(View):
         context = {}
 
         t = None
-        user_type = User(request.session['current_user_model']).user_type
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":
             t = './homeStates/TAHome.html'
         elif user_type == "Instructor":
@@ -70,3 +70,13 @@ class Home(View):
     def post(self, request):
         #Verify user information in login
         query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])
+
+class LogOut(View):
+    def get(self, request):
+        request.session["current_user_account_id"] = None
+        return render(request, 'login.html', {'message': "You have been logged out of the system."})
+
+    def post(self, request):
+        # Verify user information in login
+        request.session["current_user_account_id"] = None
+        return render(request, 'login.html', {'message': "You have been logged out of the system."})

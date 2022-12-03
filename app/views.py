@@ -248,11 +248,11 @@ class AccountFactoryDelete(View):
         elif user_to_delete_type == "TA":
             user_to_delete_model = TA.objects.get(account_ID__account_ID=user_to_delete_id)
             user_to_delete_wrapper = TAUser(user_to_delete_model)
-
+        try:
             acc_fact.delete_account(curr_user, user_to_delete_wrapper)
-        """except Exception as e:
+        except Exception as e:
             msg = "Could not delete account due to " + str(e.__str__())
             return render(request, "AccountDelete.html", {"bad_message": msg})
-"""
+
         return render(request, "AccountDelete.html", {"page_state_title": "Query For An Account To Delete",
                                                       "good_message": "Account Successfully Deleted."})

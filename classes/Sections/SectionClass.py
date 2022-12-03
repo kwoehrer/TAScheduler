@@ -14,7 +14,7 @@ class AbstractSection(abc):
         pass
 
     @abc.abstractmethod
-    def setSectionNumber(self, newSection):
+    def setSectionNumber(self):
         pass
 
     @abc.abstractmethod
@@ -39,13 +39,13 @@ class ConcreteSection(AbstractSection):
         self.section = section
 
     def getParentCourse(self) -> AbstractCourse:
-        return ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
+        ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):
         return self.section.section_num
 
-    def setSectionNumber(self, newSection: int):
-        self.section = newSection
+    def setSectionNumber(self, newNumber: int):
+        self.section = newNumber
 
     def getTA(self) -> AbstractUser:
         ta = TA.objects.get(account_ID=self.section.ta_account_id)
@@ -63,7 +63,7 @@ class ConcreteSection(AbstractSection):
     def getMeetTime(self) -> str:
         return self.section.MeetingTimes
 
-    def setMeetTime(self, new_meeting_time: str):
+    def setMeetTime(self, new_meeting_time : str):
         if len(new_meeting_time) > 50:
             raise ValueError("Meeting time must be below 50 chars")
 

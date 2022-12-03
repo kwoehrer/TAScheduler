@@ -85,6 +85,10 @@
             opacity: 0.8;
         }
 
+        .smallMargin {
+            margin: 20px;
+        }
+
 
     </style>
 </head>
@@ -100,7 +104,7 @@
     {% if query_accounts %}
         <table class="table">
             <thead>
-            <tr>
+            <tr class="table-primary">
                 <th scope="col">Account ID</th>
                 <th scope="col">Username</th>
                 <th scope="col">Email</th>
@@ -111,18 +115,20 @@
             </thead>
             <tbody>
             {% for acc in query_accounts %}
-            <tr>
-                <th scope="row">{{ acc.getID}}</th>
-                <td>{{ acc.getUsername}}</td>
-                <td>{{ acc.getEmail }}</td>
-                <td>{{ acc.getFirstName }}</td>
-                <td>{{ acc.getLastName }}</td>
-                <td>{{ acc.getUserType }}</td>
-            </tr>
+                <tr>
+                    <th scope="row">{{ acc.getID }}</th>
+                    <td>{{ acc.getUsername }}</td>
+                    <td>{{ acc.getEmail }}</td>
+                    <td>{{ acc.getFirstName }}</td>
+                    <td>{{ acc.getLastName }}</td>
+                    <td>{{ acc.getUserType }}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
-        {{ query_accounts }}
+        <a class="smallMargin" href="/AccountManagement/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Account Management Page">
+        </a>
     {% else %}
         <div class="mx-auto">
             <h1>{{ page_state_title }}</h1>

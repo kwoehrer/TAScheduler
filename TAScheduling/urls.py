@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate
+from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
+    AccountFactoryDelete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +25,7 @@ urlpatterns = [
     path('logout/', LogOut.as_view()),
     path('AccountManagement/', AccountManagement.as_view()),
     path('CreateAccount/', CreateAccount.as_view()),
-    path('AccountFactoryCreate/', AccountFactoryCreate.as_view())
+    path('AccountFactoryCreate/', AccountFactoryCreate.as_view()),
+    path('DeleteAccount/', DeleteAccount.as_view()),
+    path('AccountFactoryDelete/', AccountFactoryDelete.as_view()),
     ]

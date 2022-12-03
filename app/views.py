@@ -131,7 +131,56 @@ class AccountFactoryCreate(View):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type != "Admin":
             return render(request, "login.html",
-                          {'message': "User has been logged out due to accessing admin content as non-admin account."})
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
+        # Can make this assumption due to narrowing conversion above.
+        curr_user: AbstractUser = AdminUser(User.objects.get(account_ID=request.session['current_user_account_id']))
+        new_user_attributes = dict()
+
+        # Initialize values based on form input.
+        new_user_attributes['email'] = str(request.POST.get('email'))
+        new_user_attributes['username'] = str(request.POST.get('username'))
+        new_user_attributes['password'] = str(request.POST.get('password'))
+        new_user_attributes['first_name'] = str(request.POST.get('first_name'))
+        new_user_attributes['last_name'] = str(request.POST.get('last_name'))
+        new_user_attributes['phone_number'] = str(request.POST.get('phone'))
+        new_user_attributes['home_address'] = str(request.POST.get('home_address'))
+        new_user_attributes['user_type'] = str(request.POST.get('user_type'))
+
+        try:
+            acc_fact.create_account(curr_user, new_user_attributes)
+        except Exception as e:
+            return render(request, "AccountCreate.html", {"bad_message": e.__str__})
+
+
+        return render(request, "AccountCreate.html", {"good_message": "Account Successfully Created."})
+
+class DeleteAccount(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "AccountCreate.html", {})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "AccountCreate.html", {})
+
+
+class AccountFactoryDelete(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
 
         acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
         # Can make this assumption due to narrowing conversion above.

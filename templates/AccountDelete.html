@@ -89,6 +89,10 @@
             margin: 20px;
         }
 
+        .dangerColor {
+            background-color: #FF0000 !important;
+        }
+
 
     </style>
 </head>
@@ -102,32 +106,74 @@
 </div>
 <div class='d-flex margTop'>
     {% if query_accounts %}
-        <table class="table">
-            <thead>
-            <tr class="table-primary">
-                <th scope="col">Account ID</th>
-                <th scope="col">Username</th>
-                <th scope="col">Email</th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Account Type</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for acc in query_accounts %}
-                <tr>
-                    <th scope="row">{{ acc.getID }}</th>
-                    <td>{{ acc.getUsername }}</td>
-                    <td>{{ acc.getEmail }}</td>
-                    <td>{{ acc.getFirstName }}</td>
-                    <td>{{ acc.getLastName }}</td>
-                    <td>{{ acc.getUserType }}</td>
+        <div class="mx-auto text-center">
+            <h1>{{ page_state_title }}</h1>
+            <table class="table text-center margTop">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">Account ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Account Type</th>
+                    <th scope="col" class="dangerColor">Delete Account</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for acc in query_accounts %}
+
+                    <tr>
+                        <input type="hidden" id="acc_id" name="acc_id" value="{{ acc.getID }}">
+                        <th scope="row">{{ acc.getID }}</th>
+                        <td>{{ acc.getUsername }}</td>
+                        <td>{{ acc.getEmail }}</td>
+                        <td>{{ acc.getFirstName }}</td>
+                        <td>{{ acc.getLastName }}</td>
+                        <td>{{ acc.getUserType }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary margTop float-right w-100 redButton my-auto"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#accountDelete_{{ acc.getID }}">
+                                <b>Delete This Account</b>
+                            </button>
+                            <div class="modal fade" id="accountDelete_{{ acc.getID }}" tabindex="-1"
+                                 aria-labelledby="accountDelete_{{ acc.getID }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modal-label">Confirm Account Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Please confirm that you want to delete account with username
+                                            <b>"{{ acc.getUsername }}"</b>.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <form method="POST" action="/AccountFactoryDelete/">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="acc_id" value="{{ acc.getID }}">
+                                                <input type="hidden" name="acc_type" value="{{ acc.getUserType }}">
+                                                <input type="submit" class="btn btn-primary" value="Confirm Deletion">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <a class="smallMargin" href="/AccountManagement/">
-            <input class="btn btn-danger redButton" type="submit" value="Return To Account Management Page">
+            <input class="btn btn-outline-primary" type="submit" value="Return To Account Management Page">
         </a>
     {% else %}
         <div class="mx-auto">

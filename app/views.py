@@ -135,7 +135,8 @@ class AccountFactoryCreate(View):
 
         acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
         # Can make this assumption due to narrowing conversion above.
-        curr_user: AbstractUser = AdminUser(User.objects.get(account_ID=request.session['current_user_account_id']))
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
         new_user_attributes = dict()
 
         # Initialize values based on form input.
@@ -229,3 +230,29 @@ class AccountFactoryDelete(View):
         if user_type != "Admin":
             return render(request, "login.html",
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
+        # Can make this assumption due to narrowing conversion above.
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
+        user_to_delete_id = request.POST.get('acc_id')
+        user_to_delete_type = request.POST.get('acc_type')
+        user_to_delete_wrapper: AbstractUser = None
+
+        if user_to_delete_type == "Admin":
+            user_to_delete_model = Admin.objects.get(account_ID__account_ID=user_to_delete_id)
+            user_to_delete_wrapper = AdminUser(user_to_delete_model)
+        elif user_to_delete_type == "Instructor":
+            user_to_delete_model = Instructor.objects.get(account_ID__account_ID=user_to_delete_id)
+            user_to_delete_wrapper = InstructorUser(user_to_delete_model)
+        elif user_to_delete_type == "TA":
+            user_to_delete_model = TA.objects.get(account_ID__account_ID=user_to_delete_id)
+            user_to_delete_wrapper = TAUser(user_to_delete_model)
+
+            acc_fact.delete_account(curr_user, user_to_delete_wrapper)
+        """except Exception as e:
+            msg = "Could not delete account due to " + str(e.__str__())
+            return render(request, "AccountDelete.html", {"bad_message": msg})
+"""
+        return render(request, "AccountDelete.html", {"page_state_title": "Query For An Account To Delete",
+                                                      "good_message": "Account Successfully Deleted."})

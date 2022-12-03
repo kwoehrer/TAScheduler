@@ -53,8 +53,6 @@ class Login(View):
 
 class Home(View):
     def get(self,request):
-        context = {}
-
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":
@@ -66,10 +64,8 @@ class Home(View):
 
         if t == None:
             return render(request, "login.html", {'message': "An unknown error has occurred."})
-
-    def post(self, request):
-        #Verify user information in login
-        query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])
+        else:
+            return render(request,"home.html",{'HomeState':t})
 
 class LogOut(View):
     def get(self, request):
@@ -80,3 +76,16 @@ class LogOut(View):
         # Verify user information in login
         request.session["current_user_account_id"] = None
         return render(request, 'login.html', {'message': "You have been logged out of the system."})
+
+class AccountManagement(View):
+    def get(self, request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "Admin":
+            t = './AccountManagementStates/AdminAccMng.html'
+
+        if t == None:
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request,"home.html",{'HomeState':t})
+

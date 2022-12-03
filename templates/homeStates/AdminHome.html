@@ -1,29 +1,43 @@
 <div class = "container">
     <div class="row">
         <div class="col">
-            <a href ="#" class="btn btn-primary homeButtons">View My Personal Profile</a>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Personal Profile">
+            </form>
         </div>
         <div class="col">
-            <a href ="#" class="btn btn-primary homeButtons">Course Management</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <a href ="#" class="btn btn-primary homeButtons">Send Notification</a>
-        </div>
-        <div class="col">
-            <a href ="#"class="btn btn-primary homeButtons">Account Management</a>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Course Management">
+            </form>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <a href ="#" class="btn btn-primary homeButtons">Search For Users or Courses</a>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Send Notifications">
+            </form>
+        </div>
+        <div class="col">
+            <form method="get" action="/AccountManagement/">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Account Management">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Search For Users or Courses">
+            </form>
         </div>
         <div class="col">
             <form method="post" action="/logout/">
                 {% csrf_token %}
-
-                <input class="btn btn-danger homeButtons logOutButton" type="submit" value="Log Out">
+                <input class="btn btn-danger homeButtons redButton" type="submit" value="Log Out">
             </form>
         </div>
     </div>

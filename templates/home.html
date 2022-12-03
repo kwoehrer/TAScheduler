@@ -35,6 +35,7 @@
             transform: translate(-50%, -50%);
         }
         .homeButtons{
+            white-space: normal;
             background-color: dodgerblue;
             height: 20vh;
             width:20vw;
@@ -51,7 +52,7 @@
             background-color: #FF0000;
         }
 
-        a:hover {
+        input:hover {
             opacity: 0.8;
         }
 
@@ -59,9 +60,11 @@
         </style>
 </head>
 <body>
-{% load static %}
 <div class = "fullwidthBar">
-    <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    </a>
 </div>
 <div class = 'homeContainer'>
 {% csrf_token %}

@@ -67,6 +67,21 @@ class Home(View):
         else:
             return render(request,"home.html",{'HomeState':t})
 
+    def post(self,request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "TA":
+            t = './homeStates/TAHome.html'
+        elif user_type == "Instructor":
+            t = './homeStates/InstructorHome.html'
+        elif user_type == "Admin":
+            t = './homeStates/AdminHome.html'
+
+        if t == None:
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request,"home.html",{'HomeState':t})
+
 class LogOut(View):
     def get(self, request):
         request.session["current_user_account_id"] = None

@@ -16,7 +16,6 @@ class Login(View):
         query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])
 
         logged_user: AbstractUser = None
-        print(query)
         if len(query) > 0:
             logged_user_model: User = query[0]
             user_type = logged_user_model.user_type
@@ -34,21 +33,40 @@ class Login(View):
             return render(request,"login.html",{'message': "An unknown error has occurred."})
 
         #Store as logged user
-        request.session["current_user_model"] = serializers.serialize('json', [query[0] ])
+        request.session["current_user_account_id"] = query[0].account_ID
 
+        context = {}
+
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "TA":
+            t = './homeStates/TAHome.html'
+        elif user_type == "Instructor":
+            t = './homeStates/InstructorHome.html'
+        elif user_type == "Admin":
+            t = './homeStates/AdminHome.html'
+
+        if t == None:
+            return render(request,"login.html",{'message': "An unknown error has occurred."})
+        else:
+            return render(request,"home.html",{'HomeState':t})
+
+class Home(View):
+    def get(self,request):
         context = {}
 
         t = None
         user_type = User(request.session['current_user_model']).user_type
         if user_type == "TA":
-            t = get_template('./homeStates/TAHome.html')
+            t = './homeStates/TAHome.html'
         elif user_type == "Instructor":
-            t = get_template('./homeStates/InstructorHome.html')
+            t = './homeStates/InstructorHome.html'
         elif user_type == "Admin":
-            t = get_template('./homeStates/AdminHome.html')
+            t = './homeStates/AdminHome.html'
 
         if t == None:
-            return render(request,"login.html",{'message': "An unknown error has occurred."})
-        else:
-            HomeState = t.render(context=context)
-            return render(request,"home.html",{'HomeState':HomeState})
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+
+    def post(self, request):
+        #Verify user information in login
+        query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])

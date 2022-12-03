@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User
+from app.models import User, Admin, Instructor, TA
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
@@ -153,23 +153,73 @@ class AccountFactoryCreate(View):
         except Exception as e:
             return render(request, "AccountCreate.html", {"bad_message": e.__str__})
 
-
         return render(request, "AccountCreate.html", {"good_message": "Account Successfully Created."})
+
 
 class DeleteAccount(View):
     def get(self, request):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type != "Admin":
-            return render(request, "login.html", {'message': "An unknown error has occurred."})
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
         else:
-            return render(request, "AccountCreate.html", {})
+            return render(request, "AccountDelete.html", {"page-state-title": "Query For An Account To Delete"})
 
     def post(self, request):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type != "Admin":
-            return render(request, "login.html", {'message': "An unknown error has occurred."})
-        else:
-            return render(request, "AccountCreate.html", {})
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        # FILTER USERS HERE
+        email_query = request.POST.get('email')
+        username_query = request.POST.get('username')
+        name_query = request.POST.get('name')
+        user_type_query = request.POST.get('user_type')
+
+        total_query = None
+        if email_query is not None and email_query != '':
+            total_query = User.objects.filter(email=email_query)
+
+        if username_query is not None and username_query != '':
+            if total_query is None:
+                total_query = User.objects.filter(username=username_query)
+            else:
+                total_query = total_query.filter(username=username_query)
+        if name_query is not None and name_query != '':
+            first_name = name_query.split(' ')[0]
+            last_name = name_query.split(' ')[1]
+            if total_query is None:
+                total_query = User.objects.filter(first_name=first_name)
+                total_query = total_query.filter(last_name=last_name)
+            else:
+                total_query = total_query.filter(first_name=first_name)
+                total_query = total_query.filter(last_name=last_name)
+        if user_type_query is not None and user_type_query != '':
+            if total_query is None:
+                total_query = User.objects.filter(user_type=user_type_query)
+            else:
+                total_query = total_query.filter(user_type=user_type_query)
+
+        # GET A LIST OF ALL USERS
+        acc_model_list = total_query.values_list()
+        acc_list = list()
+
+        for account_model in acc_model_list:
+            # Evaluate user type and create the correct subtype. Then append to list.
+            if account_model.user_type == Admin:
+                curr_obj = Admin.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(AdminUser(curr_obj))
+            elif account_model.user_type == Instructor:
+                curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(InstructorUser(curr_obj))
+            elif account_model.user_type == TA:
+                curr_obj = TA.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(TAUser(curr_obj))
+
+        # INSERT INTO TEMPLATE
+
+        return render(request, "AccountDelete.html",
+                      {"page-state-title": "Select An Account To Delete", 'query_accounts': acc_list})
 
 
 class AccountFactoryDelete(View):
@@ -181,26 +231,3 @@ class AccountFactoryDelete(View):
         if user_type != "Admin":
             return render(request, "login.html",
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
-
-        acc_fact: AbstractAccountFactory = ConcreteAccountFactory()
-        # Can make this assumption due to narrowing conversion above.
-        curr_user: AbstractUser = AdminUser(User.objects.get(account_ID=request.session['current_user_account_id']))
-        new_user_attributes = dict()
-
-        # Initialize values based on form input.
-        new_user_attributes['email'] = str(request.POST.get('email'))
-        new_user_attributes['username'] = str(request.POST.get('username'))
-        new_user_attributes['password'] = str(request.POST.get('password'))
-        new_user_attributes['first_name'] = str(request.POST.get('first_name'))
-        new_user_attributes['last_name'] = str(request.POST.get('last_name'))
-        new_user_attributes['phone_number'] = str(request.POST.get('phone'))
-        new_user_attributes['home_address'] = str(request.POST.get('home_address'))
-        new_user_attributes['user_type'] = str(request.POST.get('user_type'))
-
-        try:
-            acc_fact.create_account(curr_user, new_user_attributes)
-        except Exception as e:
-            return render(request, "AccountCreate.html", {"bad_message": e.__str__})
-
-
-        return render(request, "AccountCreate.html", {"good_message": "Account Successfully Created."})

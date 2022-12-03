@@ -104,3 +104,24 @@ class AccountManagement(View):
         else:
             return render(request,"AccountManagement.html",{'State':t})
 
+class CreateAccount(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "AccountCreate.html", {})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "AccountCreate.html", {})
+
+class AccountFactoryCreate(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass

@@ -90,13 +90,17 @@ class TAUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.first_name == first_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.first_name = first_name
         user_obj.save()
 
     def setLastName(self, last_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.last_name == last_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.last_name = last_name
         user_obj.save()
@@ -105,8 +109,12 @@ class TAUser(AbstractUser):
         return self.model.account_ID.phone_number
 
     def setPhoneNumber(self, phone_number: str):
-        # TODO check if phone number is unique
-        acc_id = self.model.account_ID
+        if self.model.account_ID.phone_number == phone_number:
+            return
+
+        if len(User.objects.filter(phone_number=phone_number)) != 0:
+            raise ValueError("A user with this phone number already exists.")
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.phone_number = phone_number
         user_obj.save()
@@ -115,7 +123,9 @@ class TAUser(AbstractUser):
         return self.model.account_ID.home_address
 
     def setHomeAddress(self, new_address: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.home_address == new_address:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.home_address = new_address
         user_obj.save()
@@ -124,48 +134,56 @@ class TAUser(AbstractUser):
         return self.model.account_ID.user_type
 
     def setUserType(self, new_user_type):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.user_type == new_user_type:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
 
     def setPassword(self, new_pass: str):
+        if self.model.account_ID.password == new_pass:
+            return
         if new_pass == "" or len(new_pass) < 8:
             raise ValueError("Password must be more than 8 characters long.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.password = new_pass
         user_obj.save()
 
     def setUsername(self, username: str):
+        if self.model.account_ID.username == username:
+            return
         if len(User.objects.filter(username=username)) != 0:
             raise ValueError("A user with this username already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.username = username
         user_obj.save()
 
     def setEmail(self, email):
+        if self.model.account_ID.email == email:
+            return
         if len(User.objects.filter(email=email)) != 0:
             raise ValueError("A user with this email already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
 
-
 class InstructorUser(AbstractUser):
-    def __init__(self, model: Instructor):
-        self.model = model
 
-    def getID(self) -> int:
-        return self.model.account_ID.account_ID
+    def __init__(self, model: TA):
+        self.model = model
 
     def getUsername(self) -> str:
         return self.model.account_ID.username
 
     def getEmail(self) -> str:
         return self.model.account_ID.email
+
+    def getID(self) -> int:
+        return self.model.account_ID.account_ID
 
     def getFirstName(self) -> str:
         return self.model.account_ID.first_name
@@ -174,13 +192,17 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.first_name == first_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.first_name = first_name
         user_obj.save()
 
     def setLastName(self, last_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.last_name == last_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.last_name = last_name
         user_obj.save()
@@ -189,7 +211,12 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.phone_number
 
     def setPhoneNumber(self, phone_number: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.phone_number == phone_number:
+            return
+
+        if len(User.objects.filter(phone_number=phone_number)) != 0:
+            raise ValueError("A user with this phone number already exists.")
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.phone_number = phone_number
         user_obj.save()
@@ -198,7 +225,9 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.home_address
 
     def setHomeAddress(self, new_address: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.home_address == new_address:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.home_address = new_address
         user_obj.save()
@@ -207,48 +236,57 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.user_type
 
     def setUserType(self, new_user_type):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.user_type == new_user_type:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
 
     def setPassword(self, new_pass: str):
+        if self.model.account_ID.password == new_pass:
+            return
         if new_pass == "" or len(new_pass) < 8:
             raise ValueError("Password must be more than 8 characters long.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.password = new_pass
         user_obj.save()
 
     def setUsername(self, username: str):
+        if self.model.account_ID.username == username:
+            return
         if len(User.objects.filter(username=username)) != 0:
             raise ValueError("A user with this username already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.username = username
         user_obj.save()
 
     def setEmail(self, email):
+        if self.model.account_ID.email == email:
+            return
         if len(User.objects.filter(email=email)) != 0:
             raise ValueError("A user with this email already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
 
 
 class AdminUser(AbstractUser):
-    def __init__(self, model: Admin):
-        self.model = model
 
-    def getID(self) -> int:
-        return self.model.account_ID.account_ID
+    def __init__(self, model: TA):
+        self.model = model
 
     def getUsername(self) -> str:
         return self.model.account_ID.username
 
     def getEmail(self) -> str:
         return self.model.account_ID.email
+
+    def getID(self) -> int:
+        return self.model.account_ID.account_ID
 
     def getFirstName(self) -> str:
         return self.model.account_ID.first_name
@@ -257,13 +295,17 @@ class AdminUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.first_name == first_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.first_name = first_name
         user_obj.save()
 
     def setLastName(self, last_name: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.last_name == last_name :
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.last_name = last_name
         user_obj.save()
@@ -272,7 +314,12 @@ class AdminUser(AbstractUser):
         return self.model.account_ID.phone_number
 
     def setPhoneNumber(self, phone_number: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.phone_number == phone_number:
+            return
+
+        if len(User.objects.filter(phone_number=phone_number)) != 0:
+            raise ValueError("A user with this phone number already exists.")
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.phone_number = phone_number
         user_obj.save()
@@ -281,7 +328,9 @@ class AdminUser(AbstractUser):
         return self.model.account_ID.home_address
 
     def setHomeAddress(self, new_address: str):
-        acc_id = self.model.account_ID
+        if self.model.account_ID.home_address == new_address:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.home_address = new_address
         user_obj.save()
@@ -289,32 +338,40 @@ class AdminUser(AbstractUser):
     def getUserType(self) -> str:
         return self.model.account_ID.user_type
 
-    def setUserType(self, new_user_type: str):
-        acc_id = self.model.account_ID
+    def setUserType(self, new_user_type):
+        if self.model.account_ID.user_type == new_user_type:
+            return
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
 
     def setPassword(self, new_pass: str):
+        if self.model.account_ID.password == new_pass:
+            return
         if new_pass == "" or len(new_pass) < 8:
             raise ValueError("Password must be more than 8 characters long.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.password = new_pass
         user_obj.save()
 
     def setUsername(self, username: str):
+        if self.model.account_ID.username == username:
+            return
         if len(User.objects.filter(username=username)) != 0:
             raise ValueError("A user with this username already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.username = username
         user_obj.save()
 
     def setEmail(self, email):
+        if self.model.account_ID.email == email:
+            return
         if len(User.objects.filter(email=email)) != 0:
             raise ValueError("A user with this email already exists.")
-        acc_id = self.model.account_ID
+        acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()

@@ -355,18 +355,26 @@ class AccountEditActive(View):
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 
 
-        try:
+
             user_to_edit_wrapper.setUserType(request.POST.get('acc_type'))
             user_to_edit_wrapper.setLastName(request.POST.get('last_name'))
             user_to_edit_wrapper.setFirstName(request.POST.get('first_name'))
-            user_to_edit_wrapper.setPhoneNumber(request.POST.get('phone_number'))
+            # Have to check phone number before passing in because django changes none to empty strings. Thanks django
+            if request.POST.get('phone_number') != '':
+                user_to_edit_wrapper.setPhoneNumber(request.POST.get('phone_number'))
+
             user_to_edit_wrapper.setHomeAddress(request.POST.get('home_address'))
-            user_to_edit_wrapper.setPassword(request.POST.get('password'))
+
+            #Have to check password before passing in because django changes none to empty strings. Thanks django
+            if request.POST.get('password') != '':
+                user_to_edit_wrapper.setPassword(request.POST.get('password'))
+
             user_to_edit_wrapper.setUsername(request.POST.get('username'))
             user_to_edit_wrapper.setEmail(request.POST.get('email'))
-        except Exception as e:
-            msg = "Could not delete account due to " + str(e.__str__())
-            return render(request, "AccountDelete.html", {"bad_message": msg})
+        """except Exception as e:
+            msg = "Could not edit account due to " + str(e.__str__())
+            return render(request, "AccountEdit.html", {"bad_message": msg})
+            """
 
-        return render(request, "AccountDelete.html", {"page_state_title": "Query For An Account To Delete",
-                                                      "good_message": "Account Successfully Deleted."})
+        return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                      "good_message": "Account Successfully Edited."})

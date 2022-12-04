@@ -8,15 +8,15 @@ from classes.Users.users import InstructorUser, TAUser, AdminUser, AbstractUser
 
 class AbstractCourseFactory(ABC):
     @abstractmethod
-    def create_account(self, creator: AbstractUser, newAccountAttrbitutes: []):
+    def create_course(self, creator: AbstractUser, newAccountAttrbitutes: []):
         pass
 
     @abstractmethod
-    def delete_account(self, deletor: AbstractUser, newAccountAttrbitutes: []):
+    def delete_course(self, deletor: AbstractUser, newAccountAttrbitutes: []):
         pass
 
 
-class ConcreteCourseFactory(AbstractCourseFactory):
+class ConcreteCourseFactory(AbstractCourseFactory:
     def create_course(self, creator: AbstractUser, new_course_attributes: []):
         # Verify creator is an admin
         if not (isinstance(creator, AdminUser)) or creator.getUserType() != "Admin":

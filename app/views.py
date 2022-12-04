@@ -3,6 +3,7 @@ from django.views import View
 
 from app.models import User, Admin, Instructor, TA
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
+from classes.Factories.CourseFactory import ConcreteCourseFactory, AbstractCourseFactory
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
 
@@ -404,3 +405,34 @@ class CreateCourse(View):
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
             return render(request, "CourseCreate.html", {})
+
+class CourseFactoryCreate(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        course_fact: AbstractCourseFactory = ConcreteCourseFactory()
+        # Can make this assumption due to narrowing conversion above.
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
+        new_course_attributes = dict()
+
+        # Initialize values based on form input.
+        new_course_attributes['name'] = str(request.POST.get('email'))
+        new_course_attributes['semester'] = str(request.POST.get('semester'))
+        new_course_attributes['year'] = str(request.POST.get('year'))
+        new_course_attributes['description'] = str(request.POST.get('description'))
+        new_course_attributes['credits'] = str(request.POST.get('credit'))
+
+
+        try:
+            course_fact.create_course(curr_user,  new_course_attributes)
+        except Exception as e:
+            return render(request, "CourseCreate.html", {"bad_message": e.__str__})
+
+        return render(request, "CourseCreate.html", {"good_message": "Account Successfully Created."})

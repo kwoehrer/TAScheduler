@@ -88,15 +88,17 @@ class TestGetTA(TestCase):
     def setUp(self) -> None:
         self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                                   description='something', credits=4)
-        User.objects.create(email="lhod@gmail", username='lhod', password='password', first_name='Luke',
-                            last_name='Hodory', user_type='TA')
-        self.user_model = User.objects.filter(username='lhod')[0]
-        self.ta_model = TA.objects.create(account_ID=self.user_model)
+
+        User.objects.create(username='lhod', password='password', first_name="luke", last_name='hodory',
+                            user_type='TA', email='lhod@gmail.com')
+        ta_user_model = User.objects.filter(username='lhod')[0]
+        self.ta_model = TA.objects.create(account_ID=ta_user_model)
+
         section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00',
-                                         ta_account_id=self.ta_model.account_ID)
+                                         ta_account_id=self.ta_model)
 
         self.course = CourseClass.ConcreteCourse(self.course_model)
-        self.ta = UserClass.TAUser(self.ta_model)
+        self.ta: AbstractUser = TAUser(self.ta_model)
         self.wrapper = SectionClass.ConcreteSection(section)
 
     def test_success(self):
@@ -104,7 +106,9 @@ class TestGetTA(TestCase):
 
 
 class TestSetTA(TestCase):
-    pass
+
+    def test_not_ta(self):
+        pass
 
 
 class TestGetMeetTime(TestCase):

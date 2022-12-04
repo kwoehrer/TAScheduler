@@ -115,8 +115,11 @@ class ConcreteCourse(AbstractCourse, ABC):
         return self.course.credits
 
     def set_credits(self, credit: int):
-        self.course.credits = credit
-        self.course.save()
+        if 9 >= credit >= 1:
+            self.course.credits = credit
+            self.course.save()
+        else:
+            raise ValueError("Incorrect credits provided, should be 9 >= credit >= 1")
 
     def get_semester(self) -> str:
         return self.course.semester
@@ -132,24 +135,24 @@ class ConcreteCourse(AbstractCourse, ABC):
         return self.course.year
 
     def set_year(self, year: int):
-        if year <= (2022 + 10):
+        if (2022 + 10) >= year >= (2022 - 10):
             self.course.year = year
             self.course.save()
         else:
             raise ValueError("No more than 10 years after this year should be included")
 
-    def get_instructor(self) -> [AbstractUser]:
+    def get_instructor(self) -> [InstructorUser]:
         instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
         instr_pk_list = instructors.values_list('account_ID', flat=True)
         instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)
 
-        result_list = [AbstractUser]
+        result_list = [InstructorUser]
         for instr in instr_table:
             result_list.append(InstructorUser(instr))
 
         return result_list
 
-    def add_instructor(self, newInstructor: AbstractUser):
+    def add_instructor(self, newInstructor):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
             row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)

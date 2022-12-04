@@ -423,11 +423,11 @@ class CourseFactoryCreate(View):
         new_course_attributes = dict()
 
         # Initialize values based on form input.
-        new_course_attributes['name'] = str(request.POST.get('email'))
+        new_course_attributes['name'] = str(request.POST.get('name'))
         new_course_attributes['semester'] = str(request.POST.get('semester'))
-        new_course_attributes['year'] = str(request.POST.get('year'))
+        new_course_attributes['year'] = int(request.POST.get('year'))
         new_course_attributes['description'] = str(request.POST.get('description'))
-        new_course_attributes['credits'] = str(request.POST.get('credit'))
+        new_course_attributes['credits'] = int(request.POST.get('credit'))
 
 
         try:

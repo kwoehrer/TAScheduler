@@ -16,7 +16,7 @@ class AbstractCourseFactory(ABC):
         pass
 
 
-class ConcreteCourseFactory(AbstractCourseFactory:
+class ConcreteCourseFactory(AbstractCourseFactory):
     def create_course(self, creator: AbstractUser, new_course_attributes: []):
         # Verify creator is an admin
         if not (isinstance(creator, AdminUser)) or creator.getUserType() != "Admin":
@@ -33,13 +33,13 @@ class ConcreteCourseFactory(AbstractCourseFactory:
         if semester not in semester_valid_list:
             raise ValueError("The semester for a course was not a valid semester.")
 
-        if len(User.objects.filter(name=name, semester=semester, year=year)) != 0:
+        if len(Course.objects.filter(name=name, semester=semester, year=year)) != 0:
             raise ValueError("A course with the same name, year, and semester already exists")
 
         if credit > 9 or credit < 1:
             raise ValueError("Invalid credit amount for course.")
 
-        new_course = Course(name=name, semester=semester, year=year, description=description, credit=credit)
+        new_course = Course(name=name, semester=semester, year=year, description=description, credits=credit)
         new_course.save()
 
     def delete_course(self, deletor: AbstractUser, delete_course: AbstractCourse):

@@ -15,10 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import Login
-
+from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
+    AccountFactoryDelete, EditAccount, AccountEditActive
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Login.as_view())
-]
+    path('', Login.as_view()),
+    path('home/', Home.as_view()),
+    path('logout/', LogOut.as_view()),
+    path('AccountManagement/', AccountManagement.as_view()),
+    path('CreateAccount/', CreateAccount.as_view()),
+    path('AccountFactoryCreate/', AccountFactoryCreate.as_view()),
+    path('DeleteAccount/', DeleteAccount.as_view()),
+    path('AccountFactoryDelete/', AccountFactoryDelete.as_view()),
+    path('EditAccount/', EditAccount.as_view()),
+    path('AccountEditActive/', AccountEditActive.as_view())
+    ]

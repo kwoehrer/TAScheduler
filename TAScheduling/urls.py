@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
-    AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate
+    AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate, \
+    DeleteCourse, CourseFactoryDelete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,7 +34,7 @@ urlpatterns = [
     path('CourseManagement/', CourseManagement.as_view()),
     path('CreateCourse/', CreateCourse.as_view()),
     path('CourseFactoryCreate/', CourseFactoryCreate.as_view()),
-    path('DeleteCourse/', CreateAccount.as_view()),
-    path('CourseFactoryDelete/', CreateAccount.as_view()),
+    path('DeleteCourse/', DeleteCourse.as_view()),
+    path('CourseFactoryDelete/', CourseFactoryDelete.as_view()),
     path('EditCourse/', CreateAccount.as_view()),
 ]

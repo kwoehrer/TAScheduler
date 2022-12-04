@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User, Admin, Instructor, TA
+from app.models import User, Admin, Instructor, TA, Course
+from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
 from classes.Factories.CourseFactory import ConcreteCourseFactory, AbstractCourseFactory
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
@@ -376,9 +377,10 @@ class AccountEditActive(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "AccountEdit.html", {"bad_message": msg})
 
-
         return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                     "good_message": "Account Successfully Edited."})
+
+
 class CourseManagement(View):
     def get(self, request):
         t = None
@@ -390,6 +392,7 @@ class CourseManagement(View):
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
             return render(request, "CourseManagement.html", {'State': t})
+
 
 class CreateCourse(View):
     def get(self, request):
@@ -405,6 +408,7 @@ class CreateCourse(View):
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
             return render(request, "CourseCreate.html", {})
+
 
 class CourseFactoryCreate(View):
     def get(self, request):
@@ -429,10 +433,98 @@ class CourseFactoryCreate(View):
         new_course_attributes['description'] = str(request.POST.get('description'))
         new_course_attributes['credits'] = int(request.POST.get('credit'))
 
-
         try:
-            course_fact.create_course(curr_user,  new_course_attributes)
+            course_fact.create_course(curr_user, new_course_attributes)
         except Exception as e:
             return render(request, "CourseCreate.html", {"bad_message": e.__str__})
 
-        return render(request, "CourseCreate.html", {"good_message": "Account Successfully Created."})
+        return render(request, "CourseCreate.html", {"good_message": "Course Successfully Created."})
+
+
+class DeleteCourse(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "CourseDelete.html", {"page_state_title": "Query For A Course To Delete"})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        # FILTER COURSE HERE
+        name_query = request.POST.get('name')
+        semester_query = request.POST.get('semester')
+        year_query = request.POST.get('year')
+        credit_query = request.POST.get('credit')
+        desc_query = request.POST.get('description')
+
+        total_query = None
+        if name_query is not None and name_query != '':
+            total_query = Course.objects.filter(name=name_query)
+
+        if semester_query is not None and semester_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(semester=semester_query)
+            else:
+                total_query = total_query.filter(semester=semester_query)
+        if year_query is not None and year_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(year=year_query)
+            else:
+                total_query = total_query.filter(year=year_query)
+        if credit_query is not None and credit_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(credit=credit_query)
+            else:
+                total_query = total_query.filter(credit=credit_query)
+        if desc_query is not None and desc_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(description=credit_query)
+            else:
+                total_query = total_query.filter(description=credit_query)
+
+        # GET A LIST OF ALL USERS
+        course_model_list = list(total_query)
+        course_list = []
+
+        for crs_model in course_model_list:
+            course_list.append(ConcreteCourse(crs_model))
+
+        if len(course_list) == 0:
+            return render(request, "CourseDelete.html", {"bad_message": "No results found. Try again.",
+                                                         "page_state_title": "Query For A Course To Delete"})
+
+        return render(request, "CourseDelete.html",
+                      {"page_state_title": "Select A Course To Delete", 'query_courses': course_list})
+
+
+class CourseFactoryDelete(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_fact: AbstractCourseFactory = ConcreteCourseFactory()
+        # Can make this assumption due to narrowing conversion above.
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
+        crs_to_delete_id = request.POST.get('course_id')
+        crs_model = Course.objects.get(course_ID=crs_to_delete_id)
+        crs_wrapper: AbstractCourse = ConcreteCourse(crs_model)
+
+        try:
+            crs_fact.delete_course(curr_user, crs_wrapper)
+        except Exception as e:
+            msg = "Could not delete account due to " + str(e.__str__())
+            return render(re
+
+        return render(request, "CourseDelete.html", {"page_state_title": "Query For A Course To Delete",
+                                                     "good_message": "Course Successfully Deleted."})

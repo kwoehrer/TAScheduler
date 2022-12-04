@@ -1,0 +1,30 @@
+<div class = "container">
+    <div class="row">
+        <div class="col">
+            <a href="/CreateAccount/">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Create An Account">
+            </a>
+        </div>
+        <div class="col">
+            <a href="/EditAccount/">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Edit An Account">
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+             <a href="/DeleteAccount/">
+                {% csrf_token %}
+                <input class="btn btn-danger homeButtons redButton" type="submit" value="Delete An Account">
+             </a>
+        </div>
+        <div class="col">
+
+            <a href="/home/">
+                <input class="btn btn-primary homeButtons" type="submit" value="Return Home">
+            </a>
+        </div>
+    </div>
+</div>

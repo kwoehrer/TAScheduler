@@ -1,39 +1,43 @@
-from app.models import Section, TA, Course
-import classes.Courses.CoursesClass as CourseClass
-import classes.Users.users as UserClass
-from abc import ABC, abstractmethod
+from app.models import Section, TA, Course, User
+from classes.Sections.temp_course_class import AbstractCourse, ConcreteCourse
+from classes.Users.users import AbstractUser, TAUser
+import abc
+
+
+# import classes.Courses.CoursesClass as CourseClass
+# import classes.Users.users as UserClass
 
 
 # from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 # from classes.Users.users import AbstractUser, TAUser
 # import abc
 
-class AbstractSection(ABC):
-    @ABC.abstractmethod
+class AbstractSection(abc):
+    @abc.abstractmethod
     def getParentCourse(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def getSectionNumber(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setSectionNumber(self):
         pass
 
-    @ABC.abstractmethod
-    def getTA(self) -> CourseClass.AbstractUser:
+    @abc.abstractmethod
+    def getTA(self) -> AbstractUser:
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setTA(self, newTA):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def getMeetTime(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setMeetTime(self, newTime):
         pass
 
@@ -42,8 +46,8 @@ class ConcreteSection(AbstractSection):
     def __init__(self, section: Section):
         self.section = section
 
-    def getParentCourse(self) -> CourseClass.AbstractCourse:
-        return CourseClass.ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
+    def getParentCourse(self):
+        return ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):
         return self.section.section_num
@@ -51,12 +55,12 @@ class ConcreteSection(AbstractSection):
     def setSectionNumber(self, newNumber: int):
         self.section = newNumber
 
-    def getTA(self) -> UserClass.AbstractUser:
+    def getTA(self) -> AbstractUser:
         ta = TA.objects.get(account_ID=self.section.ta_account_id)
-        return UserClass.TAUser(ta)
+        return TAUser(ta)
 
-    def setTA(self, newTA: UserClass.AbstractUser):
-        if isinstance(newTA, UserClass.TAUser):
+    def setTA(self, newTA: AbstractUser):
+        if isinstance(newTA, TAUser):
             ta_id = newTA.getID()
             self.section.ta_account_id = ta_id
             self.section.save()

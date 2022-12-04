@@ -18,7 +18,7 @@ class ConcreteAccountFactory(AbstractAccountFactory):
 
     def create_account(self, creator: AbstractUser, newAccountAttributes: []):
         # Verify creator is an admin
-        if not (isinstance(creator, AdminUser)):
+        if not (isinstance(creator, AdminUser)) or creator.getUserType() != "Admin":
             raise TypeError("Only admin user accounts can create accounts.")
         # Verify newAccountAttributes is correct
 
@@ -33,12 +33,13 @@ class ConcreteAccountFactory(AbstractAccountFactory):
         first_name = newAccountAttributes['first_name']
         last_name = newAccountAttributes['last_name']
 
-        phone_number = ''
-        home_address = ''
+        phone_number = None
+        home_address = None
         try:
-            phone_number = newAccountAttributes['phone_number']
-            if len(User.objects.filter(phone_number=phone_number)) != 0:
-                raise ValueError("A user withy this phone number already exists.")
+            if newAccountAttributes['phone_number'] != None and newAccountAttributes['phone_number'] != '':
+                phone_number = newAccountAttributes['phone_number']
+                if len(User.objects.filter(phone_number=phone_number)) != 0:
+                    raise ValueError("A user with this phone number already exists.")
 
             home_address = newAccountAttributes['home_address']
         except KeyError:

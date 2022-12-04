@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.test import TestCase
+from django.contrib.auth.models import AbstractUser
 from app.models import Course, User, Section
 from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
@@ -10,9 +10,9 @@ class TestGetCourseId(TestCase):
     def setUp(self) -> None:
         course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
                                              description="first course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(course_model)
+        self.course = ConcreteCourse(course_model)
 
-    def get_id(self):
+    def test_get_id(self):
         id = self.course.get_course_id
         self.assertEqual(self.course.get_course_id, id, msg="Course id is incorrect")
 
@@ -20,26 +20,20 @@ class TestGetCourseId(TestCase):
 class TestGetCourseName(TestCase):
 
     def setUp(self) -> None:
-        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+        course_model = Course.objects.create(name='course1', semester="Spring", year="2022",
                                              description="first course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(course_model)
+        self.course = ConcreteCourse(course_model)
 
-        course2_model = Course.objects.create(name=None, semester="Spring", year="2022",
+        course2_model = Course.objects.create(name=1234, semester="Spring", year="2022",
                                               description="first course", credits="3")
         self.course2: AbstractCourse = ConcreteCourse(course2_model)
 
-        course3_model = Course.objects.create(name=1234, semester="Spring", year="2022",
-                                              description="first course", credits="3")
-        self.course3: AbstractCourse = ConcreteCourse(course3_model)
+    def test_get_correct_name(self):
+        name = self.course.get_course_name()
+        self.assertEqual(name, 'course1', msg="Course name is incorrect")
 
-    def get_correct_name(self):
-        self.assertEqual(self.course.get_course_name, "course1", msg="Course name is incorrect")
-
-    def get_None_name(self):
-        self.assertRaises(ValueError, self.course2.get_course_name, msg="Course name is none")
-
-    def get_int_name(self):
-        self.assertRaises(TypeError, self.course3.get_course_name, msg="Course name is integers")
+    def test_get_int_name(self):
+        self.assertRaises(TypeError, self.course2.get_course_name, msg="Course name is integers")
 
 
 class TestSetCourseName(TestCase):
@@ -47,21 +41,18 @@ class TestSetCourseName(TestCase):
     def setUp(self) -> None:
         course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
                                              description="first course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(course_model)
+        self.course = ConcreteCourse(course_model)
 
-    def set_correct_name(self):
-        self.course.set_course_name("First Course")
-        self.assertEqual(self.course.get_course_name, "First Course", msg="Course name was not set correctly")
+    def test_set_correct_name(self):
+        self.course.set_course_name('First Course')
+        name = self.course.get_course_name()
+        self.assertEqual(name, "First Course", msg="Course name was not set correctly")
 
-    def set_None_name(self):
-        self.course.set_course_name(None)
-        self.assertEqual(self.course.get_course_name, "course1", msg="Course name cannot be none")
+    def test_set_int_name(self):
+        with self.assertRaises(TypeError, msg="The name is not string"):
+            self.course.set_course_name(1234)
 
-    def set_int_name(self):
-        self.course.set_course_name(1234)
-        self.assertEqual(self.course.get_course_name, "course1", msg="Course name cannot be integers")
-
-    def set_max_name(self):
+    def test_set_max_name(self):
         with self.assertRaises(ValueError, msg="The name is too long"):
             self.course.set_course_name("123456789012345678901234567890123")
 
@@ -72,23 +63,16 @@ class TestGetSemester(TestCase):
                                              description="first course", credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        course2_model = Course.objects.create(name="course2", semester=None, year="2022",
+        course2_model = Course.objects.create(name="course2", semester=1234, year="2022",
                                               description="first course", credits="3")
         self.course2: AbstractCourse = ConcreteCourse(course2_model)
 
-        course3_model = Course.objects.create(name="course3", semester=1234, year="2022",
-                                              description="first course", credits="3")
-        self.course3: AbstractCourse = ConcreteCourse(course3_model)
 
+    def test_get_correct_semester(self):
+        self.assertEqual(self.course.get_semester(), "Fall", msg="Semester is incorrect")
 
-    def get_correct_semester(self):
-        self.assertEqual(self.course.get_semester, "Fall", msg="Semester is incorrect")
-
-    def get_None_name(self):
-        self.assertRaises(ValueError, self.course2.get_course_name, msg="Semester is none")
-
-    def get_int_name(self):
-        self.assertRaises(TypeError, self.course3.get_course_name, msg="Semester is integer")
+    def test_get_int_name(self):
+        self.assertRaises(TypeError, self.course2.get_course_name(), msg="Semester is integer")
 
 class TestSetSemester(TestCase):
 
@@ -97,17 +81,17 @@ class TestSetSemester(TestCase):
                                              description="first course", credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-    def set_correct_semester(self):
-        self.course.set_course_name("Fall")
-        self.assertEqual(self.course.get_semester, "Fall", msg="Semester was not set correctly")
+    def test_set_correct_semester(self):
+        self.course.set_semester("Fall")
+        self.assertEqual(self.course.get_semester(), "Fall", msg="Semester was not set correctly")
 
-    def set_None_name(self):
+    def test_set_None_name(self):
         with self.assertRaises(ValueError, msg="Course name cannot be none"):
-            self.course.set_course_name(None)
+            self.course.set_semester(None)
 
-    def set_int_name(self):
+    def test_set_int_name(self):
         with self.assertRaises(ValueError, msg="Course name cannot be integers"):
-            self.course.set_course_name(1234)
+            self.course.set_semester(1234)
 
 
 class TestGetYear(TestCase):
@@ -117,29 +101,25 @@ class TestGetYear(TestCase):
                                              description="first course", credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        course2_model = Course.objects.create(name="course2", semester="Fall", year=None,
+        course2_model = Course.objects.create(name="course2", semester="Fall", year="2022",
                                               description="first course", credits="3")
         self.course2: AbstractCourse = ConcreteCourse(course2_model)
 
-        course3_model = Course.objects.create(name="course3", semester="Fall", year="2022",
-                                              description="first course", credits="3")
+        course3_model = Course.objects.create(name="course3", semester="Fall", year=2035,
+                                             description="first course", credits="3")
         self.course3: AbstractCourse = ConcreteCourse(course3_model)
 
-        course4_model = Course.objects.create(name="course1", semester="Fall", year=2035,
-                                             description="first course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(course4_model)
 
-
-    def get_correct_year(self):
+    def test_get_correct_year(self):
         self.assertEqual(self.course.get_year, 2022, msg="Year is incorrect")
 
-    def get_None_name(self):
+    def test_get_None_name(self):
         self.assertRaises(ValueError, self.course2.get_year, msg="Year is none")
 
-    def get_int_name(self):
+    def test_get_int_name(self):
         self.assertRaises(TypeError, self.course3.get_year, msg="Year is integer")
 
-    def get_more_than_10_year(self):
+    def test_get_more_than_10_year(self):
         self.assertRaises(ValueError, self.course4.get_year, msg="Year is more than 10 years after this year")
 
 class TestSetYear(TestCase):

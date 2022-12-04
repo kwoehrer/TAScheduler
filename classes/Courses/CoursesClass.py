@@ -52,7 +52,7 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
-    def get_instructors(self):
+    def get_instructor(self):
         pass
 
     @abc.abstractmethod
@@ -82,7 +82,9 @@ class AbstractCourse(ABC):
     @abc.abstractmethod
     def remove_section(self, section):
         pass
-class ConcreteCourse(AbstractCourse):
+
+
+class ConcreteCourse(AbstractCourse, ABC):
     def __init__(self, course: Course):
         self.course = course
 
@@ -93,14 +95,14 @@ class ConcreteCourse(AbstractCourse):
         return self.course.name
 
     def set_course_name(self, course_name: str):
-        if len(course_name) <= 30:
-            self.course.name = course_name
-            self.course.save()
+        if isinstance(course_name, str):
+            if len(course_name) <= 30:
+                self.course.name = course_name
+                self.course.save()
+            else:
+                raise ValueError("The name is too long")
         else:
-            raise ValueError("The name is too long")
-
-
-
+            raise TypeError("Input is not string")
 
     def get_description(self) -> str:
         return self.course.description
@@ -147,8 +149,7 @@ class ConcreteCourse(AbstractCourse):
 
         return result_list
 
-
-    def add_instructor(self, newInstructor:AbstractUser):
+    def add_instructor(self, newInstructor: AbstractUser):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
             row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
@@ -191,17 +192,16 @@ class ConcreteCourse(AbstractCourse):
 
         return section_list
 
-    #Factory method, creates a section related to this course.
-    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes:str):
+    # Factory method, creates a section related to this course.
+    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes: str):
         if len(TA.objects.filter(account_ID=sectionTA_ID)) != 1:
             raise ValueError("TA Id was not a valid TA ID.")
         if sectionNumber in self.get_sections():
             raise ValueError("Cannot have duplicate course sections")
 
-        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes, ta_account_id=sectionTA_ID)
+        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes,
+                             ta_account_id=sectionTA_ID)
         newSection.save()
-
-
 
     def remove_section(self, section: Sections.AbstractSection) -> bool:
         if isinstance(section, Sections.ConcreteSection):

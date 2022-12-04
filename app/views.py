@@ -217,6 +217,10 @@ class DeleteAccount(View):
                 curr_obj = TA.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(TAUser(curr_obj))
 
+        if len(acc_list) == 0:
+            return render(request, "AccountDelete.html", {"bad_message": "No results found. Try again.",
+                                                          "page_state_title": "Query For An Account To Delete"})
+
         return render(request, "AccountDelete.html",
                       {"page_state_title": "Select An Account To Delete", 'query_accounts': acc_list})
 
@@ -250,6 +254,116 @@ class AccountFactoryDelete(View):
             user_to_delete_wrapper = TAUser(user_to_delete_model)
         try:
             acc_fact.delete_account(curr_user, user_to_delete_wrapper)
+        except Exception as e:
+            msg = "Could not delete account due to " + str(e.__str__())
+            return render(request, "AccountDelete.html", {"bad_message": msg})
+
+        return render(request, "AccountDelete.html", {"page_state_title": "Query For An Account To Delete",
+                                                      "good_message": "Account Successfully Deleted."})
+
+
+class EditAccount(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit"})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        # FILTER USERS HERE
+        email_query = request.POST.get('email')
+        username_query = request.POST.get('username')
+        name_query = request.POST.get('name')
+        user_type_query = request.POST.get('user_type')
+
+        total_query = None
+        if email_query is not None and email_query != '':
+            total_query = User.objects.filter(email=email_query)
+
+        if username_query is not None and username_query != '':
+            if total_query is None:
+                total_query = User.objects.filter(username=username_query)
+            else:
+                total_query = total_query.filter(username=username_query)
+        if name_query is not None and name_query != '':
+            first_name = name_query.split(' ')[0]
+            last_name = name_query.split(' ')[1]
+            if total_query is None:
+                total_query = User.objects.filter(first_name=first_name)
+                total_query = total_query.filter(last_name=last_name)
+            else:
+                total_query = total_query.filter(first_name=first_name)
+                total_query = total_query.filter(last_name=last_name)
+        if user_type_query is not None and user_type_query != '':
+            if total_query is None:
+                total_query = User.objects.filter(user_type=user_type_query)
+            else:
+                total_query = total_query.filter(user_type=user_type_query)
+
+        # GET A LIST OF ALL USERS
+        acc_model_list = list(total_query)
+        acc_list = []
+
+        for account_model in acc_model_list:
+            # Evaluate user type and create the correct subtype. Then append to list.
+            if user_type_query == "Admin":
+                curr_obj = Admin.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(AdminUser(curr_obj))
+            elif user_type_query == "Instructor":
+                curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(InstructorUser(curr_obj))
+            elif user_type_query == "TA":
+                curr_obj = TA.objects.get(account_ID=account_model.account_ID)
+                acc_list.append(TAUser(curr_obj))
+
+        if len(acc_list) == 0:
+            return render(request, "AccountEdit.html", {"bad_message": "No results found. Try again.",
+                                                        "page_state_title": "Query For An Account To Edit"})
+
+        return render(request, "AccountEdit.html",
+                      {"page_state_title": "Select An Account To Edit", 'query_accounts': acc_list})
+
+class AccountEditActive(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        user_to_edit_id = request.POST.get('acc_id')
+        user_to_edit_type = request.POST.get('acc_type')
+        user_to_edit_wrapper: AbstractUser = None
+
+        if user_to_edit_type == "Admin":
+            user_to_edit_model = Admin.objects.get(account_ID__account_ID=user_to_edit_id)
+            user_to_edit_wrapper = AdminUser(user_to_edit_model)
+        elif user_to_edit_type == "Instructor":
+            user_to_edit_model = Instructor.objects.get(account_ID__account_ID=user_to_edit_id)
+            user_to_edit_wrapper = InstructorUser(user_to_edit_model)
+        elif user_to_edit_type == "TA":
+            user_to_edit_model = TA.objects.get(account_ID__account_ID=user_to_edit_id)
+            user_to_edit_wrapper = TAUser(user_to_edit_model)
+
+
+        try:
+            user_to_edit_wrapper.setUserType(request.POST.get('acc_type'))
+            user_to_edit_wrapper.setLastName(request.POST.get('last_name'))
+            user_to_edit_wrapper.setFirstName(request.POST.get('first_name'))
+            user_to_edit_wrapper.setPhoneNumber(request.POST.get('phone_number'))
+            user_to_edit_wrapper.setHomeAddress(request.POST.get('home_address'))
+            user_to_edit_wrapper.setPassword(request.POST.get('password'))
+            user_to_edit_wrapper.setUsername(request.POST.get('username'))
+            user_to_edit_wrapper.setEmail(request.POST.get('email'))
         except Exception as e:
             msg = "Could not delete account due to " + str(e.__str__())
             return render(request, "AccountDelete.html", {"bad_message": msg})

@@ -56,6 +56,18 @@ class AbstractUser(abc.ABC):
     def setUserType(self, new_user_type: str):
         pass
 
+    @abc.abstractmethod
+    def setPassword(self, param):
+        pass
+
+    @abc.abstractmethod
+    def setUsername(self, param):
+        pass
+
+    @abc.abstractmethod
+    def setEmail(self, param):
+        pass
+
 
 class TAUser(AbstractUser):
 
@@ -93,6 +105,7 @@ class TAUser(AbstractUser):
         return self.model.account_ID.phone_number
 
     def setPhoneNumber(self, phone_number: str):
+        # TODO check if phone number is unique
         acc_id = self.model.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.phone_number = phone_number
@@ -114,6 +127,30 @@ class TAUser(AbstractUser):
         acc_id = self.model.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
+        user_obj.save()
+
+    def setPassword(self, new_pass: str):
+        if new_pass == "" or len(new_pass) < 8:
+            raise ValueError("Password must be more than 8 characters long.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_pass
+        user_obj.save()
+
+    def setUsername(self, username: str):
+        if len(User.objects.filter(username=username)) != 0:
+            raise ValueError("A user with this username already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.username = username
+        user_obj.save()
+
+    def setEmail(self, email):
+        if len(User.objects.filter(email=email)) != 0:
+            raise ValueError("A user with this email already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.email = email
         user_obj.save()
 
 
@@ -175,6 +212,30 @@ class InstructorUser(AbstractUser):
         user_obj.user_type = new_user_type
         user_obj.save()
 
+    def setPassword(self, new_pass: str):
+        if new_pass == "" or len(new_pass) < 8:
+            raise ValueError("Password must be more than 8 characters long.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_pass
+        user_obj.save()
+
+    def setUsername(self, username: str):
+        if len(User.objects.filter(username=username)) != 0:
+            raise ValueError("A user with this username already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.username = username
+        user_obj.save()
+
+    def setEmail(self, email):
+        if len(User.objects.filter(email=email)) != 0:
+            raise ValueError("A user with this email already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.email = email
+        user_obj.save()
+
 
 class AdminUser(AbstractUser):
     def __init__(self, model: Admin):
@@ -232,4 +293,28 @@ class AdminUser(AbstractUser):
         acc_id = self.model.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
+        user_obj.save()
+
+    def setPassword(self, new_pass: str):
+        if new_pass == "" or len(new_pass) < 8:
+            raise ValueError("Password must be more than 8 characters long.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_pass
+        user_obj.save()
+
+    def setUsername(self, username: str):
+        if len(User.objects.filter(username=username)) != 0:
+            raise ValueError("A user with this username already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.username = username
+        user_obj.save()
+
+    def setEmail(self, email):
+        if len(User.objects.filter(email=email)) != 0:
+            raise ValueError("A user with this email already exists.")
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.email = email
         user_obj.save()

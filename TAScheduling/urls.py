@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
-    AccountFactoryDelete
+    AccountFactoryDelete, EditAccount, AccountEditActive
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +28,6 @@ urlpatterns = [
     path('AccountFactoryCreate/', AccountFactoryCreate.as_view()),
     path('DeleteAccount/', DeleteAccount.as_view()),
     path('AccountFactoryDelete/', AccountFactoryDelete.as_view()),
+    path('EditAccount/', EditAccount.as_view()),
+    path('AccountEditActive/', AccountEditActive.as_view())
     ]

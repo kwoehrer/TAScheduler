@@ -389,3 +389,18 @@ class CourseManagement(View):
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
             return render(request, "CourseManagement.html", {'State': t})
+
+class CreateCourse(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseCreate.html", {})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseCreate.html", {})

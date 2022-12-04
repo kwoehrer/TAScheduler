@@ -378,3 +378,14 @@ class AccountEditActive(View):
 
         return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                     "good_message": "Account Successfully Edited."})
+class CourseManagement(View):
+    def get(self, request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "Admin":
+            t = './CourseManagementStates/AdminCourseMng.html'
+
+        if t == None:
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseManagement.html", {'State': t})

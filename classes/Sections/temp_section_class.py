@@ -53,8 +53,14 @@ class ConcreteSection(AbstractSection):
     def getSectionNumber(self):
         return self.section.section_num
 
-    def setSectionNumber(self, newNumber: int):
-        self.section.section_num = newNumber
+    def setSectionNumber(self, newNumber):
+        if isinstance(newNumber, int):
+            if newNumber <= 999 and newNumber >= 100:
+                self.section.section_num = newNumber
+            else:
+                raise ValueError("new section number too long or loo short")
+        else:
+            raise TypeError("new section number not an integer")
 
     def getTA(self):
         # ta = TA.objects.get(self.section.ta_account_id)

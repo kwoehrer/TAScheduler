@@ -58,6 +58,7 @@ class Course(models.Model):
     credits = models.IntegerField(blank=False, null=False, default=3,
                                   validators=[MaxValueValidator(9,message="Course.credit field must be less than 10."),
                                     MinValueValidator(1,message="Course.credit field must be greater than 1.")])
+    UniqueConstraint(fields=[name, semester, year], name="CourseCompPK")
 
 
 class Section(models.Model):

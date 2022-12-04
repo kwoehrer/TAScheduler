@@ -3,6 +3,7 @@ from classes.Sections.temp_course_class import AbstractCourse, ConcreteCourse
 from classes.Users.users import AbstractUser, TAUser
 from abc import ABC
 import abc
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # import classes.Courses.CoursesClass as CourseClass
@@ -48,7 +49,10 @@ class ConcreteSection(AbstractSection):
         self.section = section
 
     def getParentCourse(self):
-        return ConcreteCourse(self.section.course_ID)
+        try:
+            return ConcreteCourse(self.section.course_ID)
+        except ObjectDoesNotExist:
+            ("parent class does not exist")
 
     def getSectionNumber(self):
         return self.section.section_num

@@ -1,12 +1,13 @@
 from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
 #from classes.Sections.temp_section_class import AbstractSection, ConcreteSection
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
+from abc import ABC
 import abc
 
 import classes.Sections.temp_section_class as SectionClass
 
 
-class AbstractCourse(abc):
+class AbstractCourse(ABC):
     @abc.abstractmethod
     def get_course_id(self):
         pass

@@ -1,15 +1,17 @@
 from django.test import TestCase
 from app.models import Section, Course, User
 
-#from classes.Sections.temp_course_class import AbstractCourse, ConcreteCourse
-#from classes.Sections.temp_section_class import AbstractSection, ConcreteSection
+# from classes.Sections.temp_course_class import AbstractCourse, ConcreteCourse
+# from classes.Sections.temp_section_class import AbstractSection, ConcreteSection
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
 
 from django.core.exceptions import ObjectDoesNotExist
 
 import classes.Sections.temp_section_class as SectionClass
 import classes.Sections.temp_course_class as CourseClass
-#import classes.Users.users as UserClass
+
+
+# import classes.Users.users as UserClass
 
 class TestGetParent(TestCase):
     def setUp(self) -> None:

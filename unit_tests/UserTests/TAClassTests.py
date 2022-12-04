@@ -1,10 +1,10 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from app.models import TA
-from classes.Users.users import AbstractUser
+from classes.Users.users import AbstractUser, TAUser
 
 
-class GetNameTestTA(TestCase):
+class TestGetTAName(TestCase):
 
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -13,7 +13,7 @@ class GetNameTestTA(TestCase):
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        self.ta: AbstractUser = TA(user_model)
+        self.ta: TAUser = TAUser(user_model)
 
     def testFirstNameExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User TA first name does not exist"):
@@ -55,7 +55,7 @@ class SetNameTestTA(TestCase):
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        self.ta: AbstractUser = TA(user_model)
+        self.ta: TAUser = TAUser(user_model)
 
     def testNoArgsFirstName(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -122,7 +122,7 @@ class GetPhoneNumberTests(TestCase):
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        self.ta: AbstractUser = TA(user_model)
+        self.ta: TAUser = TAUser(user_model)
 
     def testPhoneNumberExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User TA phone number does not exist"):
@@ -150,7 +150,7 @@ class SetPhoneNumberTests(TestCase):
         user_obj = TA.objects.filter(username='ta')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        self.ta: AbstractUser = TA(user_model)
+        self.ta: TAUser = TAUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):

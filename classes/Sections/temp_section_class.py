@@ -48,7 +48,7 @@ class ConcreteSection(AbstractSection):
         self.section = section
 
     def getParentCourse(self):
-        return ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
+        return ConcreteCourse(self.section.course_ID)
 
     def getSectionNumber(self):
         return self.section.section_num

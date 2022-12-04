@@ -7,6 +7,7 @@ import abc
 import classes.Sections.temp_section_class as SectionClass
 
 
+
 class AbstractCourse(ABC):
     @abc.abstractmethod
     def get_course_id(self):
@@ -175,12 +176,12 @@ class ConcreteCourse(AbstractCourse):
         else:
             raise TypeError("Old TA was not a TA_User.")
 
-    def get_sections(self) -> [AbstractSection]:
+    def get_sections(self) -> []:
         section_table = Section.objects.filter(course_ID=self.course.course_ID)
-        section_list = [AbstractSection]
+        section_list = []
 
         for section in section_table:
-            section_list.append(ConcreteSection(section))
+            section_list.append(SectionClass.ConcreteSection(section))
 
         return section_list
 
@@ -195,8 +196,8 @@ class ConcreteCourse(AbstractCourse):
                              ta_account_id=sectionTA_ID)
         newSection.save()
 
-    def remove_section(self, section: AbstractSection) -> bool:
-        if isinstance(section, ConcreteSection):
+    def remove_section(self, section) -> bool:
+        if isinstance(section, SectionClass.ConcreteSection):
             section_id = section.getSectionNumber()
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:

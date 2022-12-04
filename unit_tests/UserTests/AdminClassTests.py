@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from app.models import Admin
-from classes.Users.users import AbstractUser
+from classes.Users.users import AdminUser
 
 
 class GetNameTestAdmin(TestCase):
@@ -13,7 +13,7 @@ class GetNameTestAdmin(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testFirstNameExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Admin first name does not exist"):
@@ -57,7 +57,7 @@ class SetNameTestAdmin(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArgsFirstName(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -126,7 +126,7 @@ class GetPhoneNumberTests(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testPhoneNumberExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Admin phone number does not exist"):
@@ -154,7 +154,7 @@ class SetPhoneNumberTests(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -182,7 +182,7 @@ class GetAddressTests(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testHomeAddressExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Admin home address does not exist"):
@@ -206,7 +206,7 @@ class SetHomeAddressTests(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -236,7 +236,7 @@ class GetUserType(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testUserTypeExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Type does not exist"):
@@ -255,7 +255,7 @@ class SetUserType(TestCase):
         user_obj = Admin.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
-        self.admin: AbstractUser = Admin(user_model)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):

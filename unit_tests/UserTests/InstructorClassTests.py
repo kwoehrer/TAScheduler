@@ -1,10 +1,10 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from app.models import Instructor
-from classes.Users.users import AbstractUser
+from classes.Users.users import InstructorUser
 
 
-class GetNameTestInstructor(TestCase):
+class TestGetInstructorName(TestCase):
 
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -13,7 +13,7 @@ class GetNameTestInstructor(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testFirstNameExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Instructor first name does not exist"):
@@ -50,7 +50,7 @@ class GetNameTestInstructor(TestCase):
             self.assertIsInstance(self.instructor.getLastName(), str, msg="Incorrect User Instructor last name type")
 
 
-class SetNameTestInstructor(TestCase):
+class TestSetInstructorName(TestCase):
 
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -59,7 +59,7 @@ class SetNameTestInstructor(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testNoArgsFirstName(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -122,7 +122,7 @@ class SetNameTestInstructor(TestCase):
             self.assertEqual(last_name, self.instructor.getFirstName(), msg='Incorrect Last Name')
 
 
-class GetPhoneNumberTests(TestCase):
+class TestGetInstructorPhoneNumber(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -130,7 +130,7 @@ class GetPhoneNumberTests(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testPhoneNumberExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User instructor phone number does not exist"):
@@ -150,7 +150,7 @@ class GetPhoneNumberTests(TestCase):
             self.assertEqual(phone_number, self.instructor.getPhoneNumber())
 
 
-class SetPhoneNumberTests(TestCase):
+class TestSetInstructorPhoneNumber(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='instructor',
@@ -158,7 +158,7 @@ class SetPhoneNumberTests(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -179,7 +179,7 @@ class SetPhoneNumberTests(TestCase):
             self.assertEqual(phone_number, self.instructor.getPhoneNumber(), msg='Incorrect Phone number')
 
 
-class GetAddressTests(TestCase):
+class TestGetInstructorHomeAddressTests(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -187,7 +187,7 @@ class GetAddressTests(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testHomeAddressExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User instructor home address does not exist"):
@@ -203,7 +203,7 @@ class GetAddressTests(TestCase):
             self.assertEqual(home_address, self.instructor.getHomeAddress())
 
 
-class SetHomeAddressTests(TestCase):
+class TestSetInstructorHomeAddressTests(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -211,7 +211,7 @@ class SetHomeAddressTests(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
@@ -234,7 +234,7 @@ class SetHomeAddressTests(TestCase):
                              msg='Incorrect User instructor Phone Number')
 
 
-class GetUserType(TestCase):
+class TestGetInstructorUserType(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -242,18 +242,18 @@ class GetUserType(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testUserTypeExists(self):
         with self.assertRaises(ObjectDoesNotExist, msg="User Type does not exist"):
             self.instructor.getUserType()
 
-    def testPhoneNumberType(self):
+    def testUserType(self):
         with self.assertRaises(TypeError, msg="incorrect user type"):
             self.assertIsInstance(self.instructor.getUserType(), str, msg="Incorrect type")
 
 
-class SetUserType(TestCase):
+class TestSetInstructorUserType(TestCase):
     def setUp(self) -> None:
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -261,7 +261,7 @@ class SetUserType(TestCase):
         user_obj = Instructor.objects.filter(username='John_Doe')[0]
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
-        self.instructor: AbstractUser = Instructor(user_model)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testNoArgs(self):
         with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):

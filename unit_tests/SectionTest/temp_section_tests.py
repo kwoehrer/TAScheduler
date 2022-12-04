@@ -19,7 +19,6 @@ class TestGetParent(TestCase):
         self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                                   description='something', credits=4)
         section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00')
-        section2 = Section.objects.create(course_ID=self.course_model, section_num=200, MeetingTimes='2:00')
         self.course = CourseClass.ConcreteCourse(self.course_model)
         self.wrapper = SectionClass.ConcreteSection(section)
 
@@ -32,11 +31,21 @@ class TestGetSectionNum(TestCase):
         self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                                   description='something', credits=4)
         section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00')
+        section2 = Section.objects.create(course_ID=self.course_model, section_num=0, MeetingTimes='2:00')
+        section3 = Section.objects.create(course_ID=self.course_model, section_num=-1, MeetingTimes='3:00')
         self.course = CourseClass.ConcreteCourse(self.course_model)
         self.wrapper = SectionClass.ConcreteSection(section)
+        self.wrapper2 = SectionClass.ConcreteSection(section2)
+        self.wrapper3 = SectionClass.ConcreteSection(section3)
 
     def test_success(self):
         self.assertEqual(100, self.wrapper.getSectionNumber())
+
+    def test_zero(self):
+        self.assertEqual(0, self.wrapper2.getSectionNumber())
+
+    def test_neg(self):
+        self.assertEqual(-1, self.wrapper3.getSectionNumber())
 
 
 
@@ -103,7 +112,7 @@ class TestGetMeetTime(TestCase):
         self.wrapper = SectionClass.ConcreteSection(section)
 
     def test_success(self):
-        self.assertEqual('12:00', self.wrapper.getMeetTime())
+        self.assertEqual('1:00', self.wrapper.getMeetTime())
 
 
 class TestSetMeetTime(TestCase):

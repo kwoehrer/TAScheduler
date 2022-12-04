@@ -329,6 +329,7 @@ class EditAccount(View):
         return render(request, "AccountEdit.html",
                       {"page_state_title": "Select An Account To Edit", 'query_accounts': acc_list})
 
+
 class AccountEditActive(View):
 
     def get(self):
@@ -354,8 +355,7 @@ class AccountEditActive(View):
             user_to_edit_model = TA.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 
-
-
+        try:
             user_to_edit_wrapper.setUserType(request.POST.get('acc_type'))
             user_to_edit_wrapper.setLastName(request.POST.get('last_name'))
             user_to_edit_wrapper.setFirstName(request.POST.get('first_name'))
@@ -365,16 +365,16 @@ class AccountEditActive(View):
 
             user_to_edit_wrapper.setHomeAddress(request.POST.get('home_address'))
 
-            #Have to check password before passing in because django changes none to empty strings. Thanks django
+            # Have to check password before passing in because django changes none to empty strings. Thanks django
             if request.POST.get('password') != '':
                 user_to_edit_wrapper.setPassword(request.POST.get('password'))
 
             user_to_edit_wrapper.setUsername(request.POST.get('username'))
             user_to_edit_wrapper.setEmail(request.POST.get('email'))
-        """except Exception as e:
+        except Exception as e:
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "AccountEdit.html", {"bad_message": msg})
-            """
+
 
         return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit",
-                                                      "good_message": "Account Successfully Edited."})
+                                                    "good_message": "Account Successfully Edited."})

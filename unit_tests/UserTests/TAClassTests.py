@@ -1,40 +1,41 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from app.models import TA
-from classes.Users.users import AbstractUser, TAUser
+from classes.Users.users import TAUser
 
 
-class TestGetIDTaName(TestCase):
+class TestGetIDTa(TestCase):
     def setUp(self) -> None:
-        TA.objects.create(account_ID=1000, username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+        TA.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
         self.ta: TAUser = TAUser(user_model)
 
     def testIDExists(self):
-        with self.assertRaises(ObjectDoesNotExist, msg="User TA first name does not exist"):
-            self.assertEqual(None, self.ta.getFirstName())
+        TA.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getID(), msg="AN ID cannot exist when the field is not "
+                                                           "declared")
 
     def testID(self):
-        self.assertEqual(1000, self.ta.getID(), msg="TA User ID was not correctly set up when creating a TA")
+        self.assertEqual(TA.objects.get(account_ID=TA.account_ID), self.ta.getID(),
+                         msg="TA User ID was not correctly "
+                             "set up when creating a TA")
 
-    def testIDType(self):
-        with self.assertRaises(TypeError, msg="An exception was not raised when createUser was passed a courseID with "
-                                              "an "
-                                              "invalid type"):
-            TA.objects.create(account_ID=1001, username='John_Doe', password='password', first_name="John",
-                              last_name='Doe',
-                              phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
-                              email='johnDoe@aol.com')
+    def testIDInstance(self):
+        self.assertIsInstance(self.ta.getID(), int, msg="Correct Type was not stored in Database")
 
 
-class TestGetTaName(TestCase):
+class TestGetTaFirstName(TestCase):
 
     def setUp(self) -> None:
-        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
@@ -42,120 +43,119 @@ class TestGetTaName(TestCase):
         self.ta: TAUser = TAUser(user_model)
 
     def testFirstNameExists(self):
-        with self.assertRaises(ObjectDoesNotExist, msg="User TA first name does not exist"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password',
-                                  last_name='Doe',
-                                  phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
-                                  email='johnDoe@aol.com')
+        TA.objects.create(username='John_Doe', password="password", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getFirstName(), msg="A password cannot exist when the field is not "
+                                                                  "declared")
 
-    def testLastNameExists(self):
-        with self.assertRaises(ObjectDoesNotExist, msg="User TA last name does not exist"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password', first_name='John',
-                                  phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
-                                  email='johnDoe@aol.com')
-
-    def testBadFirstName(self):
+    def testFirstName(self):
         # ta_first_name = TA.objects.filter(first_name="John")
         self.assertEqual("John", self.ta.getFirstName(), msg="Incorrect First Name when setting up a TA")
         # self.assertEqual(ta_first_name, self.ta.getFirstName())
 
-    def testBadLastName(self):
-        ta_last_name = TA.objects.create()
-        self.assertEqual("Doe", self.ta.getLastName(), msg="Incorrect Last Name when setting up a TA")
-
-    def testBadFirstNameType(self):
+    def testFirstNameType(self):
         with self.assertRaises(TypeError,
-                               msg="An exception was not raised when createUser was passed a user type with an "
+                               msg="An exception was not raised when create was passed a first_name type with an "
                                    "invalid type"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password', first_name=123,
-                                  last_name='Doe',
-                                  phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+            TA.objects.createUser(username='John_Doe', password="password", first_name=123,
+                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                                   email='johnDoe@aol.com')
 
-    def testBadLastNameType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when createUser was passed a user type with an "
-                                   "invalid type"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password', first_name="John",
-                                  last_name=123,
-                                  phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
-                                  email='johnDoe@aol.com')
+    def testFirstNameTypeInstance(self):
+        self.assertIsInstance(self.ta.getLastName(), str, msg="Correct Type was not stored in Database")
 
 
-class TestSetTaName(TestCase):
+class TestSetTaFirstName(TestCase):
 
     def setUp(self) -> None:
-        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
 
-    def testNoArgsFirstName(self):
-        with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
-            self.ta.setFirstName()
+    def testSetFirstName(self):
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
 
-    def testNoArgsLastName(self):
-        with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
-            self.ta.setLastName()
+        new_first_name = self.new_ta.setFirstName("Steven")
+        self.assertEqual(new_first_name, self.ta.setFirstName(new_first_name),
+                         msg="New changes were not reflected in Database")
 
-    def testSetFirstNameCorrectType(self):
-        first_name = TA.objects.filter(first_name="John")
 
-        # with self.assertRaises(ValueError, msg="Bad First Name"):
-        #    self.assertEqual(1, self.ta.setFirstName(first_name), msg='First name was not correctly set up in '
-        #                                                              'database')
+class TestGetTaLastName(TestCase):
 
-        def checkIsDigit(string):
-            res = [int(i) for i in string.split() if i.isdigit()]
-            for i in res:
-                if len(res) > 0:
-                    return True
-                return False
+    def setUp(self) -> None:
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_obj = TA.objects.filter(username='John_Doe')[0]
+        user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        with self.assertRaises(TypeError, msg="Bad First Name"):
-            self.assertEqual(checkIsDigit(first_name), True, msg='There cannot be a digit in a name')
+        self.ta: TAUser = TAUser(user_model)
 
-    def testSetLastNameCorrectType(self):
-        last_name = TA.objects.filter(last_name="Doe")
+    def testLastName(self):
+        self.assertEqual("Doe", self.ta.getLastName(), msg="Incorrect Last Name when setting up a TA")
 
-        # with self.assertRaises(ValueError, msg="Bad Last Name"):
-        #    self.assertEqual(1, self.ta.setFirstName(last_name), msg='Last name was not correctly set up in '
-        #                                                             'database')
+    def testLastNameExists(self):
+        TA.objects.create(username='John_Doe', password="password", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getLastName(), msg="A last name cannot exist when the field is not "
+                                                                 "declared")
 
-        def checkIsDigit(string):
-            res = [int(i) for i in string.split() if i.isdigit()]
-            for i in res:
-                if len(res) > 0:
-                    return True
-                return False
+    def testLastNameType(self):
+        with self.assertRaises(TypeError,
+                               msg="An exception was not raised when create was passed a last_name with an "
+                                   "invalid type"):
+            TA.objects.createUser(username='John_Doe', password="password", first_name="John", last_name=123,
+                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                                  email='johnDoe@aol.com')
 
-        with self.assertRaises(TypeError, msg="Bad Last Name"):
-            self.assertEqual(checkIsDigit(last_name), True, msg='There cannot be a digit in a name')
+    def testLastNameTypeInstance(self):
+        self.assertIsInstance(self.ta.getLastName(), str, msg="Correct Type was not stored in Database")
 
-    def testSetBadFirstName(self):
-        first_name = TA.objects.filter(first_name="John")
-        first_new_name = self.ta.setFirstName("Steven")
-        with self.assertRaises(ValueError, msg="Bad First Name"):
-            self.assertEqual(1, self.ta.setFirstName(first_new_name), msg='First name was not correctly set up in '
-                                                                          'database')
-            self.assertEqual(first_name, self.ta.getFirstName(), msg='Incorrect First Name')
 
-    def testSetBadLastName(self):
-        last_name = TA.objects.filter(first_name="John")
-        first_new_name = self.ta.setFirstName("Steven")
-        with self.assertRaises(ValueError, msg="Bad Last Name"):
-            self.assertEqual(1, self.ta.setFirstName(first_new_name), msg='Last name was not correctly set up in '
-                                                                          'database')
-            self.assertEqual(last_name, self.ta.getFirstName(), msg='Incorrect Last Name')
+class TestSetTaLastName(TestCase):
+    def setUp(self) -> None:
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_obj = TA.objects.filter(username='John_Doe')[0]
+        user_model = TA.objects.create(account_ID=user_obj.account_ID)
+
+        self.ta: TAUser = TAUser(user_model)
+
+    def testSetLastName(self):
+        TA.objects.create(username='John_Doe', password="password", first_name="John",
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
+
+        new_last_name = self.new_ta.setLastName("Adams")
+        self.assertEqual(new_last_name, self.ta.setLastName(new_last_name),
+                         msg="New changes were not reflected in Database")
 
 
 class TestGetTaPhoneNumber(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
@@ -163,162 +163,211 @@ class TestGetTaPhoneNumber(TestCase):
         self.ta: TAUser = TAUser(user_model)
 
     def testPhoneNumberExists(self):
-        with self.assertRaises(ObjectDoesNotExist, msg="User TA last name does not exist"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password', first_name='John',
-                                  home_address='2513 N Farewell Ave', user_type='TA',
-                                  email='johnDoe@aol.com')
+        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                          home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getPhoneNumber(), msg="A phone number cannot exist when the field is not "
+                                                                    "declared")
 
-    def testPhoneNumberCorrectType(self):
+    def testPhoneNumber(self):
+        self.assertEqual("4149818000", self.ta.getPhoneNumber(),
+                         "Phone was not set correctly when creating a TA.")
+
+    def testPhoneNumberType(self):
         with self.assertRaises(TypeError,
                                msg="An exception was not raised when createUser was passed a phone number with an "
                                    "invalid type"):
             TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                              phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                               email='johnDoe@aol.com')
 
-    def testBadPhoneNumberLength(self):
+    def testPhoneNumberTypeInstance(self):
+        self.assertIsInstance(self.ta.getPhoneNumber(), str, msg="Invalid Phone Number Type stored in Database")
+
+    def testPhoneNumberLength(self):
         with self.assertRaises(ValueError, msg="incorrect length for User TA phone number"):
             self.assertEqual(10, len(self.ta.getPhoneNumber()))
-
-    def testBadPhoneNumber(self):
-        self.assertEqual("4149818000", self.ta.getPhoneNumber(),
-                         "User Phone was not set correctly when creating a User.")
 
 
 class TestSetTaPhoneNumber(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='ta')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
 
-    def testNoArgs(self):
-        with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
-            self.ta.setPhoneNumber()
+    def testSetPhoneNumber(self):
+        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
 
-    def testSetPhoneNumberCorrectType(self):
-        phone_number = TA.objects.filter(phone_number="4149818000")
-        with self.assertRaises(TypeError, msg="Bad Phone Type"):
-            self.assertIsInstance(self.ta.setPhoneNumber(phone_number), int, msg='Only integers allowed')
-
-    def testSetBadPhoneNumber(self):
-        phone_number = TA.objects.filter(phone_number="4149818000")
-        first_new_name = self.ta.setPhoneNumber("4149818222")
-        with self.assertRaises(ValueError, msg="Bad Phone Number"):
-            self.assertEqual(1, self.ta.setFirstName(first_new_name), msg='Phone number was not correctly set up in '
-                                                                          'database')
-            self.assertEqual(phone_number, self.ta.getPhoneNumber(), msg='Incorrect Phone number')
+        new_phone_number = self.new_ta.setPhoneNumber("4149818001")
+        self.assertEqual(new_phone_number, self.ta.getPhoneNumber(), msg="New changes were not reflected in Database")
 
 
 class TestGetTaAddress(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
-                          email='johnDoe@aol.com')
-        user_obj = TA.objects.filter(username='ta')[0]
-        user_model = TA.objects.create(account_ID=user_obj.account_ID)
-
-        self.ta: AbstractUser = TAUser(user_model)
-
-    def testHomeAddressExists(self):
-        with self.assertRaises(ObjectDoesNotExist, msg="User TA home address does not exist"):
-            self.ta.getHomeAddress()
-
-    def testHomeAddressType(self):
-        with self.assertRaises(TypeError, msg="incorrect User TA home address Type"):
-            self.assertIsInstance(self.ta.getHomeAddress(), str, msg="Incorrect type")
-
-    def testBadHomeAddress(self):
-        home_address = TA.objects.filter(home_address="2513 N Farewell Ave")
-        with self.assertRaises(ValueError, msg="incorrect user TA home address"):
-            self.assertEqual(home_address, self.ta.getHomeAddress())
-
-
-class TestGetTaHomeAddress(TestCase):
-    def setUp(self) -> None:
-        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
+        self.ta: TAUser = TAUser(user_model)
 
-        self.ta: AbstractUser = TAUser(user_model)
+    def testHomeAddressExists(self):
+        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                          phone_number='4149818000', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getHomeAddress(), msg="A password cannot exist when the field is not "
+                                                                    "declared")
 
-    def testNoArgs(self):
-        with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
-            self.ta.setPhoneNumber()
+    def testHomeAddress(self):
+        self.assertEqual("2513 N Farewell Ave", self.ta.getHomeAddress(),
+                         "Home Address was not set correctly when creating a TA.")
 
-    def testSetHomeAddressType(self):
-        home_address = TA.objects.filter(home_address='2513 N Farewell Ave')
-        with self.assertRaises(TypeError, msg="Bad Home Address Type"):
-            self.assertIsInstance(self.ta.setHomeAddress(home_address), int, msg='Only integers allowed')
+    def testHomeAddressType(self):
+        with self.assertRaises(TypeError,
+                               msg="An exception was not raised when createUser was passed an address with an "
+                                   "invalid type"):
+            TA.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                                  phone_number='4149818000', home_address=2513, user_type='TA',
+                                  email='johnDoe@aol.com')
 
-    def testSetBadHomeNumber(self):
-        home_address = TA.objects.filter(home_address='12513 N Farewell Ave')
-        new_home_address = self.ta.setHomeAddress('2513 N Farewell Ave')
-        with self.assertRaises(ValueError, msg="Bad Phone Number"):
-            self.assertEqual(1, self.ta.setHomeAddress(new_home_address), msg='Phone Number was not correctly set up '
-                                                                              'in '
-                                                                              'database')
-            self.assertEqual(home_address, self.ta.getHomeAddress(), msg='Incorrect User TA Phone Number')
+    def testHomeAddressTypeInstance(self):
+        with self.assertRaises(TypeError, msg="incorrect User TA home address Type"):
+            self.assertIsInstance(self.ta.getHomeAddress(), str, msg="Incorrect type")
+
+
+class TestSetTaHomeAddress(TestCase):
+    def setUp(self) -> None:
+        TA.objects.create(username='John_Doe', last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_obj = TA.objects.filter(username='John_Doe')[0]
+        user_model = TA.objects.create(account_ID=user_obj.account_ID)
+        self.ta: TAUser = TAUser(user_model)
+
+    def testSetHomeAddress(self):
+        TA.objects.create(username='John_Doe', last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
+
+        new_password = self.new_ta.setHomeAddress("2512 N Farewell Ave")
+        self.assertEqual(new_password, self.ta.getHomeAddress(), msg="New changes were not reflected in Database")
 
 
 class TestGetTaUserType(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
-        self.ta: AbstractUser = TAUser(user_model)
+        self.ta: TAUser = TAUser(user_model)
 
-    def test_InvalidUserType(self):
+    def testInvalidUserType(self):
         with self.assertRaises(TypeError,
-                               msg="An exception was not raised when createUser was passed a user type with an "
+                               msg="An exception was not raised when create was passed a user type with an "
                                    "invalid type"):
-            TA.objects.createUser(account_ID=1001, username='John_Doe', password='password', first_name="John",
-                                  last_name='Doe',
-                                  phone_number=4149818000, home_address='2513 N Farewell Ave', user_type=100,
+            TA.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type=123,
                                   email='johnDoe@aol.com')
 
     def testUserType(self):
-        self.assertEqual("TA", self.ta.getUserType(), msg="User type was not correctly set up when creating a user")
+        self.assertEqual("TA", self.ta.getUserType(), msg="User type was not correctly set up when creating a TA")
 
 
 class TestSetTaUserType(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
 
-    def testNoArgs(self):
-        with self.assertRaises(TypeError, msg="No Arguments provided for function requiring params"):
-            self.ta.setPhoneNumber()
+    def testSetUserType(self):
+        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type=None,
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
+        new_user_type = self.new_ta.setUserType("TA")
 
-    def testSetUserCorrectType(self):
-        user_type = TA.objects.filter(user_type='TA')
-        with self.assertRaises(TypeError, msg="Bad User Type"):
-            self.assertIsInstance(self.ta.setUserType(user_type), str, msg='This is a TA object')
+        self.assertEqual(new_user_type, self.ta.getUserType(), msg="New changes were not reflected in Database")
 
 
 class TestGetTaUserPassword(TestCase):
     def setUp(self) -> None:
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                          phone_number=4149818000, home_address='2513 N Farewell Ave', user_type='TA',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
                           email='johnDoe@aol.com')
         user_obj = TA.objects.filter(username='John_Doe')[0]
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
 
-    def testUserTaPassword(self):
-        self.assertEqual("password", self.ta.getP, "User Password was not set correctly when creating a "
-                                                             "User.")
+    def testTaPassword(self):
+        self.assertEqual("password", self.ta.getPassword(), msg="Password was not set correctly when creating a "
+                                                                "TA.")
+
+    def testPasswordExists(self):
+        TA.objects.create(username='John_Doe', first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_obj = TA.objects.filter(username='John_Doe')[0]
+        user_model_new = TA.objects.create(account_ID=user_obj.account_ID)
+        self.new_ta: TAUser = TAUser(user_model_new)
+        self.assertNotEqual(None, self.new_ta.getPassword(), msg="A password cannot exist when the field is not "
+                                                                 "declared")
+
+    def testTaPasswordType(self):
+        with self.assertRaises(TypeError, msg="An exception was not raised when create was passed a user type with an "
+                                              "invalid type"):
+            TA.objects.create(username='John_Doe', password=123, first_name="John", last_name='Doe',
+                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                              email='johnDoe@aol.com')
+
+    def testTaPasswordTypeInstance(self):
+        self.assertIsInstance(self.ta.getPassword(), str, msg="Incorrect Password Type in Database")
+
+
+class TestSetTaUserPassword(TestCase):
+    def setUp(self) -> None:
+        TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_obj = TA.objects.filter(username='John_Doe')[0]
+        user_model = TA.objects.create(account_ID=user_obj.account_ID)
+
+        self.ta: TAUser = TAUser(user_model)
+
+    def testSetPassword(self):
+        TA.objects.create(username='John_Doe', password=12345, first_name="John",
+                          last_name='Doe',
+                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
+                          email='johnDoe@aol.com')
+        user_object = TA.objects.filter(username='John_Doe')[0]
+        user_new_model = TA.objects.create(account_ID=user_object.account_ID)
+        self.new_ta: TAUser = TAUser(user_new_model)
+
+        new_password = self.new_ta.setPassword("password2")
+        self.assertEqual(new_password, self.ta.getPassword(), msg="New changes were not reflected in Database")

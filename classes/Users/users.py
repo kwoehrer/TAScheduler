@@ -102,6 +102,15 @@ class TAUser(AbstractUser):
         user_obj.user_type = new_user_type
         user_obj.save()
 
+    def getPassword(self) -> str:
+        return self.model.account_ID.password
+
+    def setPassword(self, new_user_password):
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_user_password
+        user_obj.save()
+
 
 class InstructorUser(AbstractUser):
     def __init__(self, model: Instructor):
@@ -155,6 +164,15 @@ class InstructorUser(AbstractUser):
         user_obj.user_type = new_user_type
         user_obj.save()
 
+    def getPassword(self) -> str:
+        return self.model.account_ID.password
+
+    def setPassword(self, new_user_password):
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_user_password
+        user_obj.save()
+
 
 class AdminUser(AbstractUser):
     def __init__(self, model: Admin):
@@ -206,4 +224,13 @@ class AdminUser(AbstractUser):
         acc_id = self.model.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
+        user_obj.save()
+
+    def getPassword(self) -> str:
+        return self.model.account_ID.password
+
+    def setPassword(self, new_user_password):
+        acc_id = self.model.account_ID
+        user_obj = User.objects.get(account_ID=acc_id)
+        user_obj.password = new_user_password
         user_obj.save()

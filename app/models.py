@@ -14,7 +14,7 @@ class User(models.Model):
         TA = 'TA'
 
     # Blank/Null is used to denote if its required or not.
-    account_ID = models.AutoField(max_lenght=4, primary_key=True, Unique=True, db_index=True, auto_created=True)
+    account_ID = models.AutoField(primary_key=True, Unique=True, db_index=True, auto_created=True)
     email = models.CharField(max_length=30, unique=True, blank=False, null=False, validators=validate_email)
     username = models.CharField(max_length=30, unique=True, blank=False, null=False, db_index=True)
     # Need to validate password - do at form level, unsure if we need to salt for security

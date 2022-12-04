@@ -30,5 +30,10 @@ urlpatterns = [
     path('AccountFactoryDelete/', AccountFactoryDelete.as_view()),
     path('EditAccount/', EditAccount.as_view()),
     path('AccountEditActive/', AccountEditActive.as_view()),
-    path('CourseManagement/', CourseManagement.as_view())
+    path('CourseManagement/', CourseManagement.as_view()),
+    path('CreateCourse/', ),
+    path('CourseFactoryCreate/',),
+    path('DeleteCourse/',),
+    path('CourseFactoryDelete/', ),
+    path('EditCourse/',),
     ]

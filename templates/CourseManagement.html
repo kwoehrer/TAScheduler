@@ -62,7 +62,9 @@
 <body>
 {% load static %}
 <div class = "fullwidthBar">
-    <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/course-management-title.svg' %}">
+    <a href="/home/">
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/course-management-title.svg' %}">
+    </a>
 </div>
 <div class = 'homeContainer'>
 {% csrf_token %}

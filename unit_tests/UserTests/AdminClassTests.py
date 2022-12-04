@@ -242,9 +242,9 @@ class GetUserType(TestCase):
         with self.assertRaises(ObjectDoesNotExist, msg="User Type does not exist"):
             self.admin.getUserType()
 
-    def testPhoneNumberType(self):
+    def testUserType(self):
         with self.assertRaises(TypeError, msg="incorrect user type"):
-            self.assertIsInstance(self.admin.getUserType(), Admin, msg="Incorrect type")
+            self.assertIsInstance(self.admin.getUserType(), str, msg="Incorrect type")
 
 
 class SetUserType(TestCase):
@@ -264,4 +264,4 @@ class SetUserType(TestCase):
     def testSetUserCorrectType(self):
         user_type = Admin.objects.filter(user_type='Admin')
         with self.assertRaises(TypeError, msg="Bad User Type"):
-            self.assertIsInstance(self.admin.setUserType(user_type), int, msg='This is a Admin object')
+            self.assertIsInstance(self.admin.setUserType(user_type), str, msg='This is a Admin object')

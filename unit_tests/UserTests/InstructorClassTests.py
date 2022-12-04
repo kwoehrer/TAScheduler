@@ -250,7 +250,7 @@ class GetUserType(TestCase):
 
     def testPhoneNumberType(self):
         with self.assertRaises(TypeError, msg="incorrect user type"):
-            self.assertIsInstance(self.instructor.getUserType(), Instructor, msg="Incorrect type")
+            self.assertIsInstance(self.instructor.getUserType(), str, msg="Incorrect type")
 
 
 class SetUserType(TestCase):
@@ -270,4 +270,4 @@ class SetUserType(TestCase):
     def testSetUserCorrectType(self):
         user_type = Instructor.objects.filter(user_type='instructor')
         with self.assertRaises(TypeError, msg="Bad User Type"):
-            self.assertIsInstance(self.instructor.setUserType(user_type), int, msg='This is a Instructor object')
+            self.assertIsInstance(self.instructor.setUserType(user_type), str, msg='This is a Instructor object')

@@ -173,9 +173,9 @@ class ConcreteCourse(AbstractCourse):
         else:
             raise TypeError("Old TA was not a TA_User.")
 
-    def get_sections(self) -> [Sections.AbstractSection]:
+    def get_sections(self) -> []:
         section_table = Section.objects.filter(course_ID=self.course.course_ID)
-        section_list = [Sections.AbstractSection]
+        section_list = []
 
         for section in section_table:
             section_list.append(Sections.ConcreteSection(section))

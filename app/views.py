@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User, Admin, Instructor, TA, Course
+from app.models import User, Admin, Instructor, TA, Course, Section
 from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
 from classes.Factories.CourseFactory import ConcreteCourseFactory, AbstractCourseFactory
+from classes.Sections.SectionClass import ConcreteSection
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
 
@@ -630,7 +631,7 @@ class CourseEditActive(View):
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
-                                                   "good_message": "Account Successfully Edited."})
+                                                   "good_message": "Course Successfully Edited."})
 
 
 class CourseAddSection(View):
@@ -659,4 +660,34 @@ class CourseAddSection(View):
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
-                                                   "good_message": "Account Successfully Edited."})
+                                                   "good_message": "Section successfully added."})
+
+class CourseDeleteSection(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {
+                              'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        section_num = request.POST.get('section_num')
+        print(section_num)
+        #create section to pass into wrapper
+        sec_to_del = Section.objects.get(course_ID=crs_to_edit_model, section_num=section_num)
+
+        try:
+            crs_to_edit_wrapper.remove_section(ConcreteSection(sec_to_del))
+        except Exception as e:
+            msg = "Could not delete section due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Section Successfully Deleted."})

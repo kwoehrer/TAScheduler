@@ -221,7 +221,7 @@
                                 </div>
                             </div>
                         </td>
-                        <!-- Section modal  -->
+                        <!-- Create Section Modal  -->
                         <td>
                             <button type="button" class="btn btn-primary margTop float-right w-100 my-auto"
                                     data-bs-toggle="modal"
@@ -247,7 +247,7 @@
                                                     <div class="form-group">
                                                         <label for="sectionTA">Assign TA To Section</label>
                                                         <select class="form-control form-select" id="sectionTA"
-                                                                name="sectionTA">
+                                                                name="sectionTA" required>
                                                             {% for ta in total_ta_list %}
                                                                 <option value="{{ ta.getID }}">
                                                                     {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
@@ -279,6 +279,49 @@
                                             <div class="modal-footer">
                                                 <input type="submit" class="btn btn-primary" value="Add New Section">
                                             </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Delete Section Modal  -->
+                        <td>
+                            <button type="button" class="btn btn-primary margTop float-right w-100 my-auto redButton"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#sectionDelete_{{ course.get_course_id }}">
+                                <b>Delete Section</b>
+                            </button>
+                            <div class="modal fade" id="sectionDelete_{{ course.get_course_id }}" tabindex="-1"
+                                 aria-labelledby="sectionDelete_{{ course.get_course_id }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modal-label">Delete section from
+                                                <b>{{ course.get_course_name }}</b></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" action="/CourseDeleteSection/">
+                                            <input type="hidden" name="course_id" value="{{ course.get_course_id }}">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="section_num">Select Section to Delete</label>
+                                                        <select class="form-control form-select" id="section_num"
+                                                                name="section_num" required>
+                                                            {% for section in course.get_sections %}
+                                                                <option value ="{{ section.getSectionNumber }}">
+                                                                {{ section.getSectionNumber }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="submit" class="btn btn-primary redButton"
+                                                               value="Delete Selected Section">
+                                                    </div>
                                         </form>
                                     </div>
                                 </div>

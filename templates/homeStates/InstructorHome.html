@@ -1,32 +1,39 @@
     {% csrf_token %}
-<div class = "container">
+    <div class = "container">
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">View My Personal Profile</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Personal Profile">
+            </form>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">View My Course Assignments</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Course Assignments">
+            </form>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">View TA Assignments</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Search for Users or Courses">
+            </form>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Send Notification to TAs</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Assign TAs to Labs</button>
-        </div>
-        <div class="col">
-            <button type="button" class="btn btn-warning homeButtons">Search For Users</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Send Notification">
+            </form>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary homeButtons">Log Out</button>
+            <form method="post" action="/logout/">
+                {% csrf_token %}
+                <input class="btn btn-danger homeButtons logOutButton" type="submit" value="Log Out">
+            </form>
         </div>
     </div>
 </div>

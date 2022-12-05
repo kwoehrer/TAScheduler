@@ -80,6 +80,10 @@ class TestSetTaFirstName(TestCase):
 
         self.ta: TAUser = TAUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setFirstName()
+
     def testSetFirstName(self):
         TA.objects.create(username='John_Doe', password="password", first_name="John",
                           phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
@@ -138,6 +142,10 @@ class TestSetTaLastName(TestCase):
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setLastName()
 
     def testSetLastName(self):
         TA.objects.create(username='John_Doe', password="password", first_name="John",
@@ -202,6 +210,10 @@ class TestSetTaPhoneNumber(TestCase):
 
         self.ta: TAUser = TAUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setPhoneNumber()
+
     def testSetPhoneNumber(self):
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                           phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
@@ -259,6 +271,10 @@ class TestSetTaHomeAddress(TestCase):
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
         self.ta: TAUser = TAUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setHomeAddress()
+
     def testSetHomeAddress(self):
         TA.objects.create(username='John_Doe', last_name='Doe',
                           phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='TA',
@@ -294,6 +310,10 @@ class TestSetTaUserType(TestCase):
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setUserType()
 
     def testSetUserType(self):
         TA.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -351,6 +371,10 @@ class TestSetTaUserPassword(TestCase):
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setUserType()
 
     def testSetPassword(self):
         TA.objects.create(username='John_Doe', password=12345, first_name="John",
@@ -410,6 +434,10 @@ class TestSetEmail(TestCase):
 
         self.ta: TAUser = TAUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setEmail()
+
     def testSetEmail(self):
         TA.objects.create(username='John_Doe', password=12345, first_name="John",
                           last_name='Doe',
@@ -467,6 +495,10 @@ class TestSetUsername(TestCase):
         user_model = TA.objects.create(account_ID=user_obj.account_ID)
 
         self.ta: TAUser = TAUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.ta.setUsername()
 
     def testSetUsername(self):
         TA.objects.create(username='John_Doe', password=12345, first_name="John",

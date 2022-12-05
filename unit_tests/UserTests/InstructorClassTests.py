@@ -81,6 +81,10 @@ class TestSetInstructorFirstName(TestCase):
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setFirstName()
+
     def testSetFirstName(self):
         Instructor.objects.create(username='John_Doe', password="password", first_name="John",
                                   phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -141,6 +145,10 @@ class TestSetInstructorLastName(TestCase):
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setLastName()
 
     def testSetLastName(self):
         Instructor.objects.create(username='John_Doe', password="password", first_name="John",
@@ -207,6 +215,10 @@ class TestSetInstructorPhoneNumber(TestCase):
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setPhoneNumber()
+
     def testSetPhoneNumber(self):
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                   phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -266,6 +278,10 @@ class TestSetInstructorHomeAddress(TestCase):
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
         self.instructor: InstructorUser = InstructorUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setHomeAddress()
+
     def testSetHomeAddress(self):
         Instructor.objects.create(username='John_Doe', last_name='Doe',
                                   phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
@@ -303,6 +319,10 @@ class TestSetInstructorUserType(TestCase):
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setUserType()
 
     def testSetUserType(self):
         Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -364,6 +384,10 @@ class TestSetInstructorUserPassword(TestCase):
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setPassword()
+
     def testSetPassword(self):
         Instructor.objects.create(username='John_Doe', password=12345, first_name="John",
                                   last_name='Doe',
@@ -421,6 +445,10 @@ class TestSetEmail(TestCase):
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setEmail()
 
     def testSetEmail(self):
         Instructor.objects.create(username='John_Doe', password=12345, first_name="John",
@@ -480,6 +508,10 @@ class TestSetUsername(TestCase):
         user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
+
+    def testNoArgs(self):
+        with self.assertRaises(TypeError, msg="atleast one argument needs to be provided"):
+            self.instructor.setUsername()
 
     def testSetUsername(self):
         Instructor.objects.create(username='John_Doe', password=12345, first_name="John",

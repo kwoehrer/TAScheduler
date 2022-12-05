@@ -118,8 +118,12 @@
                     <th scope="col">Course Description</th>
                     <th scope="col">Credits</th>
                     <th scope="col">Sections</th>
+                    <th scope="col">Instructor</th>
                     <th scope="col">Edit Course</th>
                     <th scope="col">Add Section</th>
+                    <th scope="col">Delete Section</th>
+                    <th scope="col">Add Instructor</th>
+                    <th scope="col">Remove Instructor</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -135,6 +139,14 @@
                         <td>
                             {% for section in course.get_sections %}
                                 {{ section.getSectionNumber }}
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for instructor in course.get_instructors %}
+                                {% with instructor.getFirstName|add:" "|add:instructor.getLastName as fullname %}
+                                    {{ fullname }}
+                                {% endwith %}
                                 <br>
                             {% endfor %}
                         </td>

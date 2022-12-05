@@ -129,12 +129,12 @@ class ConcreteCourse(AbstractCourse):
         self.course.year = year
         self.course.save()
 
-    def get_instructors(self) -> [AbstractUser]:
+    def get_instructors(self) -> []:
         instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
         instr_pk_list = instructors.values_list('account_ID', flat=True)
         instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)
 
-        result_list = [AbstractUser]
+        result_list = []
         for instr in instr_table:
             result_list.append(InstructorUser(instr))
 

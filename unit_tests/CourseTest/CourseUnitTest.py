@@ -85,12 +85,31 @@ class TestGetCourseCredits(TestCase):
 
     def setUp(self) -> None:
         course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
-                                             description="first", credits="3")
+                                             description="first", credits=3)
         self.course = ConcreteCourse(course_model)
 
     def test_get_correct_Credits(self):
         self.assertEqual(self.course.get_credits(), 3, msg="Course description is not correct")
 
+
+class TestSetCourseCredits(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first", credits=3)
+        self.course = ConcreteCourse(course_model)
+
+    def test_set_correct_Credits(self):
+        self.course.set_credits(5)
+        self.assertEqual(self.course.get_credits(), 5, msg="Course description is not correct")
+
+    def test_set_min_Credits(self):
+        with self.assertRaises(ValueError, msg="Credits is too small"):
+            self.course.set_credits(0)
+
+    def test_set_max_Credits(self):
+        with self.assertRaises(ValueError, msg="Credits is too small"):
+            self.course.set_credits(10)
 
 
 class TestGetSemester(TestCase):
@@ -235,7 +254,7 @@ class TestGetTa(TestCase):
                                        user_type="TA")
         self.ta: AbstractUser = TAUser(ta_model)
 
-        section_model = Section.objects.create(section_num=101, MettingTimes="9:00", )
+        section_model = Section.objects.create(self.course, section_num=101, MettingTimes="9:00", )
         self.section: AbstractSection = ConcreteSection(section_model)
 
     def test_get_correct_ta(self):

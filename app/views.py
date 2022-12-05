@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User, Admin, Instructor, TA
+from app.models import User, Admin, Instructor, TA, Course, Section
+from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Factories.AccountFactory import AbstractAccountFactory, ConcreteAccountFactory
+from classes.Factories.CourseFactory import ConcreteCourseFactory, AbstractCourseFactory
+from classes.Sections.SectionClass import ConcreteSection
 from classes.Users.users import TAUser, AbstractUser, AdminUser, InstructorUser
 
 
@@ -375,6 +378,378 @@ class AccountEditActive(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "AccountEdit.html", {"bad_message": msg})
 
-
         return render(request, "AccountEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                     "good_message": "Account Successfully Edited."})
+
+
+class CourseManagement(View):
+    def get(self, request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "Admin":
+            t = './CourseManagementStates/AdminCourseMng.html'
+
+        if t == None:
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseManagement.html", {'State': t})
+
+
+class CreateCourse(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseCreate.html", {})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html", {'message': "An unknown error has occurred."})
+        else:
+            return render(request, "CourseCreate.html", {})
+
+
+class CourseFactoryCreate(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        course_fact: AbstractCourseFactory = ConcreteCourseFactory()
+        # Can make this assumption due to narrowing conversion above.
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
+        new_course_attributes = dict()
+
+        # Initialize values based on form input.
+        new_course_attributes['name'] = str(request.POST.get('name'))
+        new_course_attributes['semester'] = str(request.POST.get('semester'))
+        new_course_attributes['year'] = int(request.POST.get('year'))
+        new_course_attributes['description'] = str(request.POST.get('description'))
+        new_course_attributes['credits'] = int(request.POST.get('credit'))
+
+        try:
+            course_fact.create_course(curr_user, new_course_attributes)
+        except Exception as e:
+            return render(request, "CourseCreate.html", {"bad_message": e.__str__})
+
+        return render(request, "CourseCreate.html", {"good_message": "Course Successfully Created."})
+
+
+class DeleteCourse(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "CourseDelete.html", {"page_state_title": "Query For A Course To Delete"})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        # FILTER COURSE HERE
+        name_query = request.POST.get('name')
+        semester_query = request.POST.get('semester')
+        year_query = request.POST.get('year')
+        credit_query = request.POST.get('credit')
+        desc_query = request.POST.get('description')
+
+        total_query = None
+        if name_query is not None and name_query != '':
+            total_query = Course.objects.filter(name=name_query)
+
+        if semester_query is not None and semester_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(semester=semester_query)
+            else:
+                total_query = total_query.filter(semester=semester_query)
+        if year_query is not None and year_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(year=year_query)
+            else:
+                total_query = total_query.filter(year=year_query)
+        if credit_query is not None and credit_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(credit=credit_query)
+            else:
+                total_query = total_query.filter(credit=credit_query)
+        if desc_query is not None and desc_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(description=credit_query)
+            else:
+                total_query = total_query.filter(description=credit_query)
+
+        # GET A LIST OF ALL USERS
+        course_model_list = list(total_query)
+        course_list = []
+
+        for crs_model in course_model_list:
+            course_list.append(ConcreteCourse(crs_model))
+
+        if len(course_list) == 0:
+            return render(request, "CourseDelete.html", {"bad_message": "No results found. Try again.",
+                                                         "page_state_title": "Query For A Course To Delete"})
+
+        return render(request, "CourseDelete.html",
+                      {"page_state_title": "Select A Course To Delete", 'query_courses': course_list})
+
+
+class CourseFactoryDelete(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_fact: AbstractCourseFactory = ConcreteCourseFactory()
+        # Can make this assumption due to narrowing conversion above.
+        admin_model = Admin.objects.get(account_ID=request.session['current_user_account_id'])
+        curr_user: AbstractUser = AdminUser(admin_model)
+        crs_to_delete_id = request.POST.get('course_id')
+        crs_model = Course.objects.get(course_ID=crs_to_delete_id)
+        crs_wrapper: AbstractCourse = ConcreteCourse(crs_model)
+
+        try:
+            crs_fact.delete_course(curr_user, crs_wrapper)
+        except Exception as e:
+            msg = "Could not delete account due to " + str(e.__str__())
+            return render(request, "CourseDelete.html", {"bad_message": msg})
+
+        return render(request, "CourseDelete.html", {"page_state_title": "Query For A Course To Delete",
+                                                     "good_message": "Course Successfully Deleted."})
+
+
+class EditCourse(View):
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit"})
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        name_query = request.POST.get('name')
+        semester_query = request.POST.get('semester')
+        year_query = request.POST.get('year')
+        credit_query = request.POST.get('credit')
+        desc_query = request.POST.get('description')
+
+        total_query = None
+        if name_query is not None and name_query != '':
+            total_query = Course.objects.filter(name=name_query)
+
+        if semester_query is not None and semester_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(semester=semester_query)
+            else:
+                total_query = total_query.filter(semester=semester_query)
+        if year_query is not None and year_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(year=year_query)
+            else:
+                total_query = total_query.filter(year=year_query)
+        if credit_query is not None and credit_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(credit=credit_query)
+            else:
+                total_query = total_query.filter(credit=credit_query)
+        if desc_query is not None and desc_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(description=credit_query)
+            else:
+                total_query = total_query.filter(description=credit_query)
+
+        # GET A LIST OF ALL USERS
+        course_model_list = list(total_query)
+        course_list = []
+
+        for crs_model in course_model_list:
+            course_list.append(ConcreteCourse(crs_model))
+
+        instructor_model_list = Instructor.objects.all()
+        instructor_list = []
+
+        for instr in instructor_model_list:
+            instructor_list.append(InstructorUser(instr))
+
+        ta_model_list = TA.objects.all()
+        ta_list = []
+
+        for ta in ta_model_list:
+            ta_list.append(TAUser(ta))
+
+        if len(course_list) == 0:
+            return render(request, "CourseEdit.html", {"bad_message": "No results found. Try again.",
+                                                       "page_state_title": "Query For A Course To Edit"})
+
+        return render(request, "CourseEdit.html",
+                      {"page_state_title": "Select A Course To Edit", 'total_ta_list': ta_list,
+                       'total_instr_list': instructor_list,
+                       'query_courses': course_list})
+
+
+class CourseEditActive(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        try:
+            crs_to_edit_wrapper.set_course_name(request.POST.get('name'))
+            crs_to_edit_wrapper.set_semester(request.POST.get('semester'))
+            crs_to_edit_wrapper.set_year(request.POST.get('year'))
+            crs_to_edit_wrapper.set_credits(request.POST.get('credits'))
+            crs_to_edit_wrapper.set_description(request.POST.get('description'))
+        except Exception as e:
+            msg = "Could not edit account due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Course Successfully Edited."})
+
+
+class CourseAddSection(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        ta_account_id = request.POST.get('sectionTA')
+        section_num = request.POST.get('section_num')
+        MeetingTimes = request.POST.get('meeting_times')
+
+        try:
+            crs_to_edit_wrapper.add_section(ta_account_id, section_num, MeetingTimes)
+        except Exception as e:
+            msg = "Could not add section due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Section successfully added."})
+
+
+class CourseDeleteSection(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {
+                              'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        section_num = request.POST.get('section_num')
+
+        # create section to pass into wrapper
+        sec_to_del = Section.objects.get(course_ID=crs_to_edit_model, section_num=section_num)
+
+        try:
+            crs_to_edit_wrapper.remove_section(ConcreteSection(sec_to_del))
+        except Exception as e:
+            msg = "Could not delete section due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Section Successfully Deleted."})
+
+
+class CourseAddInstructor(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {
+                              'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        selected_instr_id = request.POST.get('selected_instr')
+
+        # create section to pass into wrapper
+        instr_to_add = Instructor.objects.get(account_ID__account_ID=selected_instr_id)
+
+        try:
+            crs_to_edit_wrapper.add_instructor(InstructorUser(instr_to_add))
+        except Exception as e:
+            msg = "Could not assign instructor due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Instructor Successfully Assigned To Course."})
+
+
+class CourseRemoveInstructor(View):
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {
+                              'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        selected_instr_id = request.POST.get('selected_instr')
+
+        # create section to pass into wrapper
+        instr_to_remove = Instructor.objects.get(account_ID__account_ID=selected_instr_id)
+
+        try:
+            crs_to_edit_wrapper.remove_instructor(InstructorUser(instr_to_remove))
+        except Exception as e:
+            msg = "Could not unassign instructor due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Instructor Successfully Unassigned From Course."})

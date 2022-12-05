@@ -16,7 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
-    AccountFactoryDelete, EditAccount, AccountEditActive
+    AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate, \
+    DeleteCourse, CourseFactoryDelete, EditCourse, CourseEditActive, CourseAddSection, CourseDeleteSection, \
+    CourseAddInstructor, CourseRemoveInstructor
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,5 +31,16 @@ urlpatterns = [
     path('DeleteAccount/', DeleteAccount.as_view()),
     path('AccountFactoryDelete/', AccountFactoryDelete.as_view()),
     path('EditAccount/', EditAccount.as_view()),
-    path('AccountEditActive/', AccountEditActive.as_view())
-    ]
+    path('AccountEditActive/', AccountEditActive.as_view()),
+    path('CourseManagement/', CourseManagement.as_view()),
+    path('CreateCourse/', CreateCourse.as_view()),
+    path('CourseFactoryCreate/', CourseFactoryCreate.as_view()),
+    path('DeleteCourse/', DeleteCourse.as_view()),
+    path('CourseFactoryDelete/', CourseFactoryDelete.as_view()),
+    path('EditCourse/', EditCourse.as_view()),
+    path('CourseEditActive/', CourseEditActive.as_view()),
+    path('CourseAddSection/', CourseAddSection.as_view()),
+    path('CourseDeleteSection/', CourseDeleteSection.as_view()),
+    path('CourseAddInstructor/', CourseAddInstructor.as_view()),
+    path('CourseRemoveInstructor/', CourseRemoveInstructor.as_view()),
+]

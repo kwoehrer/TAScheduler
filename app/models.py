@@ -54,10 +54,11 @@ class Course(models.Model):
                                validators=[MinValueValidator(datetime.date.today().year - 10,message="Course.year cannot be more than 10 years into " +" the past."),
                                MaxValueValidator(datetime.date.today().year + 10, message="Course.year cannot be more than 10 years into " +" the future.")])
     # Above validator validates that they don't add anything more than 10 years in the future
-    description = models.CharField(max_length=30, blank=False, null=False)
+    description = models.CharField(max_length=70, blank=False, null=False)
     credits = models.IntegerField(blank=False, null=False, default=3,
                                   validators=[MaxValueValidator(9,message="Course.credit field must be less than 10."),
                                     MinValueValidator(1,message="Course.credit field must be greater than 1.")])
+    UniqueConstraint(fields=[name, semester, year], name="CourseCompPK")
 
 
 class Section(models.Model):

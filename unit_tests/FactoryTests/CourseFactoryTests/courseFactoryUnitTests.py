@@ -8,7 +8,7 @@ from classes.Factories.CourseFactory import AbstractCourseFactory, ConcreteCours
 from classes.Users.users import AdminUser, InstructorUser, TAUser, AbstractUser
 
 
-class TestCreateCourse(TestCase):
+class Testcreate_course(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
@@ -56,30 +56,30 @@ class TestCreateCourse(TestCase):
 
     def test_no_arg(self):
         with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
-            self.course_fact.createCourse()
+            self.course_fact.create_course()
 
     def test_one_arg(self):
         with self.assertRaises(TypeError, msg="One Argument failed to throw type error"):
-            self.course_fact.createCourse(self.admin)
+            self.course_fact.create_course(self.admin)
 
     def test_three_arg(self):
         with self.assertRaises(TypeError, msg="Three Arguments failed to throw type error"):
-            self.course_fact.createCourse(self.admin, self.admin, self.admin)
+            self.course_fact.create_course(self.admin, self.admin, self.admin)
 
-    def test_TA_createCourse(self):
+    def test_TA_create_course(self):
         with self.assertRaises(TypeError, msg='TA User should not be able to create a course'):
-            self.course_fact.createCourse(self.ta, self.course)
+            self.course_fact.create_course(self.ta, self.course)
 
-    def test_instr_createCourse(self):
+    def test_instr_create_course(self):
         with self.assertRaises(TypeError, msg='Instructor User should not be able to create a course'):
-            self.course_fact.createCourse(self.instr, self.course)
+            self.course_fact.create_course(self.instr, self.course)
 
-    def test_admin_verify_createCourse(self):
-        self.course_fact.createCourse(self.admin, self.good_course_attributes)
+    def test_admin_verify_create_course(self):
+        self.course_fact.create_course(self.admin, self.good_course_attributes)
 
 
 
-class TestDeleteCourse(TestCase):
+class Testdelete_course(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
                             phone_number=1234567890, home_address='123 Hell Lane', user_type='Admin',
@@ -118,23 +118,23 @@ class TestDeleteCourse(TestCase):
         course_model = Course.objects.filter(course_ID='123')[0]
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-    def test_admin_deleteCourse(self):
-        self.course_fact.deleteCourse(self.admin, self.course)
+    def test_admin_delete_course(self):
+        self.course_fact.delete_course(self.admin, self.course)
         with self.assertRaises(IndexError, msg='TA User should not be able to delete a course'):
             len(Course.objects.filter(course_ID='123')[0].course_ID)
 
-    def test_TA_deleteCourse(self):
+    def test_TA_delete_course(self):
         with self.assertRaises(TypeError, msg='TA User should not be able to delete a course'):
-            self.course_fact.deleteCourse(self.ta, self.course)
+            self.course_fact.delete_course(self.ta, self.course)
 
-    def test_instr_deleteCourse(self):
+    def test_instr_delete_course(self):
         with self.assertRaises(TypeError, msg='Instructor User should not be able to delete a course'):
-            self.course_fact.deleteCourse(self.instr, self.course)
+            self.course_fact.delete_course(self.instr, self.course)
 
     def test_delete_deleted_course(self):
         Course.objects.filter(course_ID='123').delete()
         with self.assertRaises(ValueError, msg='Cannot delete a course that was already deleted'):
-            self.course_fact.deleteCourse(self.admin, self.course)
+            self.course_fact.delete_course(self.admin, self.course)
 
 class InvalidInputTests(TestCase):
 
@@ -187,58 +187,58 @@ class InvalidInputTests(TestCase):
         self.good_course_attributes['name'] = '1234567891234567891234567891234' # 31 characters
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with a 31 character length name'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_short_name(self):
         self.good_course_attributes['name'] = ''  # 31 characters
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with a 0 character length name'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_semester(self):
         self.good_course_attributes['semester'] = 'gold'
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with an invalid semester'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_no_semester(self):
         self.good_course_attributes['semester'] = ''
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with no semester'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_past_year(self):
         self.good_course_attributes['year'] = 1000
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with an invalid past year, which is 10+ years ago'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_future_year(self):
         self.good_course_attributes['year'] = 3000
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with an invalid future year, which is 10+ years ahead'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_high_credit(self):
         self.good_course_attributes['credits'] = 10
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with more than 9 credits'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_low_credit(self):
         self.good_course_attributes['credits'] = 0
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with less than 1 credit'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_description(self):
         self.good_course_attributes['description'] = ''
         with self.assertRaises(ValueError,
                                msg='Cannot create a course without a description'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)
 
     def test_invalid_description(self):
         self.good_course_attributes['description'] = '1234567891234567891234567891234'
         with self.assertRaises(ValueError,
                                msg='Cannot create a course with a description over 30 characters long'):
-            self.course_fact.createCourse(self.admin, self.good_course_attributes)
+            self.course_fact.create_course(self.admin, self.good_course_attributes)

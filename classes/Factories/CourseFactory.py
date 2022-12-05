@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from enum import Enum
+import datetime
 
 from app.models import User, Admin, TA, Instructor, Course
 from classes.Courses.CoursesClass import AbstractCourse

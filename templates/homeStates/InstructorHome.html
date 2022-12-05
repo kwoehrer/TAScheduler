@@ -1,10 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+    {% csrf_token %}
+<div class = "container">
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">View My Personal Profile</button>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">View My Course Assignments</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">View TA Assignments</button>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">Send Notification to TAs</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">Assign TAs to Labs</button>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-warning homeButtons">Search For Users</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary homeButtons">Log Out</button>
+        </div>
+    </div>
+</div>

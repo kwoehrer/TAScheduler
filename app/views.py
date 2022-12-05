@@ -582,12 +582,26 @@ class EditCourse(View):
         for crs_model in course_model_list:
             course_list.append(ConcreteCourse(crs_model))
 
+        instructor_model_list = Instructor.objects.all()
+        instructor_list = []
+
+        for instr in instructor_model_list:
+            instructor_list.append(InstructorUser(instr))
+
+        ta_model_list = TA.objects.all()
+        ta_list = []
+
+        for ta in ta_model_list:
+            ta_list.append(TAUser(ta))
+
         if len(course_list) == 0:
             return render(request, "CourseEdit.html", {"bad_message": "No results found. Try again.",
                                                        "page_state_title": "Query For A Course To Edit"})
 
         return render(request, "CourseEdit.html",
-                      {"page_state_title": "Select A Course To Delete", 'query_courses': course_list})
+                      {"page_state_title": "Select A Course To Edit", 'total_ta_list': ta_list,
+                       'total_instr_list': instructor_list,
+                       'query_courses': course_list})
 
 
 class CourseEditActive(View):
@@ -613,6 +627,35 @@ class CourseEditActive(View):
             crs_to_edit_wrapper.set_description(request.POST.get('description'))
         except Exception as e:
             msg = "Could not edit account due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Account Successfully Edited."})
+
+
+class CourseAddSection(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        ta_account_id = request.POST.get('sectionTA')
+        section_num = request.POST.get('section_num')
+        MeetingTimes = request.POST.get('meeting_times')
+
+        try:
+            crs_to_edit_wrapper.add_section(ta_account_id, section_num, MeetingTimes)
+        except Exception as e:
+            msg = "Could not add section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",

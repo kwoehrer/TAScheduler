@@ -117,8 +117,9 @@
                     <th scope="col">Year</th>
                     <th scope="col">Course Description</th>
                     <th scope="col">Credits</th>
-                    <th scope="col">Edit Course</th>
                     <th scope="col">Sections</th>
+                    <th scope="col">Edit Course</th>
+                    <th scope="col">Add Section</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -133,7 +134,8 @@
                         <td>{{ course.get_credits }}</td>
                         <td>
                             {% for section in course.get_sections %}
-                                {{ section }}
+                                {{ section.getSectionNumber }}
+                                <br>
                             {% endfor %}
                         </td>
                         <td>
@@ -201,6 +203,69 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <input type="submit" class="btn btn-primary" value="Submit Changes">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Section modal  -->
+                        <td>
+                            <button type="button" class="btn btn-primary margTop float-right w-100 my-auto"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#sectionAdd_{{ course.get_course_id }}">
+                                <b>Add Section</b>
+                            </button>
+                            <div class="modal fade" id="sectionAdd_{{ course.get_course_id }}" tabindex="-1"
+                                 aria-labelledby="sectionAdd_{{ course.get_course_id }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modal-label">Add Section to
+                                                <b>{{ course.get_course_name }}</b></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" action="/CourseAddSection/">
+                                            <input type="hidden" name="course_id" value="{{ course.get_course_id }}">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="sectionTA">Assign TA To Section</label>
+                                                        <select class="form-control form-select" id="sectionTA"
+                                                                name="sectionTA">
+                                                            {% for ta in total_ta_list %}
+                                                                <option value="{{ ta.getID }}">
+                                                                    {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
+                                                                        {{ fullname }}
+                                                                    {% endwith %}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="section_num">Section Number</label>
+                                                        <input type="number" min="1" max="999" class="form-control"
+                                                               id="section_num"
+                                                               name="section_num"
+                                                               placeholder="Enter Unique Section Number"
+                                                               value="{{ 1 }}"
+                                                               required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="meeting_times">Description</label>
+                                                        <input type="text" class="form-control" id="meeting_times"
+                                                               name="meeting_times"
+                                                               placeholder="Enter Course Meeting Times"
+                                                               required
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <input type="submit" class="btn btn-primary" value="Add New Section">
                                             </div>
                                         </form>
                                     </div>

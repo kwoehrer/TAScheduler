@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
     AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate, \
-    DeleteCourse, CourseFactoryDelete, EditCourse, CourseEditActive
+    DeleteCourse, CourseFactoryDelete, EditCourse, CourseEditActive, CourseAddSection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,4 +38,5 @@ urlpatterns = [
     path('CourseFactoryDelete/', CourseFactoryDelete.as_view()),
     path('EditCourse/', EditCourse.as_view()),
     path('CourseEditActive/', CourseEditActive.as_view()),
+    path('CourseAddSection/', CourseAddSection.as_view()),
 ]

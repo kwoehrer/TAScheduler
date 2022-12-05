@@ -1,8 +1,8 @@
-from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
-import classes.Sections.SectionClass as Sections
-from abc import ABC
 import abc
+from abc import ABC
 
+import classes.Sections.SectionClass as Sections
+from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
 
 
@@ -82,8 +82,10 @@ class AbstractCourse(ABC):
     @abc.abstractmethod
     def remove_section(self, section):
         pass
+
+
 class ConcreteCourse(AbstractCourse):
-    def __init__(self, course :Course):
+    def __init__(self, course: Course):
         self.course = course
 
     def get_course_id(self) -> int:
@@ -138,8 +140,7 @@ class ConcreteCourse(AbstractCourse):
 
         return result_list
 
-
-    def add_instructor(self, newInstructor:AbstractUser):
+    def add_instructor(self, newInstructor: AbstractUser):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
             row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
@@ -174,7 +175,7 @@ class ConcreteCourse(AbstractCourse):
             raise TypeError("Old TA was not a TA_User.")
 
     def get_sections(self) -> []:
-        section_table = Section.objects.filter(course_ID=self.course.course_ID)
+        section_table = list(Section.objects.filter(course_ID=self.course))
         section_list = []
 
         for section in section_table:
@@ -182,17 +183,21 @@ class ConcreteCourse(AbstractCourse):
 
         return section_list
 
-    #Factory method, creates a section related to this course.
-    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes:str):
+    # Factory method, creates a section related to this course.
+    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes: str):
         if len(TA.objects.filter(account_ID=sectionTA_ID)) != 1:
             raise ValueError("TA Id was not a valid TA ID.")
-        if sectionNumber in self.get_sections():
-            raise ValueError("Cannot have duplicate course sections")
 
-        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes, ta_account_id=sectionTA_ID)
+        for sec in self.get_sections():
+            if int(sectionNumber) == int(sec.getSectionNumber()):
+                raise ValueError("duplicate course section numbers.")
+
+
+        ta_obj = TA.objects.get(account_ID=sectionTA_ID)
+
+        newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
+                             ta_account_id=ta_obj)
         newSection.save()
-
-
 
     def remove_section(self, section: Sections.AbstractSection) -> bool:
         if isinstance(section, Sections.ConcreteSection):

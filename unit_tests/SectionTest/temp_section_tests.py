@@ -88,24 +88,44 @@ class TestGetTA(TestCase):
     def setUp(self) -> None:
         self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                                   description='something', credits=4)
-
         User.objects.create(username='lhod', password='password', first_name="luke", last_name='hodory',
                             user_type='TA', email='lhod@gmail.com')
         ta_user_model = User.objects.filter(username='lhod')[0]
         self.ta_model = TA.objects.create(account_ID=ta_user_model)
-
         section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00',
                                          ta_account_id=self.ta_model)
-
         self.course = CourseClass.ConcreteCourse(self.course_model)
         self.ta: AbstractUser = TAUser(self.ta_model)
         self.wrapper = SectionClass.ConcreteSection(section)
 
     def test_success(self):
-        self.assertEqual(self.ta_model.account_ID, self.wrapper.getTA().getID())
+        self.assertEqual(self.ta_model.account_ID.account_ID, self.wrapper.getTA().getID())
 
 
 class TestSetTA(TestCase):
+    def setUp(self) -> None:
+        self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
+                                                  description='something', credits=4)
+        User.objects.create(username='lhod', password='password', first_name="luke", last_name='hodory',
+                            user_type='TA', email='lhod@gmail.com')
+        ta_user_model = User.objects.filter(username='lhod')[0]
+        self.ta_model = TA.objects.create(account_ID=ta_user_model)
+
+        User.objects.create(username='jhod', password='password', first_name="jake", last_name='hodory',
+                            user_type='TA', email='jhod@gmail.com')
+        ta_user_model2 = User.objects.filter(username='jhod')[0]
+        self.ta_model2 = TA.objects.create(account_ID=ta_user_model2)
+
+        section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00',
+                                         ta_account_id=self.ta_model)
+        self.course = CourseClass.ConcreteCourse(self.course_model)
+        self.ta: AbstractUser = TAUser(self.ta_model)
+        self.ta2: AbstractUser = TAUser(self.ta_model2)
+        self.wrapper = SectionClass.ConcreteSection(section)
+
+    def test_success(self):
+        self.wrapper.setTA(self.ta_model2)
+        self.assertEqual(self.ta_model2.account_ID.account_ID, self.wrapper.getTA().getID())
 
     def test_not_ta(self):
         pass

@@ -1,19 +1,30 @@
-    {% csrf_token %}
 <div class = "container">
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary">View My Personal Profile</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Personal Profile">
+            </form>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary">View My Course Assignment</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Course Assignments">
+            </form>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary">Search For Users or Courses</button>
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Search For Users or Courses">
+            </form>
         </div>
         <div class="col">
-            <button type="button" class="btn btn-warning">Log Out</button>
+            <form method="post" action="/logout/">
+                {% csrf_token %}
+                <input class="btn btn-danger homeButtons logOutButton" type="submit" value="Log Out">
+            </form>
         </div>
     </div>
 </div>

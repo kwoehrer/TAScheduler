@@ -143,7 +143,8 @@ class ConcreteCourse(AbstractCourse):
     def add_instructor(self, newInstructor: AbstractUser):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
-            row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
+            new_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
+            row = InstructorAssignments(account_ID=new_instructor_model, course_ID=self.course)
             row.save()
         else:
             raise TypeError("newInstructor was not an instructor object.")

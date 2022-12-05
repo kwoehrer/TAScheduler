@@ -679,7 +679,7 @@ class CourseDeleteSection(View):
         crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
 
         section_num = request.POST.get('section_num')
-        print(section_num)
+
         #create section to pass into wrapper
         sec_to_del = Section.objects.get(course_ID=crs_to_edit_model, section_num=section_num)
 
@@ -691,3 +691,33 @@ class CourseDeleteSection(View):
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                    "good_message": "Section Successfully Deleted."})
+
+class CourseAddInstructor(View):
+
+    def get(self):
+        pass
+
+    def post(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {
+                              'message': "User has been logged out due to accessing admin content on non-admin account."})
+
+        crs_to_edit_id = request.POST.get('course_id')
+        crs_to_edit_model = Course.objects.get(course_ID=crs_to_edit_id)
+        crs_to_edit_wrapper: AbstractCourse = ConcreteCourse(crs_to_edit_model)
+
+        selected_instr_id = request.POST.get('selected_instr')
+
+        #create section to pass into wrapper
+        instr_to_add = Instructor.objects.get(account_ID__account_ID=selected_instr_id)
+
+        try:
+            crs_to_edit_wrapper.add_instructor(InstructorUser(instr_to_add))
+        except Exception as e:
+            msg = "Could not assign instructor due to " + str(e.__str__())
+            return render(request, "CourseEdit.html", {"bad_message": msg})
+
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+                                                   "good_message": "Instructor Successfully Assigned To Course."})

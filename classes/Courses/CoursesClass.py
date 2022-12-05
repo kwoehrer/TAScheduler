@@ -60,6 +60,10 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
+    def remove_instructor(self, instructor):
+        pass
+
+    @abc.abstractmethod
     def get_tas(self):
         pass
 
@@ -193,7 +197,6 @@ class ConcreteCourse(AbstractCourse):
             if int(sectionNumber) == int(sec.getSectionNumber()):
                 raise ValueError("duplicate course section numbers.")
 
-
         ta_obj = TA.objects.get(account_ID=sectionTA_ID)
 
         newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
@@ -206,3 +209,11 @@ class ConcreteCourse(AbstractCourse):
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:
             raise ValueError("Section is not included, cannot be deleted")
+
+    def remove_instructor(self, instructor):
+        if isinstance(instructor, InstructorUser):
+            instr_id = instructor.getID()
+            old_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
+            row = InstructorAssignments.objects.get(account_ID=old_instructor_model, course_ID=self.course).delete()
+        else:
+            raise TypeError("newInstructor was not an instructor object.")

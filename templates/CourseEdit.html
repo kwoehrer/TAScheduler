@@ -373,6 +373,52 @@
                                 </div>
                             </div>
                         </td>
+                        <!-- Remove Instructor Modal  -->
+                        <td>
+                            <button type="button" class="btn btn-primary margTop float-right w-100 my-auto redButton"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#instructorRemove_{{ course.get_course_id }}">
+                                <b>Remove Instructor</b>
+                            </button>
+                            <div class="modal fade" id="instructorRemove_{{ course.get_course_id }}" tabindex="-1"
+                                 aria-labelledby="instructorRemove_{{ course.get_course_id }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modal-label">Remove An Instructor From
+                                                <b>{{ course.get_course_name }}</b></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" action="/CourseRemoveInstructor/">
+                                            <input type="hidden" name="course_id" value="{{ course.get_course_id }}">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="selected_instr">Select Instructor To Unassign
+                                                            from {{ course.get_course_name }}</label>
+                                                        <select class="form-control form-select" id="selected_instr"
+                                                                name="selected_instr" required>
+                                                            {% for instructor in course.get_instructors %}
+                                                                <option value="{{ instructor.getID }}">
+                                                                    {% with instructor.getFirstName|add:" "|add:instructor.getLastName as fullname %}
+                                                                        {{ fullname }}
+                                                                    {% endwith %}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="submit" class="btn btn-primary redButton"
+                                                               value="Unassign Selected Instructor">
+                                                    </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
 
                 {% endfor %}

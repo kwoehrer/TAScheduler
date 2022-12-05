@@ -1,8 +1,13 @@
 from django.test import TestCase
 from app.models import Section, Course, User
-from classes.Sections.SectionClass import AbstractSection, ConcreteSection
-from classes.Courses.CourseClass import AbstractCourse, ConcreteCourse
-# TODO check name for course class after merge
+import classes.Sections.SectionClass as SectionClass
+import classes.Courses.CoursesClass as CourseClass
+import classes.Users.users as UserClass
+
+#from classes.Sections.SectionClass import AbstractSection, ConcreteSection
+#from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
+#from classes.Users.users import AbstractUser, InstructorUser, TAUser
+
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -18,9 +23,10 @@ class TestGetParent(TestCase):
                                                    description="", credits=4)
         section = Section.objects.create(self.course_model.course_ID, section_num=100, MeetingTimes='12:00')
         section2 = Section.objects.create(self.course_model2.course_ID, section_num=200, MeetingTimes='1:00')
-        self.course: AbstractCourse = ConcreteCourse(self.course_model)
-        self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course_model)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
+        self.wrapper2: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
 
     def test_success(self):
         self.assertEqual(self.course.getCourseID(), self.wrapper.getParentCourse())
@@ -47,10 +53,11 @@ class TestGetSectionNum(TestCase):
         section = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='12:00')
         section2 = Section.objects.create(self.course.course_ID, section_num=None, MeetingTimes='1:00')
         section3 = Section.objects.create(self.course.course_ID, section_num=11111111111111111, MeetingTimes='2:00')
-        self.course: AbstractCourse = ConcreteCourse(self.course)
-        self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
-        self.wrapper3: AbstractSection = ConcreteSection(section3)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
+        self.wrapper2: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
+        self.wrapper3: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section3)
 
     def test_success(self):
         self.assertEqual(100, self.wrapper.getSectionNumber())
@@ -72,10 +79,11 @@ class TestSetSectionNum(TestCase):
         section = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='12:00')
         section2 = Section.objects.create(self.course.course_ID, section_num=200, MeetingTimes='1:00')
         section3 = Section.objects.create(self.course.course_ID, section_num=300, MeetingTimes='2:00')
-        self.course: AbstractCourse = ConcreteCourse(self.course)
-        self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
-        self.wrapper3: AbstractSection = ConcreteSection(section2)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
+        self.wrapper2: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
+        self.wrapper3: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
 
     def test_success(self):
         self.wrapper.setSectionNumber(400)
@@ -102,10 +110,11 @@ class TestGetTA(TestCase):
     def setUp(self) -> None:
         self.course = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
                                        description="idk lol", credits=4)
-        self.ta = User.objects.create(first_name='Luke', last_name='Hodory', )
+        #self.ta = User.objects.create(first_name='Luke', last_name='Hodory', )
         section = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='12:00')
-        self.course: AbstractCourse = ConcreteCourse(self.course)
-        self.wrapper: AbstractSection = ConcreteSection(section)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
 
     def test_success(self):
         self.assertEqual(123, self.wrapper.getTA())
@@ -124,11 +133,12 @@ class TestGetMeetTime(TestCase):
         section2 = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='')
         section3 = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes=123)
         section4 = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes=None)
-        self.course: AbstractCourse = ConcreteCourse(self.course)
-        self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
-        self.wrapper3: AbstractSection = ConcreteSection(section3)
-        self.wrapper4: AbstractSection = ConcreteSection(section4)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
+        self.wrapper2: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
+        self.wrapper3: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section3)
+        self.wrapper4: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section4)
 
 
     def test_success(self):
@@ -151,9 +161,10 @@ class TestSetMeetTime(TestCase):
                                        description="idk lol", credits=4)
         section = Section.objects.create(self.course.course_ID, section_num=100, MeetingTimes='12:00')
         section2 = Section.objects.create(self.course.course_ID, section_num=200, MeetingTimes='12:00')
-        self.course: AbstractCourse = ConcreteCourse(self.course)
-        self.wrapper: AbstractSection = ConcreteSection(section)
-        self.wrapper2: AbstractSection = ConcreteSection(section2)
+
+        self.course: CourseClass.ConcreteCourse = CourseClass.ConcreteCourse(self.course)
+        self.wrapper: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section)
+        self.wrapper2: SectionClass.ConcreteSection = SectionClass.ConcreteSection(section2)
 
     def test_success(self):
         self.wrapper.setMeetTime('1:00')

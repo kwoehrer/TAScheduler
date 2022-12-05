@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .homeButtons {
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width: 20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family: Archivo;
+            word-break: keep-all !important;
+            margin: 1vh;
+            border: 2px black solid;
+            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
+        }
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+        .smallMargin {
+            margin: 20px;
+        }
+
+        .dangerColor {
+            background-color: #FF0000 !important;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/account-management-title.svg' %}">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    {% if query_accounts %}
+        <div class="mx-auto text-center">
+            <h1>{{ page_state_title }}</h1>
+            <table class="table text-center margTop">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">Account ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Account Type</th>
+                    <th scope="col" class="dangerColor">Delete Account</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for acc in query_accounts %}
+
+                    <tr>
+                        <input type="hidden" id="acc_id" name="acc_id" value="{{ acc.getID }}">
+                        <th scope="row">{{ acc.getID }}</th>
+                        <td>{{ acc.getUsername }}</td>
+                        <td>{{ acc.getEmail }}</td>
+                        <td>{{ acc.getFirstName }}</td>
+                        <td>{{ acc.getLastName }}</td>
+                        <td>{{ acc.getUserType }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary margTop float-right w-100 redButton my-auto"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#accountDelete_{{ acc.getID }}">
+                                <b>Delete This Account</b>
+                            </button>
+                            <div class="modal fade" id="accountDelete_{{ acc.getID }}" tabindex="-1"
+                                 aria-labelledby="accountDelete_{{ acc.getID }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modal-label">Confirm Account Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Please confirm that you want to delete account with username
+                                            <b>"{{ acc.getUsername }}"</b>.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <form method="POST" action="/AccountFactoryDelete/">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="acc_id" value="{{ acc.getID }}">
+                                                <input type="hidden" name="acc_type" value="{{ acc.getUserType }}">
+                                                <input type="submit" class="btn btn-primary" value="Confirm Deletion">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a class="smallMargin" href="/AccountManagement/">
+            <input class="btn btn-outline-primary" type="submit" value="Return To Account Management Page">
+        </a>
+    {% else %}
+        <div class="mx-auto">
+            <h1>{{ page_state_title }}</h1>
+            <form class='mx-auto' method="POST" action="/DeleteAccount/">
+                {% if bad_message %}
+                    <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                        <hr>
+                        <h4 class="alert-heading">{{ bad_message }}</h4>
+                        <hr>
+                    </div>
+                {% endif %}
+                {% if good_message %}
+                    <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                        <hr>
+                        <h4 class="alert-heading">{{ good_message }}</h4>
+                        <hr>
+                    </div>
+                {% endif %}
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
+                           placeholder="Enter an Email">
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username"
+                           placeholder="Enter a Username">
+                </div>
+                <div class="form-group">
+                    <label for="name">First Name and Last Name of User</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                           placeholder="First_Name Last_Name">
+                    <small id="passHelp" class="form-text text-muted">Format is "First_Name Last_Name".</small>
+                </div>
+                <div class="form-group">
+                    <label for="user_type">Type of User Account</label>
+                    <select class="form-select" id="user_type" name="user_type" required>
+                        <option>TA</option>
+                        <option>Instructor</option>
+                        <option>Admin</option>
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-primary margTop float-right w-100" value="Search For Account">
+            </form>
+            <a class="min-vw-100" href="/AccountManagement/">
+                <input class="btn btn-danger redButton" type="submit" value="Return To Account Management Page">
+            </a>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>

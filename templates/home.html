@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .fullwidthBar{
+            width:100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .homeButtons{
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width:20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family:Archivo;
+            word-break: keep-all !important;
+            margin:1vh;
+            border:2px black solid;
+            text-shadow:2px 4px 3px rgba(0,0,0,0.3)
+        }
+
+        .logOutButton{
+            background-color: #FF0000 !important;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+
+        </style>
+</head>
+<body>
+<div class = "fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center" src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    </a>
+</div>
+<div class = 'homeContainer'>
+{% csrf_token %}
+
+{% include HomeState %}
+
+</div>
+</body>
+</html>

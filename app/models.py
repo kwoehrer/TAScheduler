@@ -14,8 +14,8 @@ class User(models.Model):
         TA = 'TA'
 
     # Blank/Null is used to denote if its required or not.
-    account_ID = models.AutoField(primary_key=True, Unique=True, db_index=True, auto_created=True)
-    email = models.CharField(max_length=30, unique=True, blank=False, null=False, validators=validate_email)
+    account_ID = models.AutoField(primary_key=True, auto_created=True)
+    email = models.EmailField(max_length=30, unique=True, blank=False, null=False)
     username = models.CharField(max_length=30, unique=True, blank=False, null=False, db_index=True)
     # Need to validate password - do at form level, unsure if we need to salt for security
     password = models.CharField(max_length=30, blank=False, null=False)
@@ -23,7 +23,7 @@ class User(models.Model):
     last_name = models.CharField(max_length=30, blank=False, null=False)
     phone_number = models.CharField(max_length=10, unique=True, blank=True, null=True)
     home_address = models.CharField(max_length=70, blank=True, null=True)
-    user_type = models.CharField(choices=UserTypes.choices, default='TA', blank=False, null=False, db_index=True)
+    user_type = models.CharField(max_length=50,choices=UserTypes.choices, default='TA', blank=False, null=False, db_index=True)
 
 
 # Seperate subtypes for extensibility
@@ -47,26 +47,26 @@ class Course(models.Model):
         Winter = 'Winter'
         Special = 'Special'
 
-    course_ID = models.AutoField(primary_key=True, Unique=True, db_index=True, auto_created=True)
+    course_ID = models.AutoField(primary_key=True, db_index=True, auto_created=True)
     name = models.CharField(max_length=30, blank=False, null=False)
-    semester = models.CharField(choices=SemesterTypes.choices, default='Spring', blank=False, null=False, db_index=True)
-    year = models.IntegerField(max_length=4, blank=False, null=False, default=2022,
-                               validators=MaxValueValidator(datetime.date.today.year + 10,
-                                                            message="Course.year cannot be more than 10 years into " +
-                                                                    "the future."))
+    semester = models.CharField(choices=SemesterTypes.choices, max_length=10, default='Spring', blank=False, null=False, db_index=True)
+    year = models.IntegerField(blank=False, null=False, default=2022,
+                               validators=[MinValueValidator(datetime.date.today().year - 10,message="Course.year cannot be more than 10 years into " +" the past."),
+                               MaxValueValidator(datetime.date.today().year + 10, message="Course.year cannot be more than 10 years into " +" the future.")])
     # Above validator validates that they don't add anything more than 10 years in the future
-    description = models.CharField(max_length=30, blank=False, null=False)
-    credits = models.IntegerField(max_length=1, blank=False, null=False, default=3,
-                                  validators=MinValueValidator(1,
-                                                               message="Course.credit field must be greater than 1."))
+    description = models.CharField(max_length=70, blank=False, null=False)
+    credits = models.IntegerField(blank=False, null=False, default=3,
+                                  validators=[MaxValueValidator(9,message="Course.credit field must be less than 10."),
+                                    MinValueValidator(1,message="Course.credit field must be greater than 1.")])
+    UniqueConstraint(fields=[name, semester, year], name="CourseCompPK")
 
 
 class Section(models.Model):
     # NOTE THERE IS AN AUTOGEN ID FOR THIS MODEL.
     course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
-    section_num = models.AutoField(blank=False, null=False, auto_created=True)
-    MeetingTimes = models.CharField(maxlength=50, blank=False, null=False)
-    ta_account_id = models.ForeignKey(TA, blank=True, null=True)
+    section_num = models.IntegerField(blank=False, null=False) #Validate in wrapper class
+    MeetingTimes = models.CharField(max_length=50, blank=False, null=False)
+    ta_account_id = models.ForeignKey(TA, on_delete=models.SET_NULL, blank=True, null=True)
     UniqueConstraint(fields=[course_ID, section_num], name="SectionCompPK")  # Functions similar to a unique Comp PK
 
 

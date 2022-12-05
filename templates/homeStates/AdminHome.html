@@ -1,0 +1,44 @@
+<div class = "container">
+    <div class="row">
+        <div class="col">
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="View My Personal Profile">
+            </form>
+        </div>
+        <div class="col">
+            <form method="get" action="/CourseManagement/">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Course Management">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Send Notifications">
+            </form>
+        </div>
+        <div class="col">
+            <form method="get" action="/AccountManagement/">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Account Management">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="get" action="#">
+                {% csrf_token %}
+                <input class="btn btn-primary homeButtons" type="submit" value="Search For Users or Courses">
+            </form>
+        </div>
+        <div class="col">
+            <form method="post" action="/logout/">
+                {% csrf_token %}
+                <input class="btn btn-danger homeButtons logOutButton" type="submit" value="Log Out">
+            </form>
+        </div>
+    </div>
+</div>

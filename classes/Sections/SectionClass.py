@@ -1,29 +1,39 @@
 from app.models import Section, TA, Course
 import classes.Courses.CoursesClass as CourseClass
-from abc import ABC
-import abc
+import classes.Users.users as UserClass
+from abc import ABC, abstractmethod
 
-from classes.Users.users import TAUser, AbstractUser
 
+# from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
+# from classes.Users.users import AbstractUser, TAUser
+# import abc
 
 class AbstractSection(ABC):
-    @abc.abstractmethod
+    @ABC.abstractmethod
     def getParentCourse(self):
         pass
 
-    @abc.abstractmethod
-    def getTA(self) -> AbstractUser:
+    @ABC.abstractmethod
+    def getSectionNumber(self):
         pass
 
-    @abc.abstractmethod
+    @ABC.abstractmethod
+    def setSectionNumber(self):
+        pass
+
+    @ABC.abstractmethod
+    def getTA(self) -> CourseClass.AbstractUser:
+        pass
+
+    @ABC.abstractmethod
     def setTA(self, newTA):
         pass
 
-    @abc.abstractmethod
+    @ABC.abstractmethod
     def getMeetTime(self):
         pass
 
-    @abc.abstractmethod
+    @ABC.abstractmethod
     def setMeetTime(self, newTime):
         pass
 
@@ -32,18 +42,21 @@ class ConcreteSection(AbstractSection):
     def __init__(self, section: Section):
         self.section = section
 
-    def getParentCourse(self):
-        CourseClass.ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
+    def getParentCourse(self) -> CourseClass.AbstractCourse:
+        return CourseClass.ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):
         return self.section.section_num
 
-    def getTA(self) -> AbstractUser:
-        ta = TA.objects.get(account_ID=self.section.ta_account_id)
-        return TAUser(ta)
+    def setSectionNumber(self, newNumber: int):
+        self.section = newNumber
 
-    def setTA(self, newTA: AbstractUser):
-        if isinstance(newTA, TAUser):
+    def getTA(self) -> UserClass.AbstractUser:
+        ta = TA.objects.get(account_ID=self.section.ta_account_id)
+        return UserClass.TAUser(ta)
+
+    def setTA(self, newTA: UserClass.AbstractUser):
+        if isinstance(newTA, UserClass.TAUser):
             ta_id = newTA.getID()
             self.section.ta_account_id = ta_id
             self.section.save()

@@ -403,3 +403,4 @@ class TestremoveSection(TestCase):
         self.course.remove_section(self.section)
         length = len(Section.objects.filter(section_num=100))
         self.assertEqual(0, length, msg="Section was not deleted, it still exists")
+

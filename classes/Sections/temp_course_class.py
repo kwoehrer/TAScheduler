@@ -1,9 +1,11 @@
-import abc
-from abc import ABC
-
-import classes.Sections.SectionClass as Sections
 from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
+#from classes.Sections.temp_section_class import AbstractSection, ConcreteSection
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
+from abc import ABC
+import abc
+
+import classes.Sections.temp_section_class as SectionClass
+
 
 
 class AbstractCourse(ABC):
@@ -52,15 +54,11 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
-    def get_instructor(self):
+    def get_instructors(self):
         pass
 
     @abc.abstractmethod
     def add_instructor(self, instructor):
-        pass
-
-    @abc.abstractmethod
-    def remove_instructor(self, instructor):
         pass
 
     @abc.abstractmethod
@@ -80,7 +78,7 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
-    def add_section(self, section):
+    def add_section(self, sectionTA_ID, sectionNumber, MeetingTimes):
         pass
 
     @abc.abstractmethod
@@ -88,9 +86,7 @@ class AbstractCourse(ABC):
         pass
 
 
-
 class ConcreteCourse(AbstractCourse):
-
     def __init__(self, course: Course):
         self.course = course
 
@@ -101,14 +97,8 @@ class ConcreteCourse(AbstractCourse):
         return self.course.name
 
     def set_course_name(self, course_name: str):
-        if isinstance(course_name, str):
-            if len(course_name) <= 30:
-                self.course.name = course_name
-                self.course.save()
-            else:
-                raise ValueError("The name is too long")
-        else:
-            raise TypeError("Input is not string")
+        self.course.name = course_name
+        self.course.save()
 
     def get_description(self) -> str:
         return self.course.description
@@ -121,11 +111,8 @@ class ConcreteCourse(AbstractCourse):
         return self.course.credits
 
     def set_credits(self, credit: int):
-        if 9 >= credit >= 1:
-            self.course.credits = credit
-            self.course.save()
-        else:
-            raise ValueError("Incorrect credits provided, should be 9 >= credit >= 1")
+        self.course.credits = credit
+        self.course.save()
 
     def get_semester(self) -> str:
         return self.course.semester
@@ -141,32 +128,24 @@ class ConcreteCourse(AbstractCourse):
         return self.course.year
 
     def set_year(self, year: int):
-        if (2022 + 10) >= year >= (2022 - 10):
-            self.course.year = year
-            self.course.save()
-        else:
-            raise ValueError("No more than 10 years after this year should be included")
+        self.course.year = year
+        self.course.save()
 
-
-    def get_instructors(self) -> []:
+    def get_instructors(self) -> [AbstractUser]:
         instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
         instr_pk_list = instructors.values_list('account_ID', flat=True)
         instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)
 
-
-        result_list = []
-
+        result_list = [AbstractUser]
         for instr in instr_table:
             result_list.append(InstructorUser(instr))
 
         return result_list
 
-
     def add_instructor(self, newInstructor: AbstractUser):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
-            new_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
-            row = InstructorAssignments(account_ID=new_instructor_model, course_ID=self.course)
+            row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
             row.save()
         else:
             raise TypeError("newInstructor was not an instructor object.")
@@ -198,11 +177,11 @@ class ConcreteCourse(AbstractCourse):
             raise TypeError("Old TA was not a TA_User.")
 
     def get_sections(self) -> []:
-        section_table = list(Section.objects.filter(course_ID=self.course))
+        section_table = Section.objects.filter(course_ID=self.course.course_ID)
         section_list = []
 
         for section in section_table:
-            section_list.append(Sections.ConcreteSection(section))
+            section_list.append(SectionClass.ConcreteSection(section))
 
         return section_list
 
@@ -210,28 +189,16 @@ class ConcreteCourse(AbstractCourse):
     def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes: str):
         if len(TA.objects.filter(account_ID=sectionTA_ID)) != 1:
             raise ValueError("TA Id was not a valid TA ID.")
+        if sectionNumber in self.get_sections():
+            raise ValueError("Cannot have duplicate course sections")
 
-        for sec in self.get_sections():
-            if int(sectionNumber) == int(sec.getSectionNumber()):
-                raise ValueError("duplicate course section numbers.")
-
-        ta_obj = TA.objects.get(account_ID=sectionTA_ID)
-
-        newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
-                             ta_account_id=ta_obj)
+        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes,
+                             ta_account_id=sectionTA_ID)
         newSection.save()
-        
-    def remove_section(self, section: Sections.AbstractSection) -> bool:
-        if isinstance(section, Sections.ConcreteSection):
+
+    def remove_section(self, section) -> bool:
+        if isinstance(section, SectionClass.ConcreteSection):
             section_id = section.getSectionNumber()
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:
             raise ValueError("Section is not included, cannot be deleted")
-
-    def remove_instructor(self, instructor):
-        if isinstance(instructor, InstructorUser):
-            instr_id = instructor.getID()
-            old_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
-            row = InstructorAssignments.objects.get(account_ID=old_instructor_model, course_ID=self.course).delete()
-        else:
-            raise TypeError("newInstructor was not an instructor object.")

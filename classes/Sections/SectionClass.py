@@ -2,6 +2,7 @@ from app.models import Section, TA, Course
 import classes.Courses.CoursesClass as CourseClass
 import classes.Users.users as UserClass
 from abc import ABC, abstractmethod
+import abc
 
 
 # from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
@@ -9,31 +10,31 @@ from abc import ABC, abstractmethod
 # import abc
 
 class AbstractSection(ABC):
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def getParentCourse(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def getSectionNumber(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setSectionNumber(self):
         pass
 
-    @ABC.abstractmethod
-    def getTA(self) -> CourseClass.AbstractUser:
+    @abc.abstractmethod
+    def getTA(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setTA(self, newTA):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def getMeetTime(self):
         pass
 
-    @ABC.abstractmethod
+    @abc.abstractmethod
     def setMeetTime(self, newTime):
         pass
 
@@ -42,7 +43,7 @@ class ConcreteSection(AbstractSection):
     def __init__(self, section: Section):
         self.section = section
 
-    def getParentCourse(self) -> CourseClass.AbstractCourse:
+    def getParentCourse(self):
         return CourseClass.ConcreteCourse(Course.objects.get(course_ID=self.section.course_ID))
 
     def getSectionNumber(self):

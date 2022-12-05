@@ -1,23 +1,23 @@
 <div class = "container">
     <div class="row">
         <div class="col">
-            <a href="/CreateAccount/">
+            <a href="/CreateCourse/">
                 {% csrf_token %}
-                <input class="btn btn-primary homeButtons" type="submit" value="Create An Account">
+                <input class="btn btn-primary homeButtons" type="submit" value="Create A Course">
             </a>
         </div>
         <div class="col">
-            <a href="/EditAccount/">
+            <a href="/EditCourse/">
                 {% csrf_token %}
-                <input class="btn btn-primary homeButtons" type="submit" value="Edit An Account">
+                <input class="btn btn-primary homeButtons" type="submit" value="Edit A Course">
             </a>
         </div>
     </div>
     <div class="row">
         <div class="col">
-             <a href="/DeleteAccount/">
+             <a href="/DeleteCourse/">
                 {% csrf_token %}
-                <input class="btn btn-danger homeButtons redButton" type="submit" value="Delete An Account">
+                <input class="btn btn-danger homeButtons redButton" type="submit" value="Delete A Course">
              </a>
         </div>
         <div class="col">

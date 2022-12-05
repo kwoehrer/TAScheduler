@@ -1,8 +1,8 @@
-from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
-import classes.Sections.SectionClass as Sections
-from abc import ABC
 import abc
+from abc import ABC
 
+import classes.Sections.SectionClass as Sections
+from app.models import Course, Instructor, InstructorAssignments, TACourseAssignments, TA, Section
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
 
 
@@ -60,6 +60,10 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
+    def remove_instructor(self, instructor):
+        pass
+
+    @abc.abstractmethod
     def get_tas(self):
         pass
 
@@ -82,8 +86,10 @@ class AbstractCourse(ABC):
     @abc.abstractmethod
     def remove_section(self, section):
         pass
+
+
 class ConcreteCourse(AbstractCourse):
-    def __init__(self, course :Course):
+    def __init__(self, course: Course):
         self.course = course
 
     def get_course_id(self) -> int:
@@ -127,22 +133,22 @@ class ConcreteCourse(AbstractCourse):
         self.course.year = year
         self.course.save()
 
-    def get_instructors(self) -> [AbstractUser]:
+    def get_instructors(self) -> []:
         instructors = InstructorAssignments.objects.filter(course_ID=self.course.course_ID)
         instr_pk_list = instructors.values_list('account_ID', flat=True)
         instr_table = Instructor.objects.filter(account_ID__instructor__in=instr_pk_list)
 
-        result_list = [AbstractUser]
+        result_list = []
         for instr in instr_table:
             result_list.append(InstructorUser(instr))
 
         return result_list
 
-
-    def add_instructor(self, newInstructor:AbstractUser):
+    def add_instructor(self, newInstructor: AbstractUser):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
-            row = InstructorAssignments(account_ID=instr_id, course_ID=self.course_ID)
+            new_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
+            row = InstructorAssignments(account_ID=new_instructor_model, course_ID=self.course)
             row.save()
         else:
             raise TypeError("newInstructor was not an instructor object.")
@@ -173,26 +179,29 @@ class ConcreteCourse(AbstractCourse):
         else:
             raise TypeError("Old TA was not a TA_User.")
 
-    def get_sections(self) -> [Sections.AbstractSection]:
-        section_table = Section.objects.filter(course_ID=self.course.course_ID)
-        section_list = [Sections.AbstractSection]
+    def get_sections(self) -> []:
+        section_table = list(Section.objects.filter(course_ID=self.course))
+        section_list = []
 
         for section in section_table:
             section_list.append(Sections.ConcreteSection(section))
 
         return section_list
 
-    #Factory method, creates a section related to this course.
-    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes:str):
+    # Factory method, creates a section related to this course.
+    def add_section(self, sectionTA_ID: int, sectionNumber: int, MeetingTimes: str):
         if len(TA.objects.filter(account_ID=sectionTA_ID)) != 1:
             raise ValueError("TA Id was not a valid TA ID.")
-        if sectionNumber in self.get_sections():
-            raise ValueError("Cannot have duplicate course sections")
 
-        newSection = Section(course_ID=self.course.course_ID, section_num=sectionNumber, MeetingTimes=MeetingTimes, ta_account_id=sectionTA_ID)
+        for sec in self.get_sections():
+            if int(sectionNumber) == int(sec.getSectionNumber()):
+                raise ValueError("duplicate course section numbers.")
+
+        ta_obj = TA.objects.get(account_ID=sectionTA_ID)
+
+        newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
+                             ta_account_id=ta_obj)
         newSection.save()
-
-
 
     def remove_section(self, section: Sections.AbstractSection) -> bool:
         if isinstance(section, Sections.ConcreteSection):
@@ -200,3 +209,11 @@ class ConcreteCourse(AbstractCourse):
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:
             raise ValueError("Section is not included, cannot be deleted")
+
+    def remove_instructor(self, instructor):
+        if isinstance(instructor, InstructorUser):
+            instr_id = instructor.getID()
+            old_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
+            row = InstructorAssignments.objects.get(account_ID=old_instructor_model, course_ID=self.course).delete()
+        else:
+            raise TypeError("newInstructor was not an instructor object.")

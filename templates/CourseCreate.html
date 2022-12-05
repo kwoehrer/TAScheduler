@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .homeButtons {
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width: 20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family: Archivo;
+            word-break: keep-all !important;
+            margin: 1vh;
+            border: 2px black solid;
+            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
+        }
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/course-management-title.svg' %}">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    <div class="mx-auto">
+        <form class='mx-auto' method="POST" action="/CourseFactoryCreate/">
+            {% if bad_message %}
+                <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                    <hr>
+                    <h4 class="alert-heading">{{ bad_message }}</h4>
+                    <hr>
+                </div>
+            {% endif %}
+            {% if good_message %}
+                <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                    <hr>
+                    <h4 class="alert-heading">{{ good_message }}</h4>
+                    <hr>
+                </div>
+            {% endif %}
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Course Name</label>
+                <input type="name" class="form-control" id="name" name="name" aria-describedby="nameHelp"
+                       placeholder="Enter The Course Name" required>
+                <small id="nameHelp" class="form-text text-muted">The course name, semester and year combined must unique in the system.</small>
+            </div>
+            <div class="form-group">
+                <label for="semester">Semester of Course</label>
+                <select class="form-control form-select" id="semester" name="semester" required>
+                    <option>Spring</option>
+                    <option>Summer</option>
+                    <option>Fall</option>
+                    <option>Winter</option>
+                    <option>Special</option>
+                </select>
+                <small id="nameHelp" class="form-text text-muted">The course name, semester and year combined must unique in the system.</small>
+            </div>
+            <div class="form-group">
+                <label for="year">Year of Course</label>
+                <input type="number" min="2010" max = "2039" class="form-control" id="year" name="year"
+                       placeholder="Enter the year of the course"
+                       required>
+                <small id="nameHelp" class="form-text text-muted">The course name, semester and year combined must unique in the system.</small>
+            </div>
+            <div class="form-group">
+                <label for="description">Course Description</label>
+                <input type="text" minlength="1" maxlength="70" class="form-control" id="description" name="description"
+                       placeholder="Enter Course Description"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="credit">Course Credit</label>
+                <input type="number" min="1" max = "9" class="form-control" id="credit" name="credit"
+                       placeholder="Enter Course Credit Amount"
+                       required>
+                <small id="nameHelp" class="form-text text-muted">Value must be between 1 and 9.</small>
+            </div>
+            <input type="submit" class="btn btn-primary margTop float-right w-100" value="Create Course">
+        </form>
+        <a class="min-vw-100" href="/CourseManagement/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Course Management Page">
+        </a>
+    </div>
+</div>
+</body>
+</html>

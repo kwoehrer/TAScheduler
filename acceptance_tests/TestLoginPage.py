@@ -124,38 +124,38 @@ class TestTALogin(TestCase):
 
 
 '''
-Acceptance Criteria 1:
-GIVEN user is a TA and has a existing account in database
+AccepAdminnce Criteria 1:
+GIVEN user is a Instructor and has a existing account in daAdminbase
 WHEN a valid username is entered
 AND a valid password is entered
 THEN account is accessed 
-Acceptance Criteria 2:
-GIVEN user is a TA and has a existing account in database
+AccepAdminnce Criteria 2:
+GIVEN user is a Instructor and has a existing account in daAdminbase
 WHEN an invalid username is entered
 AND a valid password is entered
 THEN account is not accessed
 Acceptance Criteria 3:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Instructor has existing account in database
 WHEN a valid username is entered
 AND an invalid password is entered
 THEN account is not accessed
 Acceptance Criteria 4:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Instructor has existing account in database
 WHEN a valid username entered
 AND an empty password is entered
 THEN account is not accessed
 Acceptance Criteria 5:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Instructor has existing account in database
 WHEN a valid password entered
 AND an empty username is entered
 THEN account is not accessed
 Acceptance Criteria 6:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Instructor has existing account in database
 WHEN an invalid username entered
 AND an invalid password is entered
 THEN account is not accessed
 Acceptance Criteria 7:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Instructor has existing account in database
 WHEN an empty username entered
 AND an empty password is entered
 THEN account is not accessed
@@ -246,37 +246,37 @@ class TestInstructorLogin(TestCase):
 
 '''
 Acceptance Criteria 1:
-GIVEN user is a TA and has a existing account in database
+GIVEN user is a Admin and has a existing account in database
 WHEN a valid username is entered
 AND a valid password is entered
 THEN account is accessed 
 Acceptance Criteria 2:
-GIVEN user is a TA and has a existing account in database
+GIVEN user is a Admin and has a existing account in database
 WHEN an invalid username is entered
 AND a valid password is entered
 THEN account is not accessed
 Acceptance Criteria 3:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Admin has existing account in database
 WHEN a valid username is entered
 AND an invalid password is entered
 THEN account is not accessed
 Acceptance Criteria 4:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Admin has existing account in database
 WHEN a valid username entered
 AND an empty password is entered
 THEN account is not accessed
 Acceptance Criteria 5:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Admin has existing account in database
 WHEN a valid password entered
 AND an empty username is entered
 THEN account is not accessed
 Acceptance Criteria 6:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Admin has existing account in database
 WHEN an invalid username entered
 AND an invalid password is entered
 THEN account is not accessed
 Acceptance Criteria 7:
-GIVEN user is a TA has existing account in database
+GIVEN user is a Admin has existing account in database
 WHEN an empty username entered
 AND an empty password is entered
 THEN account is not accessed

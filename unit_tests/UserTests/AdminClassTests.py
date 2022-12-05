@@ -78,6 +78,10 @@ class TestSetAdminFirstName(TestCase):
 
         self.admin: AdminUser = AdminUser(user_model)
 
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setFirstName()
+
     def testSetFirstName(self):
         Admin.objects.create(username='John_Doe', password="password", first_name="John",
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
@@ -136,6 +140,10 @@ class TestSetAdminLastName(TestCase):
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
         self.admin: AdminUser = AdminUser(user_model)
+
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setLastName()
 
     def testSetLastName(self):
         Admin.objects.create(username='John_Doe', password="password", first_name="John",
@@ -201,6 +209,10 @@ class TestSetAdminPhoneNumber(TestCase):
 
         self.admin: AdminUser = AdminUser(user_model)
 
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setPhoneNumber()
+
     def testSetPhoneNumber(self):
         Admin.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
@@ -259,6 +271,10 @@ class TestSetAdminHomeAddress(TestCase):
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
         self.admin: AdminUser = AdminUser(user_model)
 
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setHomeAddress()
+
     def testSetHomeAddress(self):
         Admin.objects.create(username='John_Doe', last_name='Doe',
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
@@ -303,6 +319,10 @@ class TestSetAdminUserType(TestCase):
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
         self.admin: AdminUser = AdminUser(user_model)
+
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setUserType()
 
     def testSetUserType(self):
         Admin.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
@@ -360,6 +380,10 @@ class TestSetAdminUserPassword(TestCase):
         user_model = Admin.objects.create(account_ID=user_obj.account_ID)
 
         self.admin: AdminUser = AdminUser(user_model)
+
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.admin.setHomeAddress()
 
     def testSetPassword(self):
         Admin.objects.create(username='John_Doe', password=12345, first_name="John",

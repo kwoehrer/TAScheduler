@@ -41,18 +41,18 @@ class TestTAHomePage(TestCase):
 
     def test_CourseManagement_to_CreateCourse(self):
 
-        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "CourseManagement")
+            self.assertTrue(response.url, "CourseManagement")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/CreateCourse")
+        response = self.client.get("/CreateCourse")
 
         try:
-            self.assertTrue(r.url, "/CreateCourse")
+            self.assertTrue(response.url, "/CreateCourse")
         except AssertionError as msg:
             print(msg)
 

@@ -58,6 +58,41 @@ class TestSetCourseName(TestCase):
             self.course.set_course_name("123456789012345678901234567890123")
 
 
+class TestGetCourseDescription(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first", credits="3")
+        self.course = ConcreteCourse(course_model)
+
+    def test_get_correct_description(self):
+        self.assertEqual(self.course.get_description(), "first", msg="Course description is not correct")
+
+
+class TestGetCourseDescription(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first", credits="3")
+        self.course = ConcreteCourse(course_model)
+
+    def test_set_correct_description(self):
+        self.course.set_description("FIRST")
+        self.assertEqual(self.course.get_description(), "FIRST", msg="Course description is not correct")
+
+
+class TestGetCourseCredits(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first", credits="3")
+        self.course = ConcreteCourse(course_model)
+
+    def test_get_correct_Credits(self):
+        self.assertEqual(self.course.get_credits(), 3, msg="Course description is not correct")
+
+
+
 class TestGetSemester(TestCase):
 
     def setUp(self) -> None:
@@ -72,7 +107,7 @@ class TestGetSemester(TestCase):
     def test_get_correct_semester(self):
         self.assertEqual(self.course.get_semester(), "Fall", msg="Semester is incorrect")
 
-    def test_get_int_name(self):
+    def test_get_int_semester(self):
         self.assertRaises(TypeError, self.course2.get_course_name(), msg="Semester is integer")
 
 
@@ -87,11 +122,7 @@ class TestSetSemester(TestCase):
         self.course.set_semester("Fall")
         self.assertEqual(self.course.get_semester(), "Fall", msg="Semester was not set correctly")
 
-    def test_set_None_name(self):
-        with self.assertRaises(ValueError, msg="Course name cannot be none"):
-            self.course.set_semester(None)
-
-    def test_set_int_name(self):
+    def test_set_int_semester(self):
         with self.assertRaises(ValueError, msg="Course name cannot be integers"):
             self.course.set_semester(1234)
 
@@ -125,7 +156,7 @@ class TestSetYear(TestCase):
         self.course.set_year(2025)
         self.assertEqual(self.course.get_year(), 2025, msg="Course name was not set correctly")
 
-    def test_set_int_name(self):
+    def test_set_str_year(self):
         with self.assertRaises(TypeError, msg="Year is string"):
             self.course.set_year("2022")
 
@@ -175,7 +206,6 @@ class TestAddInstructor(TestCase):
                                        user_type="TA")
         self.ta: AbstractUser = TAUser(ta_model)
 
-
     def test_add_Instr_no_Arg(self):
         with self.assertRaises(TypeError, msg="More than zero argument is required"):
             self.course.add_instructor()
@@ -192,6 +222,7 @@ class TestAddInstructor(TestCase):
         self.course.add_instructor(self.instr)
         self.assertEqual(self.course.get_instructors()[0], self.instr)
 
+
 class TestGetTa(TestCase):
 
     def setUp(self) -> None:
@@ -204,7 +235,7 @@ class TestGetTa(TestCase):
                                        user_type="TA")
         self.ta: AbstractUser = TAUser(ta_model)
 
-        section_model = Section.objects.create(section_num=101, MettingTimes="9:00",)
+        section_model = Section.objects.create(section_num=101, MettingTimes="9:00", )
         self.section: AbstractSection = ConcreteSection(section_model)
 
     def test_get_correct_ta(self):
@@ -264,7 +295,8 @@ class TestremoveTA(TestCase):
         self.ta: AbstractUser = TAUser(ta_model)
 
         s_ta_model = User.objects.create(email="Ta2@gmail.com", username="Ta2", password="ta2",
-                                         first_name="first", last_name="ta", phone_number="1234", home_address="address",
+                                         first_name="first", last_name="ta", phone_number="1234",
+                                         home_address="address",
                                          user_type="TA")
         self.ta2: AbstractUser = TAUser(s_ta_model)
 
@@ -288,11 +320,12 @@ class TestGetSection(TestCase):
                                              credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        section_model = Section.objects.create(course_ID=self.course, section_num=101, MeetingTime="9:00")
+        section_model = Section.objects.create(course_ID=self.course.course_ID, section_num=101, MeetingTime="9:00")
         self.section: AbstractSection = ConcreteSection(section_model)
 
     def test_get_correct_section(self):
-        self.assertEqual(101, self.section.getSectionNumber())
+        self.course.add_section(self.section)
+        self.assertEqual(self.course.get_sections(), [], msg="No sections are found")
 
 
 class TestaddSection(TestCase):

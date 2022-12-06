@@ -9,7 +9,7 @@ class TestGetIDAdmin(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj)
+        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testIDExists(self):
@@ -34,13 +34,14 @@ class TestGetIDAdmin(TestCase):
 class TestGetAdminFirstName(TestCase):
 
     def setUp(self) -> None:
-        User.objects.create(username='John_Doe', password="password", first_name="John",
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name="Doe",
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
+        user_model.save()
 
     def testFirstNameExists(self):
         self.assertNotEqual(None, self.admin.getFirstName(), msg="A password cannot exist when the field is not "
@@ -48,14 +49,6 @@ class TestGetAdminFirstName(TestCase):
 
     def testFirstName(self):
         self.assertEqual("John", self.admin.getFirstName(), msg="Incorrect First Name when setting up a Admin")
-
-    def testFirstNameType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when create was passed a first_name type with an "
-                                   "invalid type"):
-            User.objects.createUser(username='John_Doe', password="password", first_name=123,
-                                    phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
-                                    email='johnDoe@aol.com')
 
     def testFirstNameTypeInstance(self):
         self.assertIsInstance(self.admin.getLastName(), str, msg="Correct Type was not stored in Database")
@@ -68,7 +61,7 @@ class TestSetAdminFirstName(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -76,15 +69,8 @@ class TestSetAdminFirstName(TestCase):
         with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
             self.admin.setFirstName()
 
-    def testSetFirstName(self):
-        User.objects.create(username='John_Doe', password="password", first_name="John",
-                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
-                            email='johnDoe@aol.com')
-        user_object = User.objects.filter(username='John_Doe')[0]
-        user_new_model = User.objects.create(account_ID=user_object.account_ID)
-        self.new_admin: AdminUser = AdminUser(user_new_model)
-
-        new_first_name = self.new_admin.setFirstName("Steven")
+    def testSetFirstName(self, first_name):
+        new_first_name = self.new_admin.setFirstName(first_name)
         self.assertEqual(new_first_name, self.admin.setFirstName(new_first_name),
                          msg="New changes were not reflected in Database")
 
@@ -92,11 +78,11 @@ class TestSetAdminFirstName(TestCase):
 class TestGetAdminLastName(TestCase):
 
     def setUp(self) -> None:
-        User.objects.create(username='John_Doe', password="password", first_name="John",
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name="Doe",
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -104,22 +90,8 @@ class TestGetAdminLastName(TestCase):
         self.assertEqual("Doe", self.admin.getLastName(), msg="Incorrect Last Name when setting up a Admin")
 
     def testLastNameExists(self):
-        User.objects.create(username='John_Doe', password="password", last_name='Doe',
-                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
-                            email='johnDoe@aol.com')
-        user_object = User.objects.filter(username='John_Doe')[0]
-        user_model_new = Admin.objects.create(account_ID=user_object.account_ID)
-        self.new_admin: AdminUser = AdminUser(user_model_new)
-        self.assertNotEqual(None, self.new_admin.getLastName(), msg="A last name cannot exist when the field is not "
-                                                                    "declared")
-
-    def testLastNameType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when create was passed a last_name with an "
-                                   "invalid type"):
-            User.objects.createUser(username='John_Doe', password="password", first_name="John", last_name=123,
-                                    phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
-                                    email='johnDoe@aol.com')
+        self.assertNotEqual(None, self.admin.getLastName(), msg="A last name cannot exist when the field is not "
+                                                                "declared")
 
     def testLastNameTypeInstance(self):
         self.assertIsInstance(self.admin.getLastName(), str, msg="Correct Type was not stored in Database")

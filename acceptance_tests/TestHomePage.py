@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 
 from TAScheduler.app.models import *
+from TAScheduler.classes.Users.users import AdminUser, TAUser, InstructorUser
 
 '''
 As a TA, I want to be able to navigate to the View my profile info page
@@ -38,72 +39,75 @@ class TestTAHomePage(TestCase):
                                          phone_number='4149818000', home_address='2513 N Farewell Ave',
                                          user_type='TA',
                                          email='johnDoe@aol.com')
+        user_object = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.ta: TAUser = TAUser(user_model)
 
     def test_home_to_profile_info(self):
 
-        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/MyProfileOverviewTA")
+        response = self.client.get("/MyProfileOverview")
 
         try:
-            self.assertTrue(r.url, "/MyProfileOverviewTA")
+            self.assertTrue(response.url, "/MyProfileOverview")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_Profile_Overview(self):
 
-        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/MyProfileOverview")
+        response = self.client.get("/MyProfileOverview")
 
         try:
-            self.assertTrue(r.url, "/MyProfileOverview")
+            self.assertTrue(response.url, "/MyProfileOverview")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_Profile_Course_Search(self):
 
-        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/ProfileCourseSearch")
+        response = self.client.get("/ProfileCourseSearch")
 
         try:
-            self.assertTrue(r.url, "/ProfileCourseSearch")
+            self.assertTrue(response.url, "/ProfileCourseSearch")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_logout(self):
 
-        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/login")
+        response = self.client.get("/login")
 
         try:
-            self.assertTrue(r.url, "/login")
+            self.assertTrue(response.url, "/login")
         except AssertionError as msg:
             print(msg)
 
@@ -149,106 +153,109 @@ class TestInstructorHomePage(TestCase):
                                                          phone_number='4149818222', home_address='2512 N Kenwood Ave',
                                                          user_type='Instructor',
                                                          email='stevenAdams@aol.com')
+        user_object = User.objects.filter(username='Steven_Adams')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.admin: InstructorUser = InstructorUser(user_model)
 
     def test_home_to_account_settings(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/ProfileInformationPage")
+        response = self.client.get("/ProfileInformationPage")
 
         try:
-            self.assertTrue(r.url, "/ProfileInformationPage")
+            self.assertTrue(response.url, "/ProfileInformationPage")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_lab(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/View_my_course_assignments")
+        response = self.client.get("/View_my_course_assignments")
 
         try:
-            self.assertTrue(r.url, "/View_my_course_assignments")
+            self.assertTrue(response.url, "/View_my_course_assignments")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_course(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/Search_for_users_or_courses")
+        response = self.client.get("/Search_for_users_or_courses")
 
         try:
-            self.assertTrue(r.url, "/Search_for_users_or_courses")
+            self.assertTrue(response.url, "/Search_for_users_or_courses")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_user(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'passwordNew'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/view_users")
+        response = self.client.get("/view_users")
 
         try:
-            self.assertTrue(r.url, "/view_users")
+            self.assertTrue(response.url, "/view_users")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_send_notification(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/send_notifications")
+        response = self.client.get("/send_notifications")
 
         try:
-            self.assertTrue(r.url, "/send_notifications")
+            self.assertTrue(response.url, "/send_notifications")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_logout(self):
 
-        r = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/login")
+        response = self.client.get("/login")
 
         try:
-            self.assertTrue(r.url, "/login")
+            self.assertTrue(response.url, "/login")
         except AssertionError as msg:
             print(msg)
 
@@ -293,93 +300,96 @@ class TestAdminHomePage(TestCase):
 
     def setUp(self) -> None:
         self.client = Client()
-        self.user_admin = Admin.objects.create(username='Micheal_Johnson', password="password3", first_name="Micheal",
-                                               last_name='Johnson',
-                                               phone_number='4149824444', home_address='2264 N Bradford Ave',
-                                               user_type='Admin',
-                                               email='michealJohnson@aol.com')
+        User.objects.create(username='Micheal_Johnson', password="password3", first_name="Micheal",
+                            last_name='Johnson',
+                            phone_number='4149824444', home_address='2264 N Bradford Ave',
+                            user_type='Admin',
+                            email='michealJohnson@aol.com')
+        user_object = User.objects.filter(username='Micheal_Johnson')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.admin: AdminUser = AdminUser(user_model)
 
     def test_home_to_account_settings(self):
 
-        r = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/ProfileInformationPage")
+        response = self.client.get("/ProfileInformationPage")
 
         try:
-            self.assertTrue(r.url, "/ProfileInformationPage")
+            self.assertTrue(response.url, "/ProfileInformationPage")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_lab(self):
 
-        r = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/ViewMyCourseAssignments")
+        response = self.client.get("/ViewMyCourseAssignments")
 
         try:
-            self.assertTrue(r.url, "/ViewMyCourseAssignments")
+            self.assertTrue(response.url, "/ViewMyCourseAssignments")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_course(self):
 
-        r = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/SearchForUsersOrCourses")
+        response = self.client.get("/SearchForUsersOrCourses")
 
         try:
-            self.assertTrue(r.url, "/SearchForUsersOrCourses")
+            self.assertTrue(response.url, "/SearchForUsersOrCourses")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_user(self):
 
-        r = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "/home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/AdminAccMng")
+        response = self.client.get("/AdminAccMng")
 
         try:
-            self.assertTrue(r.url, "/AdminCourseMng")
+            self.assertTrue(response.url, "/AdminCourseMng")
         except AssertionError as msg:
             print(msg)
 
     def test_home_to_logout(self):
 
-        r = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
-        self.assertTrue(r.context is None)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password3'})
+        self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(r.url, "home")
+            self.assertTrue(response.url, "/home")
         except AssertionError as msg:
             print(msg)
 
-        r = self.client.get("/login")
+        response = self.client.get("/login")
 
         try:
-            self.assertTrue(r.url, "/login")
+            self.assertTrue(response.url, "/login")
         except AssertionError as msg:
             print(msg)

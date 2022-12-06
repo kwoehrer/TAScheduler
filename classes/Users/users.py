@@ -74,6 +74,9 @@ class TAUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
+    def getPassword(self):
+        return self.model.account_ID.password
+
     def getUsername(self) -> str:
         return self.model.account_ID.username
 
@@ -175,6 +178,9 @@ class InstructorUser(AbstractUser):
 
     def __init__(self, model: TA):
         self.model = model
+
+    def getPassword(self):
+        return self.model.account_ID.password
 
     def getUsername(self) -> str:
         return self.model.account_ID.username
@@ -279,6 +285,8 @@ class AdminUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
+    def getPassword(self):
+        return self.model.account_ID.password
     def getUsername(self) -> str:
         return self.model.account_ID.username
 

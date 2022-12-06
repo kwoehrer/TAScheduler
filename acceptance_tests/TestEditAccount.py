@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 
 from TAScheduler.app.models import *
-
+from classes.Users.users import AdminUser
 '''
 As a Admin, I want to be able to navigate to the Course Management page
 ----------------------------------------------------
@@ -27,106 +27,108 @@ class TestTAHomePage(TestCase):
     def setUp(self):
 
         self.client = Client()
-        self.admin = Admin.objects.create(username='John_Doe', password="password", first_name="John",
-                                          last_name='Doe',
-                                          phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                          user_type='Admin',
-                                          email='johnDoe@aol.com')
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+
+        self.admin: AdminUser = AdminUser(user_model)
 
         self.client.post("/",
-                         {"username": self.admin.account_ID.username, "password": self.admin.account_ID.password})
+                         {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_editEmail(self):
         self.client.post("/AccountEdit/",
-                         {"Email": "johnDoe1@aol.com", "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.username), "johnDoe1@aol.com",
+                         {"Email": "johnDoe1@aol.com", "Username": self.admin.getID(),
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getUsername()), "johnDoe1@aol.com",
                          msg="Email not set correctly")
 
     def test_editUsername(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.email, "Username": "John_Doe1",
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.userID), "John_Doe1",
+                         {"Email": self.admin.getEmail(), "Username": "John_Doe1",
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getID()), "John_Doe1",
                          msg="Username not set correctly")
 
     def test_editPassword(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.getUsername(),
                           "Password": "password123",
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.password), "password123",
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getPassword()), "password123",
                          msg="Password not set correctly")
 
     def test_editFirstName(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.getUsername(),
+                          "Password": self.admin.getPassword(),
                           "First Name": "Kevin",
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.first_name), "Kevin",
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getFirstName()), "Kevin",
                          msg="First name not set correctly")
 
     def test_editLastName(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.getUsername(),
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
                           "Last Name": "Smith",
-                          "Phone Number": self.admin.account_ID.phone_number,
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.last_name), "Smith",
+                          "Phone Number": self.admin.getPhoneNumber(),
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getLastName()), "Smith",
                          msg="Last name not set correctly")
 
     def test_editPhoneNumber(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.getUsername(),
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
                           "Phone Number": "4148224000",
-                          "Home Address": self.admin.account_ID.home_address,
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.phone_number), "4148224000",
+                          "Home Address": self.admin.getHomeAddress(),
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getPhoneNumber()), "4148224000",
                          msg="Phone Number not set correctly")
 
     def test_editHomeAddress(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.getUsername(),
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
                           "Home Address": "2612 N Mary ville Ave",
-                          "Type of User Account": self.admin.account_ID.user_type})
-        self.assertEqual(TA.objects.get(userID=self.admin.account_ID.home_address), "2612 N Mary ville Ave",
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(TA.objects.get(userID=self.admin.getHomeAddress()), "2612 N Mary ville Ave",
                          msg="Home Address not set correctly")
 
     def test_editUserType(self):
         self.client.post("/AccountEdit/",
-                         {"Email": self.admin.account_ID.password, "Username": self.admin.account_ID.username,
-                          "Password": self.admin.account_ID.password,
-                          "First Name": self.admin.account_ID.first_name,
-                          "Last Name": self.admin.account_ID.last_name,
-                          "Phone Number": self.admin.account_ID.phone_number,
+                         {"Email": self.admin.getPassword(), "Username": self.admin.account_ID.username,
+                          "Password": self.admin.getPassword(),
+                          "First Name": self.admin.getFirstName(),
+                          "Last Name": self.admin.getLastName(),
+                          "Phone Number": self.admin.getPhoneNumber(),
                           "Home Address": self.admin.account_ID.home_address,
                           "Type of User Account": "TA"})
         self.assertEqual(TA.objects.get(userID=self.admin.account_ID.user_type), "TA",

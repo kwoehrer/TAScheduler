@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 
 from TAScheduler.app.models import *
+from TAScheduler.classes.Users.users import AdminUser, TAUser, InstructorUser
 
 '''
 Acceptance Criteria 1:
@@ -46,11 +47,15 @@ class TestTALogin(TestCase):
     def setUp(self):
 
         self.client = Client()
-        self.user_ta = TA.objects.create(username='John_Doe', password="password", first_name="John",
-                                         last_name='Doe',
-                                         phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                         user_type='TA',
-                                         email='johnDoe@aol.com')
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave',
+                            user_type='TA',
+                            email='johnDoe@aol.com')
+
+        user_object = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.ta: TAUser = TAUser(user_model)
 
     # Successful login test
     def testSuccessfulLogin(self):
@@ -166,12 +171,15 @@ class TestInstructorLogin(TestCase):
 
     def setUp(self) -> None:
         self.client = Client()
-        self.user_instructor = Instructor.objects.create(username='Steven_Adams', password="passwordNew",
-                                                         first_name="Steven",
-                                                         last_name='Adams',
-                                                         phone_number='4149818222', home_address='2512 N Kenwood Ave',
-                                                         user_type='Instructor',
-                                                         email='stevenAdams@aol.com')
+        User.objects.create(username='Steven_Adams', password="passwordNew",
+                            first_name="Steven",
+                            last_name='Adams',
+                            phone_number='4149818222', home_address='2512 N Kenwood Ave',
+                            user_type='Instructor',
+                            email='stevenAdams@aol.com')
+        user_object = User.objects.filter(username='Steven_Adams')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     # Successful login test
     def testSuccessfulLogin(self):
@@ -287,11 +295,15 @@ class TestAdminLogin(TestCase):
 
     def setUp(self) -> None:
         self.client = Client()
-        self.user_admin = Admin.objects.create(username='Micheal_Johnson', password="password3", first_name="Micheal",
-                                               last_name='Johnson',
-                                               phone_number='4149824444', home_address='2264 N Bradford Ave',
-                                               user_type='Admin',
-                                               email='michealJohnson@aol.com')
+        User.objects.create(username='Micheal_Johnson', password="password3", first_name="Micheal",
+                            last_name='Johnson',
+                            phone_number='4149824444', home_address='2264 N Bradford Ave',
+                            user_type='Admin',
+                            email='michealJohnson@aol.com')
+
+        user_object = User.objects.filter(username='Micheal_Johnson')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.admin: AdminUser = AdminUser(user_model)
 
     # Successful login test
     def testSuccessfulLogin(self):

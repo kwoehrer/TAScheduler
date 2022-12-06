@@ -43,7 +43,7 @@ AND specifies user type as TA
 THEN account of type TA is created
 ---------------------------------------------------------------------------------
 
-SCENARIO: As an Admin, I want to be able to navigate to the Create Account page
+SCENARIO: As an Admin, I want to be able to navigate to the Course Management page
 ----------------------------------------------------
 GIVEN: The user is an Admin and is logged in and at the home page
 AND:They can click on "Return to Course Management Page"

@@ -9,21 +9,11 @@ class TestGetIDAdmin(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
-    def testIDExists(self):
-        User.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
-                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
-                            email='johnDoe@aol.com')
-        user_object = User.objects.filter(username='John_Doe')[0]
-        user_model_new = Admin.objects.create(account_ID=user_object.account_ID)
-        self.new_admin: AdminUser = AdminUser(user_model_new)
-        self.assertNotEqual(None, self.new_admin.getID(), msg="AN ID cannot exist when the field is not "
-                                                              "declared")
-
     def testID(self):
-        self.assertEqual(User.objects.get(account_ID=self.admin.getID()), self.admin.getID(),
+        self.assertEqual(User.objects.get(account_ID=user_obj), self.admin.getID(),
                          msg="Admin User ID was not correctly "
                              "set up when creating a Admin")
 
@@ -103,7 +93,7 @@ class TestSetAdminLastName(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -116,7 +106,7 @@ class TestSetAdminLastName(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_new_model = Admin.objects.create(account_ID=user_object.account_ID)
+        user_new_model = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_new_model)
 
         new_last_name = self.new_admin.setLastName("Adams")
@@ -130,7 +120,7 @@ class TestGetAdminPhoneNumber(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -139,7 +129,7 @@ class TestGetAdminPhoneNumber(TestCase):
                             home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_model_new = Admin.objects.create(account_ID=user_object.account_ID)
+        user_model_new = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_model_new)
         self.assertNotEqual(None, self.new_admin.getPhoneNumber(),
                             msg="A phone number cannot exist when the field is not "
@@ -171,7 +161,7 @@ class TestSetAdminPhoneNumber(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -198,7 +188,7 @@ class TestGetAdminAddress(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testHomeAddressExists(self):
@@ -206,7 +196,7 @@ class TestGetAdminAddress(TestCase):
                             phone_number='4149818000', user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_model_new = Admin.objects.create(account_ID=user_object.account_ID)
+        user_model_new = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_model_new)
         self.assertNotEqual(None, self.new_admin.getHomeAddress(), msg="A password cannot exist when the field is not "
                                                                        "declared")
@@ -234,7 +224,7 @@ class TestSetAdminHomeAddress(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
@@ -246,7 +236,7 @@ class TestSetAdminHomeAddress(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_new_model = Admin.objects.create(account_ID=user_object.account_ID)
+        user_new_model = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_new_model)
 
         new_password = self.new_admin.setHomeAddress("2512 N Farewell Ave")
@@ -259,7 +249,7 @@ class TestGetAdminUserType(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -282,7 +272,7 @@ class TestSetAdminUserType(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -295,7 +285,7 @@ class TestSetAdminUserType(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type=None,
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_new_model = Admin.objects.create(account_ID=user_object.account_ID)
+        user_new_model = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_new_model)
         new_user_type = self.new_admin.setUserType("Admin")
 
@@ -308,7 +298,7 @@ class TestGetAdminUserPassword(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -321,7 +311,7 @@ class TestGetAdminUserPassword(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model_new = User.objects.create(account_ID=user_obj.account_ID)
+        user_model_new = User.objects.create(account_ID=user_obj)
         self.new_admin: AdminUser = AdminUser(user_model_new)
         self.assertNotEqual(None, self.new_admin.getPassword(), msg="A password cannot exist when the field is not "
                                                                     "declared")
@@ -343,7 +333,7 @@ class TestSetAdminUserPassword(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_obj = User.objects.filter(username='John_Doe')[0]
-        user_model = User.objects.create(account_ID=user_obj.account_ID)
+        user_model = User.objects.create(account_ID=user_obj)
 
         self.admin: AdminUser = AdminUser(user_model)
 
@@ -357,7 +347,7 @@ class TestSetAdminUserPassword(TestCase):
                             phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_new_model = Admin.objects.create(account_ID=user_object.account_ID)
+        user_new_model = Admin.objects.create(account_ID=user_object)
         self.new_admin: AdminUser = AdminUser(user_new_model)
 
         new_password = self.new_admin.setPassword("password2")

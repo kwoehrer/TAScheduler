@@ -16,6 +16,42 @@ GIVEN: The user is an Admin and is logged in and at the home page
 AND:They can click on "Return to Course Management Page"
 THEN: They will be navigated to the "Course Management" page
 ----------------------------------------------------
+
+Acceptance Criteria 1:
+GIVEN user has an existing account in the database
+WHEN a valid fields are entered
+AND a user with the same fields already exists
+THEN account is not created
+
+Acceptance Criteria 2:
+GIVEN user has an existing account in the database
+WHEN the fields are entered
+AND and one of the fields are invalid
+THEN account is not created
+
+Acceptance Criteria 3:
+GIVEN user has an existing account in the database
+WHEN the fields are entered
+AND and one of the fields is not provided
+THEN account is not created
+
+Acceptance Criteria 4:
+GIVEN The user is an Admin and is logged in and at the home page
+WHEN user enters valid fields
+AND specifies user type as Admin
+THEN account of type ADMIN is created
+
+Acceptance Criteria 5:
+GIVEN The user is an Admin and is logged in and at the home page
+WHEN user enters valid fields
+AND specifies user type as Instructor
+THEN account of type Instructor is created
+
+Acceptance Criteria 6:
+GIVEN The user is an Admin and is logged in and at the home page
+WHEN user enters valid fields
+AND specifies user type as TA
+THEN account of type TA is created
 '''
 
 
@@ -68,7 +104,7 @@ class TestAdminCreateAccount(TestCase):
         r = self.client.post("/create_user/",
                              {"username": "Stephen_Doe", "password": "", "first_name": "Stephen",
                               "last_name": "Doe", "phone_number": "12345678901",
-                              "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                              "home_address": "2514 N Farewell Ave", "user_type": "Admin",
                               "email": "stephenDoe@aol.com"}, follow=True)
 
         self.assertEqual(r.context["error"], "User was not created. A phone number needs to be 10 digits")

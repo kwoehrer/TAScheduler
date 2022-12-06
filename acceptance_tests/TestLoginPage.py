@@ -124,12 +124,12 @@ class TestTALogin(TestCase):
 
 
 '''
-AccepAdminnce Criteria 1:
+Acceptance Criteria 1:
 GIVEN user is a Instructor and has a existing account in daAdminbase
 WHEN a valid username is entered
 AND a valid password is entered
 THEN account is accessed 
-AccepAdminnce Criteria 2:
+Acceptance Criteria 2:
 GIVEN user is a Instructor and has a existing account in daAdminbase
 WHEN an invalid username is entered
 AND a valid password is entered

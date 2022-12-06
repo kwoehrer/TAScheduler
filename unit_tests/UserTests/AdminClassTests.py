@@ -3,6 +3,7 @@ from app.models import Admin, User
 from classes.Users.users import AdminUser
 
 
+# New Branch
 class TestGetIDAdmin(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',

@@ -3,6 +3,7 @@ from app.models import Instructor, User
 from classes.Users.users import InstructorUser
 
 
+# New Branch
 class TestGetIDInstructor(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',

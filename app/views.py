@@ -479,9 +479,9 @@ class DeleteCourse(View):
                 total_query = total_query.filter(year=year_query)
         if credit_query is not None and credit_query != '':
             if total_query is None:
-                total_query = Course.objects.filter(credit=credit_query)
+                total_query = Course.objects.filter(credits=credit_query)
             else:
-                total_query = total_query.filter(credit=credit_query)
+                total_query = total_query.filter(credits=credit_query)
         if desc_query is not None and desc_query != '':
             if total_query is None:
                 total_query = Course.objects.filter(description=credit_query)
@@ -567,9 +567,9 @@ class EditCourse(View):
                 total_query = total_query.filter(year=year_query)
         if credit_query is not None and credit_query != '':
             if total_query is None:
-                total_query = Course.objects.filter(credit=credit_query)
+                total_query = Course.objects.filter(credits=credit_query)
             else:
-                total_query = total_query.filter(credit=credit_query)
+                total_query = total_query.filter(credits=credit_query)
         if desc_query is not None and desc_query != '':
             if total_query is None:
                 total_query = Course.objects.filter(description=credit_query)
@@ -623,8 +623,8 @@ class CourseEditActive(View):
         try:
             crs_to_edit_wrapper.set_course_name(request.POST.get('name'))
             crs_to_edit_wrapper.set_semester(request.POST.get('semester'))
-            crs_to_edit_wrapper.set_year(request.POST.get('year'))
-            crs_to_edit_wrapper.set_credits(request.POST.get('credits'))
+            crs_to_edit_wrapper.set_year(int(request.POST.get('year')))
+            crs_to_edit_wrapper.set_credits(int(request.POST.get('credits')))
             crs_to_edit_wrapper.set_description(request.POST.get('description'))
         except Exception as e:
             msg = "Could not edit account due to " + str(e.__str__())

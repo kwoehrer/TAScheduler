@@ -4,41 +4,50 @@ from TAScheduler.app.models import *
 from TAScheduler.classes.Users.users import AdminUser, TAUser, InstructorUser
 
 '''
+Scenario: As a TA, I want to be able to navigate to the Login Page
+-------------------------------------------------------------
 Acceptance Criteria 1:
 GIVEN user is a TA and has a existing account in database
 WHEN a valid username is entered
 AND a valid password is entered
-THEN account is accessed 
+THEN account is accessed
+-------------------------------------------------------------
 Acceptance Criteria 2:
 GIVEN user is a TA and has a existing account in database
 WHEN an invalid username is entered
 AND a valid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 3:
 GIVEN user is a TA has existing account in database
 WHEN a valid username is entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 4:
 GIVEN user is a TA has existing account in database
 WHEN a valid username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 5:
 GIVEN user is a TA has existing account in database
 WHEN a valid password entered
 AND an empty username is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 6:
 GIVEN user is a TA has existing account in database
 WHEN an invalid username entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 7:
 GIVEN user is a TA has existing account in database
 WHEN an empty username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 '''
 
 
@@ -56,6 +65,7 @@ class TestTALogin(TestCase):
         user_object = User.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
+        user_model.save()
 
     # Successful login test
     def testSuccessfulLogin(self):
@@ -70,7 +80,7 @@ class TestTALogin(TestCase):
     # Incorrect Username test
     def testLoginIncorrectUserName(self):
 
-        response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'passwordNew'}, follow=True)
+        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'}, follow=True)
         try:
             self.assertTrue(response.context["error"], "Incorrect Username")
         except AssertionError as msg:
@@ -81,29 +91,29 @@ class TestTALogin(TestCase):
     # Incorrect Password test
     def testLoginIncorrectPassword(self):
 
-        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password1'}, follow=True)
+        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Incorrect Password")
         except AssertionError as msg:
             print(msg)
 
         pass
 
     # Empty Username test
-    def testLoginNoUser(self):
+    def testLoginEmptyUsername(self):
 
         response = self.client.post('/', {'username': ' ', 'password': 'password'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Invalid Username")
         except AssertionError as msg:
             print(msg)
 
     # Empty Password test
-    def testLoginNoPass(self):
+    def testLoginEmptyPassword(self):
 
         response = self.client.post('/', {'username': 'John_Doe', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Invalid Password")
         except AssertionError as msg:
             print(msg)
 
@@ -118,7 +128,7 @@ class TestTALogin(TestCase):
             print(msg)
 
     # Empty Username and Password test
-    def testLoginNoUserAndPass(self):
+    def testLoginEmptyUsernameAndPassword(self):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:
@@ -129,41 +139,50 @@ class TestTALogin(TestCase):
 
 
 '''
-AccepAdminnce Criteria 1:
-GIVEN user is a Instructor and has a existing account in daAdminbase
+Scenario: As an Instructor, I want to be able to navigate to the Login Page
+-------------------------------------------------------------
+Acceptance Criteria 1:
+GIVEN user is an Instructor and has a existing account in database
 WHEN a valid username is entered
 AND a valid password is entered
-THEN account is accessed 
-AccepAdminnce Criteria 2:
-GIVEN user is a Instructor and has a existing account in daAdminbase
+THEN account is accessed
+-------------------------------------------------------------
+Acceptance Criteria 2:
+GIVEN user is an Instructor and has a existing account in database
 WHEN an invalid username is entered
 AND a valid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 3:
-GIVEN user is a Instructor has existing account in database
+GIVEN user is an Instructor has existing account in database
 WHEN a valid username is entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 4:
-GIVEN user is a Instructor has existing account in database
+GIVEN user is an Instructor has existing account in database
 WHEN a valid username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 5:
-GIVEN user is a Instructor has existing account in database
+GIVEN user is an Instructor has existing account in database
 WHEN a valid password entered
 AND an empty username is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 6:
-GIVEN user is a Instructor has existing account in database
+GIVEN user is an Instructor has existing account in database
 WHEN an invalid username entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 7:
-GIVEN user is a Instructor has existing account in database
+GIVEN user is an Instructor has existing account in database
 WHEN an empty username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 '''
 
 
@@ -180,6 +199,7 @@ class TestInstructorLogin(TestCase):
         user_object = User.objects.filter(username='Steven_Adams')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.instructor: InstructorUser = InstructorUser(user_model)
+        user_model.save()
 
     # Successful login test
     def testSuccessfulLogin(self):
@@ -207,32 +227,32 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Incorrect Password")
         except AssertionError as msg:
             print(msg)
 
         pass
 
     # Empty Username test
-    def testLoginNoUser(self):
+    def testLoginEmptyUsername(self):
 
         response = self.client.post('/', {'username': ' ', 'password': 'passwordNew'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Empty Username")
         except AssertionError as msg:
             print(msg)
 
     # Empty Password test
-    def testLoginNoPass(self):
+    def testLoginEmptyPassword(self):
 
         response = self.client.post('/', {'username': 'Steven_Adams', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Incorrect Password")
         except AssertionError as msg:
             print(msg)
 
     # Incorrect Username and Password test
-    def testLoginIncorrectUserAndPass(self):
+    def testLoginIncorrectUsernameAndPassword(self):
 
         response = self.client.post('/', {'username': 'testAdmin', 'password': 'testAdmin1'})
         try:
@@ -242,7 +262,7 @@ class TestInstructorLogin(TestCase):
             print(msg)
 
     # Empty Username and Password test
-    def testLoginNoUserAndPass(self):
+    def testLoginEmptyUsernameAndPassword(self):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:
@@ -253,41 +273,50 @@ class TestInstructorLogin(TestCase):
 
 
 '''
+Scenario: As an Admin, I want to be able to navigate to the Login Page
+-------------------------------------------------------------
 Acceptance Criteria 1:
-GIVEN user is a Admin and has a existing account in database
+GIVEN user is an Admin and has a existing account in database
 WHEN a valid username is entered
 AND a valid password is entered
-THEN account is accessed 
+THEN account is accessed
+-------------------------------------------------------------
 Acceptance Criteria 2:
-GIVEN user is a Admin and has a existing account in database
+GIVEN user is an Admin and has a existing account in database
 WHEN an invalid username is entered
 AND a valid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 3:
-GIVEN user is a Admin has existing account in database
+GIVEN user is an Admin has existing account in database
 WHEN a valid username is entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 4:
-GIVEN user is a Admin has existing account in database
+GIVEN user is an Admin has existing account in database
 WHEN a valid username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 5:
-GIVEN user is a Admin has existing account in database
+GIVEN user is an Admin has existing account in database
 WHEN a valid password entered
 AND an empty username is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 6:
-GIVEN user is a Admin has existing account in database
+GIVEN user is an Admin has existing account in database
 WHEN an invalid username entered
 AND an invalid password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 Acceptance Criteria 7:
-GIVEN user is a Admin has existing account in database
+GIVEN user is an Admin has existing account in database
 WHEN an empty username entered
 AND an empty password is entered
 THEN account is not accessed
+-------------------------------------------------------------
 '''
 
 
@@ -304,6 +333,7 @@ class TestAdminLogin(TestCase):
         user_object = User.objects.filter(username='Micheal_Johnson')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.admin: AdminUser = AdminUser(user_model)
+        user_model.save()
 
     # Successful login test
     def testSuccessfulLogin(self):
@@ -318,7 +348,7 @@ class TestAdminLogin(TestCase):
     # Incorrect Username test
     def testLoginIncorrectUserName(self):
 
-        response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'passwordNew'}, follow=True)
+        response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'password3'}, follow=True)
         try:
             self.assertTrue(response.context["error"], "Incorrect Username")
         except AssertionError as msg:
@@ -329,34 +359,34 @@ class TestAdminLogin(TestCase):
     # Incorrect Password test
     def testLoginIncorrectPassword(self):
 
-        response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password1'}, follow=True)
+        response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Incorrect Password")
         except AssertionError as msg:
             print(msg)
 
         pass
 
     # Empty Username test
-    def testLoginNoUser(self):
+    def testLoginEmptyUsername(self):
 
         response = self.client.post('/', {'username': ' ', 'password': 'password3'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Empty Username")
         except AssertionError as msg:
             print(msg)
 
     # Empty Password test
-    def testLoginNoPass(self):
+    def testLoginEmptyPassword(self):
 
         response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["error"], "Empty Password")
         except AssertionError as msg:
             print(msg)
 
     # Incorrect Username and Password test
-    def testLoginIncorrectUserAndPass(self):
+    def testLoginIncorrectUsernameAndPassword(self):
 
         response = self.client.post('/', {'username': 'testAdmin', 'password': 'testAdmin1'})
         try:
@@ -366,7 +396,7 @@ class TestAdminLogin(TestCase):
             print(msg)
 
     # Empty Username and Password test
-    def testLoginNoUserAndPass(self):
+    def testLoginEmptyUsernameAndPassword(self):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:

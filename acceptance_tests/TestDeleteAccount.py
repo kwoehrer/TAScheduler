@@ -4,61 +4,43 @@ from TAScheduler.app.models import *
 from classes.Users.users import AdminUser, InstructorUser, TAUser
 
 '''
-As an Admin, I want to be able to navigate to the Delete Account page
-----------------------------------------------------
-GIVEN: The user is an Admin and is logged in and at the Delete Account page
-AND:They can click on "Delete Account"
-THEN: They will be able to Delete an Account of any user type
-----------------------------------------------------
-
-As an Admin, I want to be able to navigate to the Account Management page
-----------------------------------------------------
-GIVEN: The user is an Admin and is logged in and at the Delete Account page
-AND:They can click on "Return to Account Management Page"
-THEN: They will be navigated to the "Account Management" page
-----------------------------------------------------
-'''
-
-'''
 SCENARIO: As an Admin, I want to be able navigate the Delete Account Page and Delete a User
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 1:
 GIVEN The user is an Admin and is logged in and at the Delete Account page
 WHEN a user with the same fields already exists
 AND "Delete Account" is clicked
 THEN account is can be deleted
-
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 2:
-SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
 GIVEN The user is an Admin and is logged in and at the Delete Account page
 WHEN a user is to be deleted
 AND all of the valid fields are not provided
 THEN account cannot be searched to be deleted
-
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 3:
-SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
 GIVEN The user is an Admin and is logged in and at the Delete Account page
 WHEN a user of type TA is to be deleted
 WHEN user can be found with valid fields in the list of all users
 AND "Delete Account" is clicked
 THEN account can be deleted
-
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 4:
-SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
 GIVEN The user is an Admin and is logged in and at the Delete Account page
 WHEN a user of type Instructor is to be deleted
 WHEN user can be found with valid fields in the list of all users
 AND "Delete Account" is clicked
 THEN account can be deleted
-
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 5:
-SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
 GIVEN The user is an Admin and is logged in and at the Delete Account page
 WHEN a user of type Admin is to be deleted
 WHEN user can be found with valid fields in the list of all users
 AND "Delete Account" is clicked
 THEN account can be deleted
-
+-------------------------------------------------------------------------------------------
 SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+-------------------------------------------------------------------------------------------
 Acceptance Criteria 1:
 GIVEN: The user is an Admin and is logged in and at the Delete Account page
 AND:They can click on "Return to Account Management Page"
@@ -69,7 +51,7 @@ THEN: They will be navigated to the "Account Management" page
 class TestSearchUsersToDelete(TestCase):
 
     def setUp(self):
-        self.dummyClient = Client()
+        self.client = Client()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -110,9 +92,9 @@ class TestSearchUsersToDelete(TestCase):
         user_model = TA.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
-    def testNoEmailProvided(self):
+    def testEmptyEmailProvided(self):
         response = self.client.post("/DeleteAccount/",
                                     {"Email": " ", "Username": "stephen_Doe",
                                      "First Name and Last Name": "Stephen Doe", "Type of User Account": "Admin"},
@@ -121,7 +103,7 @@ class TestSearchUsersToDelete(TestCase):
         self.assertEqual(response.context["error"], "User cannot be found. First name and Last Name should not be "
                                                     "left blank")
 
-    def testNoUsernameProvided(self):
+    def testEmptyUsernameProvided(self):
         response = self.client.post("/DeleteAccount/",
                                     {"Email": "stephenDoe@aol.com", "Username": " ",
                                      "First Name and Last Name": "Stephen Doe", "Type of User Account": "Admin"},
@@ -129,7 +111,7 @@ class TestSearchUsersToDelete(TestCase):
 
         self.assertEqual(response.context["error"], "User cannot be found. Username should not be left blank")
 
-    def testNoFirstNameAndLastNameProvided(self):
+    def testEmptyFirstNameAndLastNameProvided(self):
         response = self.client.post("/DeleteAccount/",
                                     {"Email": "stephenDoe@aol.com", "Username": "stephen_Doe",
                                      "First Name and Last Name": " ", "Type of User Account": "Admin"},
@@ -138,7 +120,7 @@ class TestSearchUsersToDelete(TestCase):
         self.assertEqual(response.context["error"], "User cannot be found. First name and Last Name should not be "
                                                     "left blank")
 
-    def testNoUserTypeProvided(self):
+    def testEmptyUserTypeProvided(self):
         response = self.client.post("/DeleteAccount/",
                                     {"Email": "stephenDoe@aol.com", "Username": "stephen_Doe",
                                      "First Name and Last Name": "Stephen Doe", "Type of User Account": " "},
@@ -149,13 +131,9 @@ class TestSearchUsersToDelete(TestCase):
 
 
 class TestAdminDeleteAccount(TestCase):
-    dummyClient = None
-    TA = None
-    instructor = None
-    admin = None
-
+    
     def setUp(self):
-        self.dummyClient = Client()
+        self.client = Client()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -196,35 +174,33 @@ class TestAdminDeleteAccount(TestCase):
         user_model = TA.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_deleteUser(self):
-        self.dummyClient.post('/DeleteAccount/', {'Delete Account': 1}, follow=True)
+        self.client.post('/DeleteAccount/', {'Delete Account': 1}, follow=True)
         var = User.objects.count()
         self.assertEquals(var, 3, "TA has been successfully deleted")
         user_count = list(User.objects.all())
         self.assertEquals(user_count, [self.instructor, self.admin, self.admin1],
                           "Instructor, Admin, and Admin1 still exist")
 
-        self.dummyClient.post('/DeleteAccount/', {'Delete Account': 2}, follow=True)
+        self.client.post('/DeleteAccount/', {'Delete Account': 2}, follow=True)
         var = User.objects.count()
         self.assertEquals(var, 2, "Instructor has been successfully deleted")
         user_count = list(User.objects.all())
         self.assertEquals(user_count, [self.admin, self.admin1], "Admin2 and Admin has not been deleted")
 
-        self.dummyClient.post('/delete_user/', {'Delete Account': 4}, follow=True)
+        self.client.post('/AccountDelete/', {'Delete Account': 3}, follow=True)
         var = User.objects.count()
-        self.assertEquals(var, 1, "Admin2 was successfully deleted")
+        self.assertEquals(var, 1, "Admin1 was successfully deleted")
         user_count = list(User.objects.all())
         self.assertEquals(user_count, [self.admin], "Only admin is left")
 
 
 class DeleteAdmin(TestCase):
-    dummyClient = None
-    admin = None
 
     def setUp(self):
-        self.dummyClient = Client()
+        self.client = Client()
 
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
@@ -236,24 +212,20 @@ class DeleteAdmin(TestCase):
         user_model = Admin.objects.create(account_ID=user_object)
         self.admin: AdminUser = AdminUser(user_model)
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_deleteAdmin(self):
-        resp = self.dummyClient.post('/DeleteAccount/', {'Delete Account': 1}, follow=True)
+        response = self.client.post('/DeleteAccount/', {'Delete Account': 1}, follow=True)
         try:
-            self.assertTrue(resp.url, "")
+            self.assertTrue(response.url, " ")
         except AttributeError as msg:
             print(msg)
 
 
 class DeleteInstructor(TestCase):
-    dummyClient = None
-    TA = None
-    instructor = None
-    admin = None
 
     def setUp(self):
-        self.dummyClient = Client()
+        self.client = Client()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -294,22 +266,22 @@ class DeleteInstructor(TestCase):
         user_model = TA.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_deleteInstructor(self):
-        self.dummyClient.post('/DeleteAccount/', {'Delete Account': 2}, follow=True)
+        self.client.post('/DeleteAccount/', {'Delete Account': 2}, follow=True)
         self.assertEquals(User.objects.get(userID=self.instructor.getID()), self.instructor.getID(),
                           msg="Instructor has not been deleted")
 
 
 class DeleteTA(TestCase):
-    dummyClient = None
+    client = None
     TA = None
     instructor = None
     admin = None
 
     def setUp(self):
-        self.dummyClient = Client()
+        self.client = Client()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -350,10 +322,10 @@ class DeleteTA(TestCase):
         user_model = TA.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_deleteTa(self):
-        self.dummyClient.post('/delete_user/', {'Delete Account': 1}, follow=True)
+        self.client.post('/AccountDelete/', {'Delete Account': 1}, follow=True)
         var = User.objects.count()
         self.assertEquals(var, 2)
         user_count = list(User.objects.all())

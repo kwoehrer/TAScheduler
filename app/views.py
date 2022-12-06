@@ -359,7 +359,7 @@ class AccountEditActive(View):
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 
         try:
-            user_to_edit_wrapper.setUserType(request.POST.get('acc_type'))
+            user_to_edit_wrapper.setUserType(request.POST.get('user_type'))
             user_to_edit_wrapper.setLastName(request.POST.get('last_name'))
             user_to_edit_wrapper.setFirstName(request.POST.get('first_name'))
             # Have to check phone number before passing in because django changes none to empty strings. Thanks django

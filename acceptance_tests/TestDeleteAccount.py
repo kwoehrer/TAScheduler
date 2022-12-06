@@ -19,6 +19,52 @@ THEN: They will be navigated to the "Account Management" page
 ----------------------------------------------------
 '''
 
+'''
+SCENARIO: As an Admin, I want to be able navigate the Delete Account Page and Delete a User
+Acceptance Criteria 1:
+GIVEN The user is an Admin and is logged in and at the Delete Account page
+WHEN a user with the same fields already exists
+AND "Delete Account" is clicked
+THEN account is can be deleted
+
+Acceptance Criteria 2:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Delete Account page
+WHEN a user is to be deleted
+AND all of the valid fields are not provided
+THEN account cannot be searched to be deleted
+
+Acceptance Criteria 3:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Delete Account page
+WHEN a user of type TA is to be deleted
+WHEN user can be found with valid fields in the list of all users
+AND "Delete Account" is clicked
+THEN account can be deleted
+
+Acceptance Criteria 4:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Delete Account page
+WHEN a user of type Instructor is to be deleted
+WHEN user can be found with valid fields in the list of all users
+AND "Delete Account" is clicked
+THEN account can be deleted
+
+Acceptance Criteria 5:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Delete Account page
+WHEN a user of type Admin is to be deleted
+WHEN user can be found with valid fields in the list of all users
+AND "Delete Account" is clicked
+THEN account can be deleted
+
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+Acceptance Criteria 1:
+GIVEN: The user is an Admin and is logged in and at the Delete Account page
+AND:They can click on "Return to Account Management Page"
+THEN: They will be navigated to the "Account Management" page
+'''
+
 
 class TestSearchUsersToDelete(TestCase):
 

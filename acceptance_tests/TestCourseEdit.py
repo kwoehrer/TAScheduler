@@ -4,6 +4,39 @@ from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 from classes.Users.users import AdminUser
 
 
+'''
+SCENARIO: As an Admin, I want to be able navigate the Edit Course Page and Edit a Course
+Acceptance Criteria 1:
+GIVEN a course needs to edited
+WHEN all the valid fields are entered correctly and course can be found
+WHEN "Edit Account" is clicked
+AND all the valid fields to be edited are entered correctly
+THEN the course is edited
+
+Acceptance Criteria 2:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN a course needs to edited
+WHEN all the valid fields are not entered correctly
+THEN course cannot be found
+THEN course cannot be edited
+
+Acceptance Criteria 3:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Edit Account page
+WHEN a user of type Admin is to be edited
+WHEN user can be found with valid fields in the list of all users
+AND "Edit Account" is clicked
+THEN account can be edited
+
+SCENARIO: As an Admin, I want to be able navigate to the Home Page
+Acceptance Criteria 1:
+GIVEN: The user is a Admin and is logged in and at the Edit Account page
+AND:They can click on "Return to Account Management Page"
+THEN: They will be navigated to the "AdminAccMng" page
+
+'''
+
+
 class TestEditCourse(TestCase):
     dummyClient = None
     admin = None

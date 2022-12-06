@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 
 from TAScheduler.app.models import *
 from classes.Users.users import AdminUser
+
 '''
 As a Admin, I want to be able to navigate to the Course Management page
 ----------------------------------------------------
@@ -19,6 +20,40 @@ GIVEN: The user is a Admin and is logged in and at the home page
 AND:They can click on "Delete Account"
 THEN: They will be navigated to the "Delete Account" page
 As a user, I want to be able to navigate to the Delete Account page
+'''
+
+'''
+SCENARIO: As an Admin, I want to be able navigate the Edit Account Page and Edit a User
+Acceptance Criteria 1:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Edit Account page
+WHEN a user of type TA is to be edited
+WHEN user can be found with valid fields in the list of all users
+AND "Edit Account" is clicked
+THEN account can be edited
+
+Acceptance Criteria 2:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Edit Account page
+WHEN a user of type Instructor is to be edited
+WHEN user can be found with valid fields in the list of all users
+AND "Edit Account" is clicked
+THEN account can be edited
+
+Acceptance Criteria 3:
+SCENARIO: As an Admin, I want to be able to navigate to the Account Management page
+GIVEN The user is an Admin and is logged in and at the Edit Account page
+WHEN a user of type Admin is to be edited
+WHEN user can be found with valid fields in the list of all users
+AND "Edit Account" is clicked
+THEN account can be edited
+
+SCENARIO: As an Admin, I want to be able navigate to the Home Page
+Acceptance Criteria 1:
+GIVEN: The user is a Admin and is logged in and at the Edit Account page
+AND:They can click on "Return to Account Management Page"
+THEN: They will be navigated to the "AdminAccMng" page
+
 '''
 
 

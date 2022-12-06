@@ -2,7 +2,7 @@ import abc
 
 from app.models import User, TA, Instructor, Admin
 
-
+# Updated
 class AbstractUser(abc.ABC):
     @abc.abstractmethod
     def getID(self):
@@ -74,8 +74,7 @@ class TAUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-
-    def getPassword(self) -> str:
+    def getPassword(self):
         return self.model.account_ID.password
 
     def getUsername(self) -> str:
@@ -94,8 +93,7 @@ class TAUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-
-        if self.model.account_ID.first_name == first_name:
+        if self.model.account_ID.first_name == first_name :
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -103,8 +101,7 @@ class TAUser(AbstractUser):
         user_obj.save()
 
     def setLastName(self, last_name: str):
-
-        if self.model.account_ID.last_name == last_name:
+        if self.model.account_ID.last_name == last_name :
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -182,7 +179,7 @@ class InstructorUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-    def getPassword(self) -> str:
+    def getPassword(self):
         return self.model.account_ID.password
 
     def getUsername(self) -> str:
@@ -201,9 +198,7 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-
-        if self.model.account_ID.first_name == first_name:
-
+        if self.model.account_ID.first_name == first_name :
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -211,8 +206,7 @@ class InstructorUser(AbstractUser):
         user_obj.save()
 
     def setLastName(self, last_name: str):
-
-        if self.model.account_ID.last_name == last_name:
+        if self.model.account_ID.last_name == last_name :
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -291,8 +285,7 @@ class AdminUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-
-    def getPassword(self) -> str:
+    def getPassword(self):
         return self.model.account_ID.password
     def getUsername(self) -> str:
         return self.model.account_ID.username

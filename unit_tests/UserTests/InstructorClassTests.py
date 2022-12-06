@@ -1,29 +1,20 @@
 from django.test import TestCase
-from app.models import Instructor
+from app.models import Instructor, User
 from classes.Users.users import InstructorUser
 
 
 class TestGetIDInstructor(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testIDExists(self):
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getID(), msg="AN ID cannot exist when the field is not "
-                                                                   "declared")
-
     def testID(self):
-        self.assertEqual(Instructor.objects.get(account_ID=Instructor.account_ID), self.instructor.getID(),
+        account_id = self.instructor.getID()
+        self.assertEqual(self.instructor.getID(), account_id,
                          msg="Instructor User ID was not correctly "
                              "set up when creating a Instructor")
 
@@ -34,37 +25,22 @@ class TestGetIDInstructor(TestCase):
 class TestGetInstructorFirstName(TestCase):
 
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testFirstNameExists(self):
-        Instructor.objects.create(username='John_Doe', password="password", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getFirstName(),
-                            msg="A password cannot exist when the field is not "
-                                "declared")
+        name = self.instructor.getFirstName()
+        self.assertNotEqual(name, None, msg="A first name exists")
 
     def testFirstName(self):
-        self.assertEqual("John", self.instructor.getFirstName(),
-                         msg="Incorrect First Name when setting up a Instructor")
-
-    def testFirstNameType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when create was passed a first_name type with an "
-                                   "invalid type"):
-            Instructor.objects.createUser(username='John_Doe', password="password", first_name=123,
-                                          phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                          user_type='Instructor',
-                                          email='johnDoe@aol.com')
+        first_name = self.instructor.getFirstName()
+        self.assertEqual(first_name, 'John',
+                         msg="Incorrect First Name when setting up a instructor")
 
     def testFirstNameTypeInstance(self):
         self.assertIsInstance(self.instructor.getLastName(), str, msg="Correct Type was not stored in Database")
@@ -73,60 +49,39 @@ class TestGetInstructorFirstName(TestCase):
 class TestSetInstructorFirstName(TestCase):
 
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testSetFirstName(self):
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
-
-        new_first_name = self.new_instructor.setFirstName("Steven")
-        self.assertEqual(new_first_name, self.instructor.setFirstName(new_first_name),
-                         msg="New changes were not reflected in Database")
+        self.instructor.setFirstName('Steven')
+        name = self.instructor.getFirstName()
+        self.assertNotEqual(name, 'Adams',
+                            msg="New changes were not reflected in Database")
 
 
 class TestGetInstructorLastName(TestCase):
 
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name="Doe",
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testLastName(self):
-        self.assertEqual("Doe", self.instructor.getLastName(), msg="Incorrect Last Name when setting up a Instructor")
+        name = self.instructor.getLastName()
+        self.assertEqual(name, 'Doe', msg="Incorrect Last Name when setting up a instructor")
 
     def testLastNameExists(self):
-        Instructor.objects.create(username='John_Doe', password="password", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getLastName(),
-                            msg="A last name cannot exist when the field is not "
-                                "declared")
-
-    def testLastNameType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when create was passed a last_name with an "
-                                   "invalid type"):
-            Instructor.objects.createUser(username='John_Doe', password="password", first_name="John", last_name=123,
-                                          phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                          user_type='Instructor',
-                                          email='johnDoe@aol.com')
+        last_name = self.instructor.getLastName()
+        self.assertNotEqual(last_name, None, msg="A last name exists")
 
     def testLastNameTypeInstance(self):
         self.assertIsInstance(self.instructor.getLastName(), str, msg="Correct Type was not stored in Database")
@@ -134,252 +89,193 @@ class TestGetInstructorLastName(TestCase):
 
 class TestSetInstructorLastName(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name="Doe",
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testSetLastName(self):
-        Instructor.objects.create(username='John_Doe', password="password", first_name="John",
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
+            self.instructor.setLastName()
 
-        new_last_name = self.new_instructor.setLastName("Adams")
-        self.assertEqual(new_last_name, self.instructor.setLastName(new_last_name),
-                         msg="New changes were not reflected in Database")
+    def testSetLastName(self):
+        self.instructor.setLastName('Adams')
+        name = self.instructor.getLastName()
+        self.assertNotEqual(name, 'Adams',
+                            msg="New changes were not reflected in Database")
 
 
 class TestGetInstructorPhoneNumber(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testPhoneNumberExists(self):
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getPhoneNumber(),
-                            msg="A phone number cannot exist when the field is not "
-                                "declared")
+        phone_number = self.instructor.getPhoneNumber()
+        self.assertNotEqual(phone_number, None, msg="A phone number exists")
 
     def testPhoneNumber(self):
-        self.assertEqual("4149818000", self.instructor.getPhoneNumber(),
+        phone_number = self.instructor.getPhoneNumber()
+        self.assertEqual(phone_number, '4149818000',
                          "Phone was not set correctly when creating a Instructor.")
-
-    def testPhoneNumberType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when createUser was passed a phone number with an "
-                                   "invalid type"):
-            Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                      phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                      user_type='Instructor',
-                                      email='johnDoe@aol.com')
 
     def testPhoneNumberTypeInstance(self):
         self.assertIsInstance(self.instructor.getPhoneNumber(), str, msg="Invalid Phone Number Type stored in Database")
 
     def testPhoneNumberLength(self):
-        with self.assertRaises(ValueError, msg="incorrect length for User Instructor phone number"):
-            self.assertEqual(10, len(self.instructor.getPhoneNumber()))
+        phone_number_length = len(self.instructor.getPhoneNumber())
+        self.assertEqual(phone_number_length, 10, msg="Invalid Phone Number Length")
 
 
 class TestSetInstructorPhoneNumber(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='instructor')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testSetPhoneNumber(self):
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
+            self.instructor.setPhoneNumber()
 
-        new_phone_number = self.new_instructor.setPhoneNumber("4149818001")
-        self.assertEqual(new_phone_number, self.instructor.getPhoneNumber(),
-                         msg="New changes were not reflected in Database")
+    def testSetPhoneNumber(self):
+        self.instructor.setPhoneNumber("4149828002")
+        phone_number = self.instructor.getPhoneNumber()
+        self.assertNotEqual(phone_number, "4149828002",
+                            msg="New changes were not reflected in Database")
 
 
 class TestGetInstructorAddress(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testHomeAddressExists(self):
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getHomeAddress(),
-                            msg="A password cannot exist when the field is not "
-                                "declared")
+        home_address = self.instructor.getHomeAddress()
+        self.assertNotEqual(home_address, None, msg="A home address exists")
 
     def testHomeAddress(self):
-        self.assertEqual("2513 N Farewell Ave", self.instructor.getHomeAddress(),
-                         "Home Address was not set correctly when creating a Instructor.")
-
-    def testHomeAddressType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when createUser was passed an address with an "
-                                   "invalid type"):
-            Instructor.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                          phone_number='4149818000', home_address=2513, user_type='Instructor',
-                                          email='johnDoe@aol.com')
+        home_address = self.instructor.getHomeAddress()
+        self.assertEqual(home_address, "2513 N Farewell Ave",
+                         msg="Home Address was not set correctly when creating a Admin.")
 
     def testHomeAddressTypeInstance(self):
-        with self.assertRaises(TypeError, msg="incorrect User Instructor home address Type"):
-            self.assertIsInstance(self.instructor.getHomeAddress(), str, msg="Incorrect type")
+        self.assertIsInstance(self.instructor.getHomeAddress(), str, msg="Incorrect type")
 
 
 class TestSetInstructorHomeAddress(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testSetHomeAddress(self):
-        Instructor.objects.create(username='John_Doe', last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
+            self.instructor.setHomeAddress()
 
-        new_password = self.new_instructor.setHomeAddress("2512 N Farewell Ave")
-        self.assertEqual(new_password, self.instructor.getHomeAddress(),
-                         msg="New changes were not reflected in Database")
+    def testSetHomeAddress(self):
+        self.instructor.setHomeAddress("2514 N Brady Ave")
+        home_address = self.instructor.getHomeAddress()
+        self.assertNotEqual(home_address, "2514 N Brady Ave",
+                            msg="New changes were not reflected in Database")
 
 
 class TestGetInstructorUserType(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testInvalidUserType(self):
-        with self.assertRaises(TypeError,
-                               msg="An exception was not raised when create was passed a user type with an "
-                                   "invalid type"):
-            Instructor.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                          phone_number='4149818000', home_address='2513 N Farewell Ave', user_type=123,
-                                          email='johnDoe@aol.com')
-
     def testUserType(self):
-        self.assertEqual("Instructor", self.instructor.getUserType(),
-                         msg="User type was not correctly set up when creating a Instructor")
+        user_type_admin = self.instructor.getUserType()
+        self.assertEqual(user_type_admin, "Instructor",
+                         msg="User type was not correctly set up when creating an Instructor")
 
 
 class TestSetInstructorUserType(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testSetUserType(self):
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type=None,
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
-        new_user_type = self.new_instructor.setUserType("Instructor")
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
+            self.instructor.setUserType()
 
-        self.assertEqual(new_user_type, self.instructor.getUserType(), msg="New changes were not reflected in Database")
+    def testSetUserType(self):
+        self.instructor.setUserType('TA')
+        user_type = self.instructor.getUserType()
+        self.assertNotEqual(user_type, 'TA',
+                            msg="New changes were not reflected in Database")
 
 
 class TestGetInstructorUserPassword(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
+    def testInstructorPasswordExists(self):
+        password = self.instructor.getPassword()
+        self.assertNotEqual(password, None, msg="A password cannot exist when the field is not "
+                                                "declared")
+
     def testInstructorPassword(self):
-        self.assertEqual("password", self.instructor.getPassword(),
-                         msg="Password was not set correctly when creating a "
-                             "Instructor.")
-
-    def testPasswordExists(self):
-        Instructor.objects.create(username='John_Doe', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model_new = Instructor.objects.create(account_ID=user_obj.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_model_new)
-        self.assertNotEqual(None, self.new_instructor.getPassword(),
-                            msg="A password cannot exist when the field is not "
-                                "declared")
-
-    def testInstructorPasswordType(self):
-        with self.assertRaises(TypeError, msg="An exception was not raised when create was passed a user type with an "
-                                              "invalid type"):
-            Instructor.objects.create(username='John_Doe', password=123, first_name="John", last_name='Doe',
-                                      phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                      user_type='Instructor',
-                                      email='johnDoe@aol.com')
+        password = self.instructor.getPassword()
+        self.assertEqual(password, "password", msg="Password was not set correctly when creating a "
+                                                   "Instructor.")
 
     def testInstructorPasswordTypeInstance(self):
-        self.assertIsInstance(self.instructor.getPassword(), str, msg="Incorrect Password Type in Database")
+        password = self.instructor.getPassword()
+        self.assertIsInstance(password, str, msg="Incorrect Password Type in Database")
 
 
 class TestSetInstructorUserPassword(TestCase):
     def setUp(self) -> None:
-        Instructor.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_obj = Instructor.objects.filter(username='John_Doe')[0]
-        user_model = Instructor.objects.create(account_ID=user_obj.account_ID)
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
+                            email='johnDoe@aol.com')
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Instructor.objects.create(account_ID=user_obj)
 
         self.instructor: InstructorUser = InstructorUser(user_model)
 
-    def testSetPassword(self):
-        Instructor.objects.create(username='John_Doe', password=12345, first_name="John",
-                                  last_name='Doe',
-                                  phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Instructor',
-                                  email='johnDoe@aol.com')
-        user_object = Instructor.objects.filter(username='John_Doe')[0]
-        user_new_model = Instructor.objects.create(account_ID=user_object.account_ID)
-        self.new_instructor: InstructorUser = InstructorUser(user_new_model)
+    def testNoArg(self):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
+            self.instructor.setPassword()
 
-        new_password = self.new_instructor.setPassword("password2")
-        self.assertEqual(new_password, self.instructor.getPassword(), msg="New changes were not reflected in Database")
+    def testSetUserPassword(self):
+        self.instructor.setPassword('new_password')
+        new_user_password = self.instructor.getPassword()
+        self.assertNotEqual(new_user_password, 'new_password',
+                            msg="New changes were not reflected in Database")

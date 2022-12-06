@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
+import datetime
 
 from app.models import User, Admin, TA, Instructor, Course
 from classes.Courses.CoursesClass import AbstractCourse
@@ -38,6 +39,15 @@ class ConcreteCourseFactory(AbstractCourseFactory):
 
         if credit > 9 or credit < 1:
             raise ValueError("Invalid credit amount for course.")
+
+        if len(description) > 30 or len(description) < 1:
+            raise ValueError("The name for a course was not greater than 0 or less than 30 .")
+
+        if len(name) > 30 or len(name) < 1:
+            raise ValueError("The name for a course was not greater than 0 or less than 30 .")
+
+        if year > datetime.date.today().year + 10 or year < datetime.date.today().year - 10:
+            raise ValueError("The course year must be less than 10 years into the future/past.")
 
         new_course = Course(name=name, semester=semester, year=year, description=description, credits=credit)
         new_course.save()

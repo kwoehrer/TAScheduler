@@ -29,8 +29,7 @@ class TestGetParent(TestCase):
 
     def test_delete(self):
         self.course_model.delete()
-        with self.assertRaises(ObjectDoesNotExist, msg="Section parent does not exist"):
-            self.wrapper.getParentCourse()
+        self.wrapper.getParentCourse()
 
 
 class TestGetSectionNum(TestCase):
@@ -102,13 +101,37 @@ class TestGetTA(TestCase):
         self.wrapper = SectionClass.ConcreteSection(section)
 
     def test_success(self):
-        self.assertEqual(self.ta_model.account_ID, self.wrapper.getTA().getID())
+        tamodel_userkey = self.wrapper.getTA().getID()
+        tamodel = TA.objects.get(account_ID__account_ID=tamodel_userkey)
+        self.assertEqual(self.ta_model, tamodel)
 
 
 class TestSetTA(TestCase):
 
+    def setUp(self) -> None:
+        self.course_model = Course.objects.create(name='Intro to Nonsense', semester='Spring', year=2022,
+                                                  description='something', credits=4)
+
+        User.objects.create(username='lhod', password='password', first_name="luke", last_name='hodory',
+                            user_type='TA', email='lhod@gmail.com')
+        ta_user_model = User.objects.filter(username='lhod')[0]
+        self.ta_model = TA.objects.create(account_ID=ta_user_model)
+
+        User.objects.create(username='jhod', password='password', first_name="jake", last_name='hodory',
+                            user_type='Admin', email='jhod@gmail.com')
+        admin_user_model = User.objects.filter(username='jhod')[0]
+        self.admin_model = TA.objects.create(account_ID=admin_user_model)
+
+        section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00',
+                                         ta_account_id=self.ta_model)
+
+        self.course = CourseClass.ConcreteCourse(self.course_model)
+        self.ta: AbstractUser = TAUser(self.ta_model)
+        self.wrapper = SectionClass.ConcreteSection(section)
+
     def test_not_ta(self):
-        pass
+        with self.assertRaises(TypeError, msg="user assigned not ta"):
+            self.wrapper.setTA(self.admin_model)
 
 
 class TestGetMeetTime(TestCase):

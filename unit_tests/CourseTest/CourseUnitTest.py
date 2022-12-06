@@ -1,6 +1,8 @@
+import tarfile
+
 from django.test import TestCase
 from django.contrib.auth.models import AbstractUser
-from app.models import Course, User, Section, Instructor, InstructorAssignments
+from app.models import Course, User, Section, Instructor, InstructorAssignments, TA
 from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 from classes.Users.users import InstructorUser, TAUser
@@ -203,7 +205,7 @@ class TestGetInstructor(TestCase):
         self.instr: AbstractUser = InstructorUser(inst_user_model)
 
     def test_get_instructor(self):
-        self.assertNotEqual(self.course.get_instructor(), [], msg="Instructor was not found")
+        self.assertNotEqual(self.course.get_instructors(), [], msg="Instructor was not found")
 
 
 class TestAddInstructor(TestCase):
@@ -335,16 +337,21 @@ class TestremoveTA(TestCase):
 
 class TestGetSection(TestCase):
     def setUp(self) -> None:
-        course_model = Course.objects.create(name="course1", semester="Spring", year="2022", description="test",
+        self.course_model = course_model = Course.objects.create(name="course1", semester="Spring", year="2022", description="test",
                                              credits="3")
-        self.course: AbstractCourse = ConcreteCourse(course_model)
-
-        section_model = Section.objects.create(course_ID=self.course.course_ID, section_num=101, MeetingTime="9:00")
-        self.section: AbstractSection = ConcreteSection(section_model)
+        self.section_num=101
+        self.MeetingTimes="9:00"
+        User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
+                            phone_number=2345678901, home_address='123 Hell Lane', user_type='TA',
+                            email='taemail@aol.com')
+        ta_user_model = User.objects.filter(username='ta')[0]
+        ta_model = TA.objects.create(account_ID=ta_user_model)
+        self.TA = TAUser(ta_model)
+        self.course = ConcreteCourse(course_model)
 
     def test_get_correct_section(self):
-        self.course.add_section(self.section)
-        self.assertEqual(self.course.get_sections(), [], msg="No sections are found")
+        self.course.add_section(self.TA.getID(), self.section_num, self.MeetingTimes)
+        self.assertEqual(1, len(self.course.get_sections()), msg="Incorrect number of sections created.")
 
 
 class TestaddSection(TestCase):
@@ -354,7 +361,7 @@ class TestaddSection(TestCase):
                                              credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        section_model = Section.objects.create(self.course.course_ID, section_num=1, MeetingTime="9:00")
+        section_model = Section.objects.create(self.course.course_ID, section_num=1, MeetingTimes="9:00")
         self.section: AbstractSection = ConcreteSection(section_model)
 
     def test_add_section_no_arg(self):

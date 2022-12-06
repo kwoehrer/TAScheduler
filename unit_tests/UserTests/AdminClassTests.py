@@ -1,15 +1,15 @@
 from django.test import TestCase
-from app.models import Admin
+from app.models import Admin, User
 from classes.Users.users import AdminUser
 
 
 class TestGetIDAdmin(TestCase):
     def setUp(self) -> None:
-        Admin.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
+        User.objects.create(username='John_Doe', password="password", first_name="John", last_name='Doe',
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                              email='johnDoe@aol.com')
-        user_obj = Admin.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testIDExists(self):
@@ -216,15 +216,15 @@ class TestSetAdminPhoneNumber(TestCase):
 
 class TestGetAdminAddress(TestCase):
     def setUp(self) -> None:
-        Admin.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                              email='johnDoe@aol.com')
-        user_obj = Admin.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_obj = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testHomeAddressExists(self):
-        Admin.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
+        User.objects.create(username='John_Doe', password='password', first_name="John", last_name='Doe',
                              phone_number='4149818000', user_type='Admin',
                              email='johnDoe@aol.com')
         user_object = Admin.objects.filter(username='John_Doe')[0]
@@ -241,7 +241,7 @@ class TestGetAdminAddress(TestCase):
         with self.assertRaises(TypeError,
                                msg="An exception was not raised when createUser was passed an address with an "
                                    "invalid type"):
-            Admin.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
+            User.objects.createUser(username='John_Doe', password='password', first_name="John", last_name='Doe',
                                      phone_number='4149818000', home_address=2513, user_type='Admin',
                                      email='johnDoe@aol.com')
 
@@ -252,11 +252,11 @@ class TestGetAdminAddress(TestCase):
 
 class TestSetAdminHomeAddress(TestCase):
     def setUp(self) -> None:
-        Admin.objects.create(username='John_Doe', last_name='Doe',
+        User.objects.create(username='John_Doe', last_name='Doe',
                              phone_number='4149818000', home_address='2513 N Farewell Ave', user_type='Admin',
                              email='johnDoe@aol.com')
         user_obj = Admin.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_obj.account_ID)
+        user_model = Admin.objects.create(account_ID=user_obj)
         self.admin: AdminUser = AdminUser(user_model)
 
     def testSetHomeAddress(self):

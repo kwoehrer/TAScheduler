@@ -52,7 +52,7 @@ class AbstractCourse(ABC):
         pass
 
     @abc.abstractmethod
-    def get_instructor(self):
+    def get_instructors(self):
         pass
 
     @abc.abstractmethod

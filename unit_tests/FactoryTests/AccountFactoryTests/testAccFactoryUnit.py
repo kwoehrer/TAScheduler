@@ -121,6 +121,7 @@ class TestCreateAccount(TestCase):
                                msg='Cannot create an account that does not meet password requirements'):
             self.acc_fact.create_account(self.admin, self.good_account_attributes)
 
+
 class TestDeleteCourse(TestCase):
     def setUp(self) -> None:
         User.objects.create(username='testadmin', password='password1', first_name="admin", last_name='admin',
@@ -152,11 +153,11 @@ class TestDeleteCourse(TestCase):
         self.admin: AbstractUser = AdminUser(admin_model)
         self.del_admin: AbstractUser = AdminUser(del_admin_model)
         self.ta: AbstractUser = TAUser(ta_model)
-        self.instr: AbstractUser = AdminUser(instr_model)
+        self.instr: AbstractUser = InstructorUser(instr_model)
 
     def test_no_arg(self):
         with self.assertRaises(TypeError, msg="Zero Arguments failed to throw type error"):
-            self.acc_fact.delete_account();
+            self.acc_fact.delete_account()
 
     def test_one_arg(self):
         with self.assertRaises(TypeError, msg="One Argument failed to throw type error"):

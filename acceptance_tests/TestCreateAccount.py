@@ -53,249 +53,247 @@ THEN: They will be navigated to the "Course Management" page
 
 
 class TestAdminCreateAccount(TestCase):
-    class TestAdminCreateAccount(TestCase):
+    def setUp(self):
+        self.client1 = Client()
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave',
+                            user_type='Admin',
+                            email='johnDoe@aol.com')
 
-        def setUp(self):
-            self.client1 = Client()
-            User.objects.create(username='John_Doe', password="password", first_name="John",
-                                last_name='Doe',
-                                phone_number='4149818000', home_address='2513 N Farewell Ave',
-                                user_type='Admin',
-                                email='johnDoe@aol.com')
+        user_object = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.admin: AdminUser = AdminUser(user_model)
+        user_model.save()
 
-            user_object = User.objects.filter(username='John_Doe')[0]
-            user_model = Admin.objects.create(account_ID=user_object)
-            self.admin: AdminUser = AdminUser(user_model)
-            user_model.save()
+        self.client1.post("/",
+                          {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
-            self.client1.post("/",
-                              {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.client2 = Client()
+        User.objects.create(username='Steven_Adams', password="password1", first_name="Steven",
+                            last_name='Adams',
+                            phone_number='4149818001', home_address='2512 N Farewell Ave',
+                            user_type='Instructor',
+                            email='stevenAdams@aol.com')
 
-            self.client2 = Client()
-            User.objects.create(username='Steven_Adams', password="password1", first_name="Steven",
-                                last_name='Adams',
-                                phone_number='4149818001', home_address='2512 N Farewell Ave',
-                                user_type='Instructor',
-                                email='stevenAdams@aol.com')
+        user_object2 = User.objects.filter(username='John_Doe')[0]
+        user_model2 = Admin.objects.create(account_ID=user_object2)
+        self.instructor: InstructorUser = InstructorUser(user_model2)
+        user_model2.save()
 
-            user_object2 = User.objects.filter(username='John_Doe')[0]
-            user_model2 = Admin.objects.create(account_ID=user_object2)
-            self.instructor: InstructorUser = InstructorUser(user_model2)
-            user_model2.save()
+        self.client2.post("/",
+                          {"username": self.instructor.getUsername(), "password": self.instructor.getPassword()})
 
-            self.client2.post("/",
-                              {"username": self.instructor.getUsername(), "password": self.instructor.getPassword()})
+        self.client3 = Client()
+        self.ta = TA.objects.create(username='Micheal_Johnson', password="password", first_name="Micheal",
+                                    last_name='Johnson',
+                                    phone_number='4149818002', home_address='2514 N Farewell Ave',
+                                    user_type='TA',
+                                    email='michealJohnson@aol.com')
 
-            self.client3 = Client()
-            self.ta = TA.objects.create(username='Micheal_Johnson', password="password", first_name="Micheal",
-                                        last_name='Johnson',
-                                        phone_number='4149818002', home_address='2514 N Farewell Ave',
-                                        user_type='TA',
-                                        email='michealJohnson@aol.com')
+        user_object3 = User.objects.filter(username='John_Doe')[0]
+        user_model3 = Admin.objects.create(account_ID=user_object3)
+        self.ta: TAUser = TAUser(user_model3)
+        user_model3.save()
 
-            user_object3 = User.objects.filter(username='John_Doe')[0]
-            user_model3 = Admin.objects.create(account_ID=user_object3)
-            self.ta: TAUser = TAUser(user_model3)
-            user_model3.save()
+        self.client3.post("/", {"username": self.ta.getUsername(), "password": self.ta.getPassword()})
 
-            self.client3.post("/", {"username": self.ta.getUsername(), "password": self.ta.getPassword()})
+    def testDuplicateUser(self):
+        Admin.objects.create(self.admin)
+        user_obj = Admin.objects.filter(username='John_Doe')[0]
+        new_user = Admin.objects.create(account_ID=user_obj)
+        self.admin1: AdminUser = AdminUser(new_user)
+        new_user.save()
 
-        def testDuplicateUser(self):
-            Admin.objects.create(self.admin)
-            user_obj = Admin.objects.filter(username='John_Doe')[0]
-            new_user = Admin.objects.create(account_ID=user_obj)
-            self.admin1: AdminUser = AdminUser(new_user)
-            new_user.save()
+        response = self.client.post("/AccountCreate/",
+                                    new_user, follow=True)
 
-            response = self.client.post("/AccountCreate/",
-                                        new_user, follow=True)
+        self.assertEqual(response.context["error"],
+                         "User was not created. This user already exists: ",
+                         "An error message was not displayed when account ID are duplicates")
 
-            self.assertEqual(response.context["error"],
-                             "User was not created. This user already exists: ",
-                             "An error message was not displayed when account ID are duplicates")
+    def testInvalidPhoneNumber(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidPhoneNumber(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A phone number needs to be 10 digits")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A phone number needs to be 10 digits")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidUsername(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": 123, "password": "password", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidUsername(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": 123, "password": "password", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A username has to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A username has to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidPassword(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": 123, "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidPassword(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": 123, "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A password needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A password needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidFirstName(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": 123,
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidFirstName(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": 123,
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A first name needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A first name needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidLastName(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": "John",
+                                     "last_name": 123, "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidLastName(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": "John",
-                                         "last_name": 123, "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A last name needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A last name needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidAddress(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": "John",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": 123, "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidAddress(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": "John",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": 123, "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. An address needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. An address needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidEmail(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": "John",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": 123}, follow=True)
 
-        def testInvalidEmail(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": "John",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": 123}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. An email address needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. An email address needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def testInvalidUserType(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password", "first_name": "John",
+                                     "last_name": "Doe", "phone_number": "12345678901",
+                                     "home_address": "2514 N Farewell Ave", "user_type": 123,
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-        def testInvalidUserType(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password", "first_name": "John",
-                                         "last_name": "Doe", "phone_number": "12345678901",
-                                         "home_address": "2514 N Farewell Ave", "user_type": 123,
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+        self.assertEqual(response.context["error"], "User was not created. A type needs to be a string")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-            self.assertEqual(response.context["error"], "User was not created. A type needs to be a string")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+    def test_createAdmin(self):
+        self.client.post("/AccountCreate/",
+                         {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
+                          "last_name": "Doe", "phone_number": "4142294000",
+                          "home_address": "2514 N Farewell Ave", "user_type": "Admin",
+                          "email": "stephenDoe@aol.com"}, follow=True)
 
-        def test_createAdmin(self):
-            self.client.post("/AccountCreate/",
+        self.assertNotEqual(User.objects.get(account_ID=self.admin).account_ID, self.admin,
+                            "Supervisor was not created successfully")
+
+    def test_createInstructor(self):
+        r = self.client.post("/AccountCreate/",
                              {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
                               "last_name": "Doe", "phone_number": "4142294000",
-                              "home_address": "2514 N Farewell Ave", "user_type": "Admin",
+                              "home_address": "2514 N Farewell Ave", "user_type": "Instructor",
                               "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertNotEqual(User.objects.get(account_ID=self.admin).account_ID, self.admin,
-                                "Supervisor was not created successfully")
+        self.assertNotEqual(User.objects.create(username='Stephen_Doe', password="password", first_name="John",
+                                                last_name='Doe',
+                                                phone_number='4149818000', home_address='2514 N Farewell Ave',
+                                                user_type='Instructor',
+                                                email='stephenDoe@aol.com'), self.instructor)
 
-        def test_createInstructor(self):
-            r = self.client.post("/AccountCreate/",
-                                 {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
-                                  "last_name": "Doe", "phone_number": "4142294000",
-                                  "home_address": "2514 N Farewell Ave", "user_type": "Instructor",
-                                  "email": "stephenDoe@aol.com"}, follow=True)
+    def test_createTA(self):
+        r = self.client.post("/AccountCreate/",
+                             {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
+                              "last_name": "Doe", "phone_number": "4142294000",
+                              "home_address": "2514 N Farewell Ave", "user_type": "TA",
+                              "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertNotEqual(User.objects.create(username='Stephen_Doe', password="password", first_name="John",
-                                last_name='Doe',
-                                phone_number='4149818000', home_address='2514 N Farewell Ave',
-                                user_type='Instructor',
-                                email='stephenDoe@aol.com'), self.instructor)
+        self.assertNotEqual(User.objects.get(userID=self.instructor), self.instructor,
+                            "Instructor was not created successfully")
 
-        def test_createTA(self):
-            r = self.client.post("/AccountCreate/",
-                                 {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
-                                  "last_name": "Doe", "phone_number": "4142294000",
-                                  "home_address": "2514 N Farewell Ave", "user_type": "TA",
-                                  "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyUsernameProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "41498184444",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertNotEqual(User.objects.get(userID=self.instructor), self.instructor,
-                                "Instructor was not created successfully")
+        self.assertEqual(response.context["error"], "User was not created. Username should not be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyUsernameProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "41498184444",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyPasswordProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "41498184444",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created. Username should not be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created. Password should not be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyPasswordProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "41498184444",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyFirstNameProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "41498184444",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created. Password should not be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created. First name should not be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyFirstNameProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "41498184444",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyLastNameProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "", "phone_number": "41498184444",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created. First name should not be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created. Last name should not be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyLastNameProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "", "phone_number": "41498184444",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyPhoneNumberProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "",
+                                     "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created. Last name should not be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created, Phone Number cannot be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyPhoneNumberProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "",
-                                         "home_address": "2514 N Farewell Ave", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyHomeAddressProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "",
+                                     "home_address": "", "user_type": "admin",
+                                     "email": "stephenDoe@aol.com"}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created, Phone Number cannot be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created, Home Address cannot be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
-        def testEmptyHomeAddressProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "",
-                                         "home_address": "", "user_type": "admin",
-                                         "email": "stephenDoe@aol.com"}, follow=True)
+    def testEmptyEmailProvided(self):
+        response = self.client.post("/AccountCreate/",
+                                    {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
+                                     "last_name": "Doe", "phone_number": "",
+                                     "home_address": "", "user_type": "admin",
+                                     "email": ""}, follow=True)
 
-            self.assertEqual(response.context["error"], "User was not created, Home Address cannot be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
-
-        def testEmptyEmailProvided(self):
-            response = self.client.post("/AccountCreate/",
-                                        {"username": "Stephen_Doe", "password": "password1", "first_name": "Stephen",
-                                         "last_name": "Doe", "phone_number": "",
-                                         "home_address": "", "user_type": "admin",
-                                         "email": ""}, follow=True)
-
-            self.assertEqual(response.context["error"], "User was not created, Email cannot be left blank")
-            self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["error"], "User was not created, Email cannot be left blank")
+        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
 
 
 class TestCreateAccountToAccManagement(TestCase):

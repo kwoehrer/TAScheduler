@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import AbstractUser
-from app.models import Course, User, Section, Instructor, InstructorAssignments
+from app.models import Course, User, Section, Instructor, TA
 from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Sections.SectionClass import AbstractSection, ConcreteSection
 from classes.Users.users import InstructorUser, TAUser
@@ -203,7 +203,8 @@ class TestGetInstructor(TestCase):
         self.instr: AbstractUser = InstructorUser(inst_user_model)
 
     def test_get_instructor(self):
-        self.assertNotEqual(self.course.get_instructor(), [], msg="Instructor was not found")
+        self.course.add_instructor(self.instr)
+        self.assertNotEqual(self.course.get_instructors(), [], msg="Instructor was not found")
 
 
 class TestAddInstructor(TestCase):
@@ -239,7 +240,45 @@ class TestAddInstructor(TestCase):
 
     def test_add_Instr_success(self):
         self.course.add_instructor(self.instr)
-        self.assertEqual(self.course.get_instructors()[0], self.instr)
+        self.assertNotEqual(self.course.get_instructors(), [], msg="Instructor was not found")
+
+
+class TestremoveInstructor(TestCase):
+
+    def setUp(self) -> None:
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first course", credits="3")
+        self.course: AbstractCourse = ConcreteCourse(course_model)
+
+        inst_model = User.objects.create(email="Inst1@gmail.com", username="Inst1", password="inst1",
+                                         first_name="first", last_name="instructor", phone_number="123",
+                                         home_address="address",
+                                         user_type="Instructor")
+        inst_user_model = Instructor.objects.create(account_ID=inst_model)
+        self.instr: AbstractUser = InstructorUser(inst_user_model)
+
+        User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
+                            phone_number=2345678901, home_address='123 Hell Lane', user_type='TA',
+                            email='taemail@aol.com')
+        ta_user_model = User.objects.filter(username='ta')[0]
+        self.ta = TA.objects.create(account_ID=ta_user_model)
+
+    def test_remove_instructor_no_arg(self):
+        with self.assertRaises(TypeError, msg="Remove instructor - No arg was added"):
+            self.course.remove_instructor()
+
+    def test_remove_instructor_more_arg(self):
+        with self.assertRaises(TypeError, msg="Remove instructor - Too much arg was added"):
+            self.course.remove_instructor(self.ta, self.instr)
+
+    def test_remove_ta_no_user(self):
+        with self.assertRaises(TypeError, msg="Remove instructor - no such instructor was found"):
+            self.course.remove_instructor(self.ta)
+
+    def test_remove_instr_success(self):
+        self.course.add_instructor(self.instr)
+        self.course.remove_instructor(self.instr)
+        self.assertEqual(self.course.get_instructors(), [], msg="Instructor was not deleted")
 
 
 class TestGetTa(TestCase):
@@ -247,30 +286,31 @@ class TestGetTa(TestCase):
     def setUp(self) -> None:
         course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
                                              description="first course", credits="3")
-        self.course = ConcreteCourse(course_model)
+        self.course: AbstractCourse = ConcreteCourse(course_model)
+
+        inst_model = User.objects.create(email="Inst1@gmail.com", username="Inst1", password="inst1",
+                                         first_name="first", last_name="instructor", phone_number="123",
+                                         home_address="address",
+                                         user_type="Instructor")
+        inst_user_model = Instructor.objects.create(account_ID=inst_model)
+        self.instr: AbstractUser = InstructorUser(inst_user_model)
 
         ta_model = User.objects.create(email="Ta1@gmail.com", username="Ta1", password="ta1",
-                                       first_name="first", last_name="ta", phone_number="123", home_address="address",
+                                       first_name="first", last_name="ta", phone_number="1234", home_address="address",
                                        user_type="TA")
-        self.ta: AbstractUser = TAUser(ta_model)
-
-        section_model = Section.objects.create(self.course, section_num=101, MettingTimes="9:00", )
-        self.section: AbstractSection = ConcreteSection(section_model)
+        ta_user_model = TA.objects.create(account_ID=ta_model)
+        self.ta = TAUser(ta_user_model)
 
     def test_get_correct_ta(self):
-        self.assertNotEqual(self.course.get_tas(), [], msg="Instructor was not found")
+        self.assertEqual(self.course.get_tas(), [], msg="Instructor was not found")
 
 
 class TestAddTa(TestCase):
 
     def setUp(self) -> None:
-        f_course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
-                                               description="first course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(f_course_model)
-
-        s_course_model = Course.objects.create(name="course2", semester="Spring", year="2022",
-                                               description="second course", credits="3")
-        self.course: AbstractCourse = ConcreteCourse(s_course_model)
+        course_model = Course.objects.create(name="course1", semester="Spring", year="2022",
+                                             description="first course", credits="3")
+        self.course: AbstractCourse = ConcreteCourse(course_model)
 
         inst_model = User.objects.create(email="Inst1@gmail.com", username="Inst1", password="inst1",
                                          first_name="first", last_name="instructor", phone_number="123",
@@ -278,15 +318,12 @@ class TestAddTa(TestCase):
                                          user_type="Instructor")
         self.inst: AbstractUser = InstructorUser(inst_model)
 
-        ta_model = User.objects.create(email="Ta1@gmail.com", username="Ta1", password="ta1",
-                                       first_name="first", last_name="ta", phone_number="12344", home_address="address",
-                                       user_type="TA")
-        self.ta: AbstractUser = TAUser(ta_model)
-
-        ta2_model = User.objects.create(email="Ta2@gmail.com", username="Ta2", password="ta2",
-                                        first_name="first", last_name="ta", phone_number="1234", home_address="address",
-                                        user_type="TA")
-        self.ta2: AbstractUser = TAUser(ta2_model)
+        ta_model = User.objects.create(email='taemail@aol.com', username='ta', password='password1', first_name="ta",
+                                       last_name='ta', phone_number=2345678901, home_address='123 Hell Lane',
+                                       user_type='TA'
+                                       )
+        ta_user_model = TA.objects.filter(account_ID=ta_model)
+        self.ta: AbstractUser = TAUser(ta_user_model)
 
     def test_add_ta_no_arg(self):
         with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
@@ -294,7 +331,7 @@ class TestAddTa(TestCase):
 
     def test_add_ta_more_arg(self):
         with self.assertRaises(TypeError, msg="Add ta - Too much arg was added"):
-            self.course.add_ta(self.ta, self.ta2)
+            self.course.add_ta(self.ta, self.inst)
 
     def test_add_ta_wrong_user(self):
         with self.assertRaises(TypeError, msg="Add ta - this user is not a TA"):
@@ -308,16 +345,17 @@ class TestremoveTA(TestCase):
                                              description="first course", credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        ta_model = User.objects.create(email="Ta1@gmail.com", username="Ta1", password="ta1",
-                                       first_name="first", last_name="ta", phone_number="123", home_address="address",
-                                       user_type="TA")
-        self.ta: AbstractUser = TAUser(ta_model)
-
-        s_ta_model = User.objects.create(email="Ta2@gmail.com", username="Ta2", password="ta2",
-                                         first_name="first", last_name="ta", phone_number="1234",
+        inst_model = User.objects.create(email="Inst1@gmail.com", username="Inst1", password="inst1",
+                                         first_name="first", last_name="instructor", phone_number="123",
                                          home_address="address",
-                                         user_type="TA")
-        self.ta2: AbstractUser = TAUser(s_ta_model)
+                                         user_type="Instructor")
+        self.inst: AbstractUser = InstructorUser(inst_model)
+
+        User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
+                            phone_number=2345678901, home_address='123 Hell Lane', user_type='TA',
+                            email='taemail@aol.com')
+        ta_user_model = User.objects.filter(username='ta')[0]
+        self.ta = TA.objects.create(account_ID=ta_user_model)
 
     def test_remove_ta_no_arg(self):
         with self.assertRaises(TypeError, msg="Remove ta - No arg was added"):
@@ -325,12 +363,11 @@ class TestremoveTA(TestCase):
 
     def test_remove_ta_more_arg(self):
         with self.assertRaises(TypeError, msg="Remove ta - Too much arg was added"):
-            self.course.remove_ta(self.ta, self.ta2)
+            self.course.remove_ta(self.ta, self.inst)
 
     def test_remove_ta_no_user(self):
-        self.course.add_ta(self.ta)
         with self.assertRaises(TypeError, msg="Remove ta - no such TA was found"):
-            self.course.remove_ta(self.ta2)
+            self.course.remove_ta(self.inst)
 
 
 class TestGetSection(TestCase):
@@ -339,12 +376,11 @@ class TestGetSection(TestCase):
                                              credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        section_model = Section.objects.create(course_ID=self.course.course_ID, section_num=101, MeetingTime="9:00")
+        section_model = Section.objects.create(course_ID=course_model, section_num=101, MeetingTimes="9:00")
         self.section: AbstractSection = ConcreteSection(section_model)
 
     def test_get_correct_section(self):
-        self.course.add_section(self.section)
-        self.assertEqual(self.course.get_sections(), [], msg="No sections are found")
+        self.assertNotEqual(self.course.get_sections()[0], [], msg="No sections are found")
 
 
 class TestaddSection(TestCase):
@@ -354,8 +390,16 @@ class TestaddSection(TestCase):
                                              credits="3")
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
-        section_model = Section.objects.create(self.course.course_ID, section_num=1, MeetingTime="9:00")
+        section_model = Section.objects.create(course_ID=course_model, section_num=101, MeetingTimes="9:00")
         self.section: AbstractSection = ConcreteSection(section_model)
+        self.section.section_num = 101
+        self.section.MeetingTimes = "9.00"
+
+        User.objects.create(username='ta', password='password1', first_name="ta", last_name='ta',
+                            phone_number=2345678901, home_address='123 Hell Lane', user_type='TA',
+                            email='taemail@aol.com')
+        ta_user_model = User.objects.filter(username='ta')[0]
+        self.ta = TA.objects.create(account_ID=ta_user_model)
 
     def test_add_section_no_arg(self):
         with self.assertRaises(TypeError, msg="add_section - More than zero arg is required"):
@@ -363,20 +407,20 @@ class TestaddSection(TestCase):
 
     def test_add_secion_one_arg(self):
         with self.assertRaises(TypeError, msg="add_section - More than one arg is required"):
-            self.course.add_section(self.section.getTA())
+            self.course.add_section(self.ta.account_ID)
 
     def test_add_secion_two_arg(self):
         with self.assertRaises(TypeError, msg="add_section - More than two arg is required"):
-            self.course.add_section(self.section.getTA(), self.section.getSectionNumber())
+            self.course.add_section(self.ta.account_ID, self.section.section_num)
 
     def test_add_section_more_arg(self):
         with self.assertRaises(TypeError, msg="add_section - Too many arg was added"):
-            self.course.add_section(self.section.getTA(), self.section.getSectionNumber(), self.section.getMeetTime(),
+            self.course.add_section(self.ta.account_ID, self.section.section_num, self.section.MeetingTimes,
                                     self.course.get_course_id)
 
     def test_add_section_not_saved(self):
-        self.course.add_section(self.section.getTA(), self.section.getSectionNumber(), self.section.getSectionNumber())
-        length = len(Section.objects.filter(section_num=100))
+        self.course.add_section(self.ta.account_ID, 102, self.section.MeetingTimes)
+        length = len(Section.objects.filter(section_num=102))
         self.assertNotEqual(0, length, msg="Section was not added")
 
 
@@ -386,7 +430,7 @@ class TestremoveSection(TestCase):
         course_model = Course.objects.create(name="course1", semester="Spring", year="2022", description="test",
                                              credits="3")
 
-        section_model = Section.objects.create(course_ID=self.course, section_num=101, MeetingTime="9:00")
+        section_model = Section.objects.create(course_ID=course_model, section_num=101, MeetingTimes="9:00")
 
         self.course: AbstractCourse = ConcreteCourse(course_model)
         self.section: AbstractSection = ConcreteSection(section_model)
@@ -397,10 +441,9 @@ class TestremoveSection(TestCase):
 
     def test_add_section_more_arg(self):
         with self.assertRaises(TypeError, msg="add_section - Too many arg was added"):
-            self.course.add_section(self.section, self.course)
+            self.course.add_section(self.section, 111)
 
     def test_remove_section_not_deleted(self):
         self.course.remove_section(self.section)
         length = len(Section.objects.filter(section_num=100))
         self.assertEqual(0, length, msg="Section was not deleted, it still exists")
-

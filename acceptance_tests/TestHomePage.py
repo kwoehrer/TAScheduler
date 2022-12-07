@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 
-from TAScheduler.app.models import *
-from TAScheduler.classes.Users.users import AdminUser
+from app.models import *
+from classes.Users.users import AdminUser
 
 '''
 SCENARIO: As an Admin, I want to be able to navigate to the Home page
@@ -25,15 +25,17 @@ THEN: They will be navigated to the "login" page
 
 
 class TestAdminHomePage(TestCase):
+    client = None
+    admin = None
 
     def setUp(self):
 
         self.client = Client()
-        Admin.objects.create(username='John_Doe', password="password", first_name="John",
-                             last_name='Doe',
-                             phone_number='4149818000', home_address='2513 N Farewell Ave',
-                             user_type='Admin',
-                             email='johnDoe@aol.com')
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave',
+                            user_type='Admin',
+                            email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.admin: AdminUser = AdminUser(user_model)
@@ -41,10 +43,11 @@ class TestAdminHomePage(TestCase):
     def test_home_to_AccManagement(self):
 
         response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        # successful login
         self.assertTrue(response.context is None)
 
         try:
-            self.assertTrue(response.url, "/home")
+            self.assertFalse(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
@@ -57,18 +60,18 @@ class TestAdminHomePage(TestCase):
 
     def test_home_to_CourseManagement(self):
 
-        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(response.context is None)
+        r = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
+        self.assertTrue(r.context is None)
 
         try:
-            self.assertTrue(response.url, "/home")
+            self.assertTrue(r.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        response = self.client.get("/AdminCourseMng")
+        r = self.client.get("/AdminCourseMng")
 
         try:
-            self.assertTrue(response.url, "/AdminCourseMng")
+            self.assertTrue(r.url, "/AdminCourseMng")
         except AssertionError as msg:
             print(msg)
 

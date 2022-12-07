@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from TAScheduler.app.models import *
+from app.models import *
 from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 from classes.Users.users import AdminUser
 
@@ -93,7 +93,7 @@ class SuccessfulDeleteCourse(TestCase):
                                                   credits="3")
         self.course_new: AbstractCourse = ConcreteCourse(spring_course_new)
         spring_course_new.save()
-        self.client.post('/delete_course/', {'Delete Course': 1}, follow=True)
+        self.client.post('/AccountDelete/', {'Delete Course': 1}, follow=True)
         var = Course.objects.count()
         self.assertEquals(var, 0, "Course was successfully deleted")
         courseCount = list(Course.objects.filter(name=spring_course_new)[0])

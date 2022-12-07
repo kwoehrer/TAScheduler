@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
-from TAScheduler.app.models import *
-from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
+
+from app.models import Course, User, Admin
+from classes.Courses.CoursesClass import ConcreteCourse, AbstractCourse
 from classes.Users.users import AdminUser
 
 '''

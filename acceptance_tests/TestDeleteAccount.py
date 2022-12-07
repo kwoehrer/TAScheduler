@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 
-from TAScheduler.app.models import *
+from app.models import *
 from classes.Users.users import AdminUser, InstructorUser, TAUser
 
 '''
@@ -131,7 +131,7 @@ class TestSearchUsersToDelete(TestCase):
 
 
 class TestAdminDeleteAccount(TestCase):
-    
+
     def setUp(self):
         self.client = Client()
         User.objects.create(username='John_Doe', password="password", first_name="John",

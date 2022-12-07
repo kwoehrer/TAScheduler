@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 
-from TAScheduler.app.models import *
-from TAScheduler.classes.Users.users import AdminUser, TAUser, InstructorUser
+from app.models import *
+from classes.Users.users import AdminUser, TAUser, InstructorUser
 
 '''
 Scenario: As a TA, I want to be able to navigate to the Login Page
@@ -82,7 +82,7 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["message"], "Incorrect Username")
         except AssertionError as msg:
             print(msg)
 
@@ -93,7 +93,7 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': 'John_Doe', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -104,7 +104,7 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': 'password'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Invalid Username")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -113,7 +113,7 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': 'John_Doe', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Invalid Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -122,8 +122,8 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': 'testAdmin', 'password': 'testAdmin1'})
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -132,8 +132,8 @@ class TestTALogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:
-            self.assertTrue(response.context["error"], "Empty Username")
-            self.assertTrue(response.context["error"], "Empty Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -216,7 +216,7 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'passwordNew'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -227,7 +227,7 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -238,7 +238,7 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': 'passwordNew'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Empty Username")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -247,7 +247,7 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -256,8 +256,8 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'testAdmin', 'password': 'testAdmin1'})
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -266,8 +266,8 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:
-            self.assertTrue(response.context["error"], "Empty Username")
-            self.assertTrue(response.context["error"], "Empty Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -350,7 +350,7 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'password3'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -361,7 +361,7 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': 'password1'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -372,7 +372,7 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': 'password3'}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Empty Username")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -381,7 +381,7 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Micheal_Johnson', 'password': ' '}, follow=True)
         try:
-            self.assertTrue(response.context["error"], "Empty Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -390,8 +390,8 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': 'testAdmin', 'password': 'testAdmin1'})
         try:
-            self.assertTrue(response.context["error"], "Incorrect Username")
-            self.assertTrue(response.context["error"], "Incorrect Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 
@@ -400,7 +400,7 @@ class TestAdminLogin(TestCase):
 
         response = self.client.post('/', {'username': ' ', 'password': ' '})
         try:
-            self.assertTrue(response.context["error"], "Empty Username")
-            self.assertTrue(response.context["error"], "Empty Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertTrue(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)

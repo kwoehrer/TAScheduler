@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 
-from TAScheduler.app.models import *
-from TAScheduler.classes.Users.users import AdminUser
+from app.models import *
+from classes.Users.users import AdminUser
 
 '''
 SCENARIO: As an Admin, I want to be able navigate the Edit Account Page and Edit a User

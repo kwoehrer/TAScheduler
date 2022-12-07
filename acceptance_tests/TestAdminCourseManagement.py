@@ -33,11 +33,11 @@ class TestAccountManagementPage(TestCase):
     def setUp(self):
 
         self.client = Client()
-        Admin.objects.create(username='John_Doe', password="password", first_name="John",
-                             last_name='Doe',
-                             phone_number='4149818000', home_address='2513 N Farewell Ave',
-                             user_type='Admin',
-                             email='johnDoe@aol.com')
+        User.objects.create(username='John_Doe', password="password", first_name="John",
+                            last_name='Doe',
+                            phone_number='4149818000', home_address='2513 N Farewell Ave',
+                            user_type='Admin',
+                            email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.admin: AdminUser = AdminUser(user_model)

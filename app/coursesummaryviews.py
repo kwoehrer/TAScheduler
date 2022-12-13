@@ -15,9 +15,12 @@ class CourseSummary(View):
         pass
 
     def post(self, request):
+        course_id = Course.objects.get(account_ID=request.session['current_course']).course_ID
+
         #USE REQUEST.POST.get('COURSE_ID') TO GET COURSE ID. FILTER COURSE.OBJECTS TO FIND THE COURSE MODEL
         #WRAP COURSE MODEL WITH OUR WRAPPER CLASS
         #USE THAT WRAPPER CLASS TO CREATE VIEW
+
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":

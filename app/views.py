@@ -71,6 +71,8 @@ class Home(View):
             return render(request, "home.html", {'HomeState': t})
 
     def post(self, request):
+
+
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":

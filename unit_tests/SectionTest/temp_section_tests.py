@@ -1,20 +1,11 @@
 from django.test import TestCase
 from app.models import Section, Course, User, TA
-
-# from classes.Sections.temp_course_class import AbstractCourse, ConcreteCourse
-# from classes.Sections.temp_section_class import AbstractSection, ConcreteSection
 from classes.Users.users import AbstractUser, InstructorUser, TAUser
-
-from django.core.exceptions import ObjectDoesNotExist
-
 import classes.Sections.temp_section_class as SectionClass
-import classes.Sections.temp_course_class as CourseClass
+import classes.Courses.CoursesClass as CourseClass
 import classes.Users.users as UserClass
-
 from django.core.exceptions import ObjectDoesNotExist
 
-
-# import classes.Users.users as UserClass
 
 class TestGetParent(TestCase):
     def setUp(self) -> None:
@@ -117,6 +108,11 @@ class TestSetTA(TestCase):
         ta_user_model = User.objects.filter(username='lhod')[0]
         self.ta_model = TA.objects.create(account_ID=ta_user_model)
 
+        User.objects.create(username='mhod', password='password', first_name="max", last_name='hodory',
+                            user_type='TA', email='mhod@gmail.com')
+        ta_user_model2 = User.objects.filter(username='mhod')[0]
+        self.ta_model2 = TA.objects.create(account_ID=ta_user_model2)
+
         User.objects.create(username='jhod', password='password', first_name="jake", last_name='hodory',
                             user_type='Admin', email='jhod@gmail.com')
         admin_user_model = User.objects.filter(username='jhod')[0]
@@ -127,6 +123,7 @@ class TestSetTA(TestCase):
 
         self.course = CourseClass.ConcreteCourse(self.course_model)
         self.ta: AbstractUser = TAUser(self.ta_model)
+        self.ta2 = TAUser(self.ta_model2)
         self.wrapper = SectionClass.ConcreteSection(section)
 
     def test_not_ta(self):

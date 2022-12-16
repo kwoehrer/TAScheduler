@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app.search_views import SearchHome
+from app.search_views import SearchHome, SearchUser, SearchCourse
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
     AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate, \
     DeleteCourse, CourseFactoryDelete, EditCourse, CourseEditActive, CourseAddSection, CourseDeleteSection, \
@@ -46,4 +46,6 @@ urlpatterns = [
     path('CourseAddInstructor/', CourseAddInstructor.as_view()),
     path('CourseRemoveInstructor/', CourseRemoveInstructor.as_view()),
     path('search/', SearchHome.as_view()),
+    path('search/user/', SearchUser.as_view()),
+    path('search/course/', SearchCourse.as_view()),
 ]

@@ -182,7 +182,10 @@ class TAUser(AbstractUser):
 
     def getCourses(self):
         courses = TACourseAssignments.objects.filter(account_ID=self.model)
-        return list(courses)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
 
 
 class InstructorUser(AbstractUser):

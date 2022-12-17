@@ -39,22 +39,22 @@ class TestAdminHomePage(TestCase):
         user_object = User.objects.filter(username='John_Doe')[0]
         user_model = Admin.objects.create(account_ID=user_object)
         self.admin: AdminUser = AdminUser(user_model)
+        user_model.save()
 
     def test_home_to_AccManagement(self):
 
-        response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        # successful login
+        response = self.client.post('/', {'username': self.admin.getUsername(), 'password': self.admin.getPassword()}, follow=True)
+        # Check that the response is 200 OK.
         self.assertTrue(response.context is None)
-
         try:
-            self.assertFalse(response.url, "home")
+            self.assertEqual(response.url, "home")
         except AssertionError as msg:
             print(msg)
 
-        response = self.client.get("/AdminAccMng")
+        response = self.client.get("/AccountManagement/")
 
         try:
-            self.assertTrue(response.url, "/AdminAccMng")
+            self.assertTrue(response.url, "/AccountManagement/")
         except AssertionError as msg:
             print(msg)
 
@@ -78,7 +78,7 @@ class TestAdminHomePage(TestCase):
     def test_home_to_login(self):
 
         response = self.client.post('/', {'username': 'John_Doe', 'password': 'password'})
-        self.assertTrue(response.context is None)
+        self.assertRedirects(response.context is None)
 
         try:
             self.assertTrue(response.url, "home")

@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 
+import app.views
 from app.models import *
 from classes.Users.users import AdminUser, TAUser, InstructorUser
 
@@ -216,7 +217,7 @@ class TestInstructorLogin(TestCase):
 
         response = self.client.post('/', {'username': 'Steven_Adams1', 'password': 'passwordNew'}, follow=True)
         try:
-            self.assertTrue(response.context["message"], "Invalid Username or Password")
+            self.assertEqual(response.context["message"], "Invalid Username or Password")
         except AssertionError as msg:
             print(msg)
 

@@ -114,6 +114,17 @@ class TestAdminCreateAccount(TestCase):
         except AssertionError as msg:
             print(msg)
 
+    def test_blankUsername(self):
+        r = self.client.post("/create_user/",
+                             {"username": " ", "password": "password", "first_name": "Stephen",
+                              "last_name": "Doe", "phone_number": "12345678901",
+                              "home_address": "2514 N Farewell Ave", "user_type": "admin",
+                              "email": "stephenDoe@aol.com"}, follow=True)
+
+        self.assertEqual(r.context["error"], "User was not created. Username should not be left blank",
+                         "An error message was not displayed when username was left blank")
+        self.assertEqual(User.objects.count(), 1, "Database did not change")
+
     def testInvalidPhoneNumber(self):
         response = self.client.post("/AccountCreate/",
                                     {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
@@ -206,10 +217,10 @@ class TestAdminCreateAccount(TestCase):
 
     def test_createInstructor(self):
         self.client.post("/AccountCreate/",
-                             {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
-                              "last_name": "Doe", "phone_number": "4142294000",
-                              "home_address": "2514 N Farewell Ave", "user_type": "Instructor",
-                              "email": "stephenDoe@aol.com"}, follow=True)
+                         {"username": "Stephen_Doe", "password": "password", "first_name": "Stephen",
+                          "last_name": "Doe", "phone_number": "4142294000",
+                          "home_address": "2514 N Farewell Ave", "user_type": "Instructor",
+                          "email": "stephenDoe@aol.com"}, follow=True)
         user_instructor = User.objects.get(name="user")
         user_model_instructor = Instructor.objects.create(account_ID=user_instructor)
         self.post_instructor: InstructorUser = InstructorUser(user_model_instructor)

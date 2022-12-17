@@ -106,13 +106,40 @@
 </div>
 <div class='d-flex margTop'>
     <div class="homeContainer">
-        <h1>{{ page_state_title }}</h1>
         {% if query_users %}
-            <a class="min-vw-100" href="/search/">
-                <input class="btn btn-danger redButton" type="submit" value="Return To Search Page">
-            </a>
+            <div class="mx-auto text-center">
+            <h1>{{ page_state_title }}</h1>
+            <table class="table text-center margTop">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Type of User</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Related Courses</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in query_users %}
+                    <tr>
+                        <input type="hidden" id="acc_id" name="acc_id" value="{{ user.getID }}">
+                        <th scope="row">{{ user.getID }}</th>
+                        <td>{{ user.getFirstName }}</td>
+                        <td>{{ user.getLastName }}</td>
+                        <td>{{ user.getUserType }}</td>
+                        <td>{{ course.getEmail }}</td>
+                        <td>{{ course.get_credits }}</td>
+                        <td>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
+        <a class="min-vw-100" href="/search/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Search Page">
+        </a>
+        </div>
     </div>
-</div>
 </body>
 </html>

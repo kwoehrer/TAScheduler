@@ -68,6 +68,10 @@ class AbstractUser(abc.ABC):
     def setEmail(self, param):
         pass
 
+    @abc.abstractmethod
+    def getCourses(self):
+        pass
+
 
 class TAUser(AbstractUser):
 
@@ -176,6 +180,8 @@ class TAUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+    def getCourses(self):
+        
 
 class InstructorUser(AbstractUser):
 

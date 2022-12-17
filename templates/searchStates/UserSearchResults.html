@@ -123,13 +123,15 @@
                 {% for user in query_users %}
                     <tr>
                         <input type="hidden" id="acc_id" name="acc_id" value="{{ user.getID }}">
-                        <th scope="row">{{ user.getID }}</th>
-                        <td>{{ user.getFirstName }}</td>
+                        <th scope="row">{{ user.getFirstName }}</th>
                         <td>{{ user.getLastName }}</td>
                         <td>{{ user.getUserType }}</td>
                         <td>{{ course.getEmail }}</td>
-                        <td>{{ course.get_credits }}</td>
                         <td>
+                            {% for course in user.getCourses %}
+                                {{ course.name }}
+                                <br>
+                            {% endfor %}
                         </td>
                     </tr>
                 {% endfor %}
@@ -141,5 +143,6 @@
         </a>
         </div>
     </div>
+</div>
 </body>
 </html>

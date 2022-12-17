@@ -1,6 +1,6 @@
 import abc
 
-from app.models import User, TA, Instructor, Admin, TACourseAssignments, InstructorAssignments
+from app.models import User, TA, Instructor, Admin, TACourseAssignments, InstructorAssignments, Course
 
 
 class AbstractUser(abc.ABC):
@@ -181,7 +181,7 @@ class TAUser(AbstractUser):
         user_obj.save()
 
     def getCourses(self):
-        courses = TACourseAssignments.filter(account_id=self.model.account_ID.account_ID)
+        courses = TACourseAssignments.objects.filter(account_ID=self.model)
         return list(courses)
 
 
@@ -293,8 +293,11 @@ class InstructorUser(AbstractUser):
         user_obj.save()
 
     def getCourses(self):
-        courses = InstructorAssignments.filter(account_id=self.model.account_ID.account_ID)
-        return list(courses)
+        courses = InstructorAssignments.objects.filter(account_ID=self.model)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
 
 
 class AdminUser(AbstractUser):

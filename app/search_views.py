@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User, Admin, Instructor, TA
+from app.models import User, Admin, Instructor, TA, Course
+from classes.Courses.CoursesClass import ConcreteCourse
 from classes.Users.users import InstructorUser, TAUser, AdminUser
 
 
@@ -142,7 +143,7 @@ class SearchCourse(View):
         if t == None:
             return render(request, "login.html", {'message': "Please login to access search page."})
         else:
-            return render(request, "searchStates/UserSearchResults.html", {'page_state_title': "User Search Results"})
+            return render(request, "searchStates/CourseSearch.html", {'page_state_title': "Course Search"})
 
     def post(self, request):
         t = None
@@ -153,4 +154,64 @@ class SearchCourse(View):
         if t == None:
             return render(request, "login.html", {'message': "Please login to access search page."})
         else:
-            return render(request, "searchStates/UserSearchResults.html", {'page_state_title': "User Search Results"})
+            return render(request, "searchStates/CourseSearch.html", {'page_state_title': "Course Search"})
+
+class SearchCourseResults(View):
+    def get(self, request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "TA" or user_type == "Instructor" or user_type == "Admin":
+            t = "hehexd"
+
+        if t == None:
+            return render(request, "login.html", {'message': "Please login to access search page."})
+
+        # FILTER COURSE HERE
+        name_query = request.GET.get('name')
+        semester_query = request.GET.get('semester')
+        year_query = request.GET.get('year')
+
+        total_query = None
+        if name_query is not None and name_query != '':
+            total_query = Course.objects.filter(name=name_query)
+
+        if semester_query is not None and semester_query != '':
+            if total_query is None:
+                if semester_query == "All Semesters":
+                    total_query = Course.objects.all()
+                else:
+                    total_query = Course.objects.filter(semester=semester_query)
+            else:
+                if semester_query != "All Semesters":
+                    total_query = total_query.filter(semester=semester_query)
+        if year_query is not None and year_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(year=year_query)
+            else:
+                total_query = total_query.filter(year=year_query)
+
+        # GET A LIST OF ALL USERS
+        course_model_list = list(total_query)
+        course_list = []
+
+        for crs_model in course_model_list:
+            course_list.append(ConcreteCourse(crs_model))
+
+        if len(course_list) == 0:
+            return render(request, "searchStates/CourseSearch.html", {"bad_message": "No results found. Try again.",
+                                                         "page_state_title": "Course Search"})
+
+        return render(request, "searchStates/courseSearchResults.html",
+                      {"page_state_title": "Course Search Results", 'query_courses': course_list})
+
+    def post(self, request):
+        t = None
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type == "TA" or user_type == "Instructor" or user_type == "Admin":
+            t = "hehexd"
+
+        if t == None:
+            return render(request, "login.html", {'message': "Please login to access search page."})
+        else:
+            return render(request, "searchStates/CourseSearchResults.html", {'page_state_title': "User Search Results"})
+

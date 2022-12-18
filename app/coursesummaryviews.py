@@ -16,6 +16,9 @@ class CourseSummary(View):
 
     def post(self, request):
         course_id = Course.objects.get(account_ID=request.session['current_course']).course_ID
+        course_model = Course.objects.filter(course_id)
+        course_wrapper = Course.ConcreteCourse(course_model)
+        # TODO make sure this is right
 
         #USE REQUEST.POST.get('COURSE_ID') TO GET COURSE ID. FILTER COURSE.OBJECTS TO FIND THE COURSE MODEL
         #WRAP COURSE MODEL WITH OUR WRAPPER CLASS
@@ -24,11 +27,14 @@ class CourseSummary(View):
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":
-            t = render(request, "./CourseSummaryStates/TACourseSummary.html",{'course_wrapper': #ActualCourseWrapperObjHere})
+            t = render(request, "./CourseSummaryStates/TACourseSummary.html",
+                       {'course_wrapper': course_wrapper})
         elif user_type == "Instructor":
-            t = './CourseSummaryStates/InstructorCourseSummary.html'
+            t = render(request, "./CourseSummaryStates/InstructorCourseSummary.html",
+                       {'course_wrapper': course_wrapper})
         elif user_type == "Admin":
-            t = './CourseSummaryStates/AdminCourseSummary.html'
+            t = render(request, "./CourseSummaryStates/AdminCourseSummary.html",
+                       {'course_wrapper': course_wrapper})
 
         if t == None:
             return render(request, "login.html", {'message': "An unknown error has occurred."})

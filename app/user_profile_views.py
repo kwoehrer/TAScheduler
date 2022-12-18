@@ -44,7 +44,7 @@ class Profile(View):
 class PersonalProfile(View):
     def get(self, request):
         t = None
-        user = User.objects.get(account_ID=request.session['current_user_account_id'])
+        t = user = User.objects.get(account_ID=request.session['current_user_account_id'])
         if user.user_type == "TA":
             user_model = TA.objects.get(account_ID=user)
             user_wrapped = TAUser(user_model)
@@ -58,7 +58,48 @@ class PersonalProfile(View):
         if t == None:
             return render(request, "login.html", {'message': "Please login to access search page."})
         else:
-            return render(request, "MyUserProfile.html", {'State': t, 'user': user_wrapped})
+            return render(request, "MyUserProfile.html", { 'user': user_wrapped})
 
     def post(self, request):
         pass
+
+class EditMyProfile(View):
+    def get(self, request):
+        t = None
+        t = user = User.objects.get(account_ID=request.session['current_user_account_id'])
+        if user.user_type == "TA":
+            user_model = TA.objects.get(account_ID=user)
+            user_wrapped = TAUser(user_model)
+        elif user.user_type == "Instructor":
+            user_model = Instructor.objects.get(account_ID=user)
+            user_wrapped = InstructorUser(user_model)
+        elif user.user_type == "Admin":
+            user_model = Admin.objects.get(account_ID=user)
+            user_wrapped = AdminUser(user_model)
+
+        if t == None:
+            return render(request, "login.html", {'message': "Please login to access search page."})
+        else:
+            return render(request, "EditMyUserProfile.html", {'user': user_wrapped})
+
+    def post(self, request):
+
+
+
+
+        t = None
+        t = user = User.objects.get(account_ID=request.session['current_user_account_id'])
+        if user.user_type == "TA":
+            user_model = TA.objects.get(account_ID=user)
+            user_wrapped = TAUser(user_model)
+        elif user.user_type == "Instructor":
+            user_model = Instructor.objects.get(account_ID=user)
+            user_wrapped = InstructorUser(user_model)
+        elif user.user_type == "Admin":
+            user_model = Admin.objects.get(account_ID=user)
+            user_wrapped = AdminUser(user_model)
+
+        if t == None:
+            return render(request, "login.html", {'message': "Please login to access search page."})
+        else:
+            return render(request, "EditMyUserProfile.html", {'user': user_wrapped})

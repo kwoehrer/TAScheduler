@@ -110,7 +110,7 @@
         {% if user %}
             <div class="mx-auto text-center">
                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
-                    <h1>{{ fullname }}'s Profile</h1>
+                    <h1>Your Profile</h1>
                 {% endwith %}
                 <table class="table text-center margTop">
                     <thead>
@@ -145,10 +145,14 @@
                 </table>
             </div>
         {% endif %}
-    </div>
-        <a class="min-vw-100" href="/search/">
-            <input class="btn btn-danger redButton" type="submit" value="Return To Search Page">
+        <a class="min-vw-100" href="/editMyProfile/">
+            <input class="btn btn-primary" type="submit" value="Edit my profile">
         </a>
+        <a class="min-vw-100" href="/home/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
+        </a>
+    </div>
 </div>
+
 </body>
 </html>

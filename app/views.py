@@ -753,3 +753,75 @@ class CourseRemoveInstructor(View):
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
+
+class SectionSummary(View):
+    def get(self, request):
+        # Get all the courses from the database
+        courses = Course.objects.all()
+
+        # Wrap the course objects in ConcreteCourse objects
+        concrete_courses = [ConcreteCourse(course) for course in courses]
+
+        # Render the template with the courses as context
+        return render(request, 'SectionSummary.html', {'courses': concrete_courses})
+
+    def post(self, request):
+        # Retrieve the course ID from the form
+        name_query = request.POST.get('name')
+        semester_query = request.POST.get('semester')
+        year_query = request.POST.get('year')
+        credit_query = request.POST.get('credit')
+        desc_query = request.POST.get('description')
+
+        total_query = None
+        if name_query is not None and name_query != '':
+            total_query = Course.objects.filter(name=name_query)
+
+        if semester_query is not None and semester_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(semester=semester_query)
+            else:
+                total_query = total_query.filter(semester=semester_query)
+        if year_query is not None and year_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(year=year_query)
+            else:
+                total_query = total_query.filter(year=year_query)
+        if credit_query is not None and credit_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(credits=credit_query)
+            else:
+                total_query = total_query.filter(credits=credit_query)
+        if desc_query is not None and desc_query != '':
+            if total_query is None:
+                total_query = Course.objects.filter(description=credit_query)
+            else:
+                total_query = total_query.filter(description=credit_query)
+
+        # GET A LIST OF ALL USERS
+        course_model_list = list(total_query)
+        course_list = []
+
+        for crs_model in course_model_list:
+            course_list.append(ConcreteCourse(crs_model))
+
+        instructor_model_list = Instructor.objects.all()
+        instructor_list = []
+
+        for instr in instructor_model_list:
+            instructor_list.append(InstructorUser(instr))
+
+        ta_model_list = TA.objects.all()
+        ta_list = []
+
+        for ta in ta_model_list:
+            ta_list.append(TAUser(ta))
+
+        if len(course_list) == 0:
+            return render(request, "CourseEdit.html", {"bad_message": "No results found. Try again.",
+                                                       "page_state_title": "Query For A Course To Edit"})
+
+        return render(request, "CourseEdit.html",
+                      {"page_state_title": "Select A Course To Edit", 'total_ta_list': ta_list,
+                       'total_instr_list': instructor_list,
+                       'query_courses': course_list})

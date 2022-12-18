@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views import View
 
-from app.models import User, Admin, Instructor, TA, Course
-from classes.Courses.CoursesClass import ConcreteCourse
+from app.models import User, Admin, Instructor, TA
 from classes.Users.users import InstructorUser, TAUser, AdminUser
+
 
 class Profile(View):
     def get(self, request):
@@ -32,11 +32,33 @@ class Profile(View):
             user_model = Admin.objects.get(account_ID=user_model)
             user_wrapped = AdminUser(user_model)
 
+        if t == None:
+            return render(request, "login.html", {'message': "Please login to access search page."})
+        else:
+            return render(request, "UserProfile.html", {'State': t, 'user': user_wrapped})
+
+    def post(self, request):
+        pass
+
+
+class PersonalProfile(View):
+    def get(self, request):
+        t = None
+        user = User.objects.get(account_ID=request.session['current_user_account_id'])
+        if user.user_type == "TA":
+            user_model = TA.objects.get(account_ID=user)
+            user_wrapped = TAUser(user_model)
+        elif user.user_type == "Instructor":
+            user_model = Instructor.objects.get(account_ID=user)
+            user_wrapped = InstructorUser(user_model)
+        elif user.user_type == "Admin":
+            user_model = Admin.objects.get(account_ID=user)
+            user_wrapped = AdminUser(user_model)
 
         if t == None:
             return render(request, "login.html", {'message': "Please login to access search page."})
         else:
-            return render(request, "UserProfile.html", {'State': t, 'user':user_wrapped})
+            return render(request, "UserProfile.html", {'State': t, 'user': user_wrapped})
 
     def post(self, request):
-       pass
+        pass

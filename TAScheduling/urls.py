@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from app.search_views import SearchHome, SearchUser, SearchCourse, SearchUserResults, SearchCourseResults
-from app.user_profile_views import Profile
+from app.user_profile_views import Profile, PersonalProfile
 from app.views import Login, Home, LogOut, AccountManagement, CreateAccount, AccountFactoryCreate, DeleteAccount, \
     AccountFactoryDelete, EditAccount, AccountEditActive, CourseManagement, CreateCourse, CourseFactoryCreate, \
     DeleteCourse, CourseFactoryDelete, EditCourse, CourseEditActive, CourseAddSection, CourseDeleteSection, \
@@ -52,4 +52,5 @@ urlpatterns = [
     path('search/user/results/', SearchUserResults.as_view()),
     path('search/course/results/', SearchCourseResults.as_view()),
     path('profile/', Profile.as_view(), name='profile'),
+    path('myprofile/', PersonalProfile.as_view(), name='personalProfile'),
 ]

@@ -753,3 +753,36 @@ class CourseRemoveInstructor(View):
 
         return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
+
+
+class SendNotification(View):
+
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "SendNotification.html", {"list of users": "Query For An User To Send Email To"})
+
+    def post(self, request):
+        # If the user does not have a valid name, I.E. if they try to manually enter /home in the search bar,
+        # they will fail the userAllowed test and be redirected back to the login page
+        # If the user is allowed then home is rendered like normal
+
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin":
+            return render(request, "home.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            to_field = request.POST.getlist('to')
+            cc_field = request.POST.getlist('cc')
+            subject = request.POST['subject']
+            message = request.POST['message']
+            try:
+                selected_instr_id = request.POST.get('selected_instr')
+                return render(request, "SendNotification.html",
+                              {"users": selected_instr_id})
+            except Exception as e:
+                msg = "Could not send email " + str(e.__str__())
+                return render(request, "SendNotification.html", {"bad_message": msg})

@@ -118,5 +118,17 @@ class EditMyProfile(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "EditMyUserProfile.html", {"user": user_to_edit_wrapper, "bad_message": msg})
 
-        return render(request, "MyUserProfile.html", {"user": user_to_edit_wrapper,
+        updated_wrapper = None
+
+        if user.user_type == "Admin":
+            user_to_edit_model = Admin.objects.get(account_ID=user)
+            updated_wrapper = AdminUser(user_to_edit_model)
+        elif user.user_type == "Instructor":
+            user_to_edit_model = Instructor.objects.get(account_ID=user)
+            updated_wrapper = InstructorUser(user_to_edit_model)
+        elif user.user_type == "TA":
+            user_to_edit_model = TA.objects.get(account_ID=user)
+            updated_wrapper = TAUser(user_to_edit_model)
+
+        return render(request, "MyUserProfile.html", {"user": updated_wrapper,
                                                       "good_message": "Account Successfully Edited."})

@@ -14,18 +14,23 @@ class Profile(View):
         user_model = User.objects.get(account_ID=user_id)
 
         user_wrapped = None
+
         if user_type == "TA":
-            user_model = TA.objects.get(account_ID=user_model)
-            user_wrapped = TAUser(user_model)
             t = "ProfileStates/TAViewState.html"
         elif user_type == "Instructor":
-            user_model = Instructor.objects.get(account_ID=user_model)
-            user_wrapped = InstructorUser(user_model)
             t = "ProfileStates/InstrViewState.html"
         elif user_type == "Admin":
+            t = "ProfileStates/AdminViewState.html"
+
+        if user_model.user_type == "TA":
+            user_model = TA.objects.get(account_ID=user_model)
+            user_wrapped = TAUser(user_model)
+        elif user_model.user_type == "Instructor":
+            user_model = Instructor.objects.get(account_ID=user_model)
+            user_wrapped = InstructorUser(user_model)
+        elif user_model.user_type == "Admin":
             user_model = Admin.objects.get(account_ID=user_model)
             user_wrapped = AdminUser(user_model)
-            t = "ProfileStates/AdminViewState.html"
 
 
         if t == None:

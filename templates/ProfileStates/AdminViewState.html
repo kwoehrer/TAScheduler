@@ -23,7 +23,9 @@
                 <td>{{ user.getEmail }}</td>
                 <td>
                     {% for course in user.getCourses %}
-                        {{ course.name }}
+                        <a href="{% url 'course' %}?current_course={{ course.getID }}">
+                            {{ course.name }}
+                        </a>
                         <br>
                     {% endfor %}
                 </td>

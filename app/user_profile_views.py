@@ -58,7 +58,7 @@ class PersonalProfile(View):
         if t == None:
             return render(request, "login.html", {'message': "Please login to access search page."})
         else:
-            return render(request, "UserProfile.html", {'State': t, 'user': user_wrapped})
+            return render(request, "MyUserProfile.html", {'State': t, 'user': user_wrapped})
 
     def post(self, request):
         pass

@@ -16,7 +16,6 @@ class Login(View):
     def post(self, request):
         # Verify user information in login
         query = User.objects.filter(username=request.POST['username'], password=request.POST['password'])
-        print(query[0].get_user_type_display())
 
         logged_user: AbstractUser = None
         if len(query) > 0:
@@ -42,7 +41,6 @@ class Login(View):
 
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
-        print(user_type)
         if user_type == "TA":
             t = './homeStates/TAHome.html'
         elif user_type == "Instructor":

@@ -106,13 +106,25 @@
 </div>
 <div class='d-flex margTop'>
     <div class="homeContainer">
-        {% csrf_token %}
+        {% if bad_message %}
+            <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ bad_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if good_message %}
+            <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ good_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
         {% if user %}
             <div class="mx-auto text-center">
-                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
-                    <h1>Your Profile</h1>
-                {% endwith %}
+                <h1>Edit Your Profile</h1>
                 <form method="POST" action="/editMyProfile/">
+                    {% csrf_token %}
                     <table class="table text-center margTop">
                         <thead>
                         <tr class="table-primary">
@@ -122,6 +134,7 @@
                             <th scope="col">Email</th>
                             <th scope="col">Phone Number</th>
                             <th scope="col">Home Address</th>
+                            <th scope="col">New Password</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -156,7 +169,7 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="email" class="form-control" id="email" name="email"
+                                    <input type="email" class="form-control text-center" id="email" name="email"
                                            aria-describedby="emailHelp"
                                            placeholder="{{ user.getEmail }}"
                                            value="{{ user.getEmail }}">
@@ -164,13 +177,13 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="tel" class="form-control" id="phone_number"
+                                    <input type="tel" class="form-control text-center" id="phone_number"
                                            name="phone_number"
                                             {% if user.getPhoneNumber %}
                                            placeholder="{{ user.getPhoneNumber }}"
                                            value="{{ user.getPhoneNumber }}"
                                             {% else %}
-                                           placeholder="Enter the Users Phone Number (Ex. '6082929191')"
+                                           placeholder="Enter your phone number"
                                             {% endif %}
                                            pattern="[0-9]{3}[0-9]{3}[0-9]{4}"
                                     >
@@ -178,9 +191,8 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="home_address"
+                                    <input type="text" class="form-control text-center" id="home_address"
                                            name="home_address"
-                                           placeholder="Enter the Users Address"
                                             {% if user.getHomeAddress %}
                                            value="{{ user.getHomeAddress }}"
                                            placeholder="{{ user.getHomeAddress }}"
@@ -188,6 +200,12 @@
                                            placeholder="Enter an address"
                                             {% endif %}
                                     >
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="password" class="form-control text-center" value="" id="password"
+                                           name="password" placeholder="***********">
                                 </div>
                             </td>
                         </tr>

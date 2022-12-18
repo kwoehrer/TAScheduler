@@ -106,7 +106,20 @@
 </div>
 <div class='d-flex margTop'>
     <div class="homeContainer">
-        {% csrf_token %}
+        {% if bad_message %}
+            <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ bad_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if good_message %}
+            <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ good_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
         {% if user %}
             <div class="mx-auto text-center">
                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
@@ -126,7 +139,7 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <th scope="row">{{ user.getFirstName }}</th>
+                        <td>{{ user.getFirstName }}</td>
                         <td>{{ user.getLastName }}</td>
                         <td>{{ user.getUserType }}</td>
                         <td>{{ user.getEmail }}</td>

@@ -52,5 +52,5 @@ urlpatterns = [
     path('search/user/results/', SearchUserResults.as_view()),
     path('search/course/results/', SearchCourseResults.as_view()),
     path('profile/', Profile.as_view(), name='profile'),
-    path('myprofile/', PersonalProfile.as_view(), name='personalProfile'),
+    path('MyProfile/', PersonalProfile.as_view()),
 ]

@@ -1,6 +1,6 @@
 import abc
 
-from app.models import User, TA, Instructor, Admin
+from app.models import User, TA, Instructor, Admin, TACourseAssignments, InstructorAssignments, Course
 
 
 class AbstractUser(abc.ABC):
@@ -68,12 +68,15 @@ class AbstractUser(abc.ABC):
     def setEmail(self, param):
         pass
 
+    @abc.abstractmethod
+    def getCourses(self):
+        pass
+
 
 class TAUser(AbstractUser):
 
     def __init__(self, model: TA):
         self.model = model
-
 
     def getPassword(self) -> str:
         return self.model.account_ID.password
@@ -176,6 +179,14 @@ class TAUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+
+    def getCourses(self):
+        courses = TACourseAssignments.objects.filter(account_ID=self.model)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
+
 
 class InstructorUser(AbstractUser):
 
@@ -203,7 +214,6 @@ class InstructorUser(AbstractUser):
     def setFirstName(self, first_name: str):
 
         if self.model.account_ID.first_name == first_name:
-
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -285,15 +295,22 @@ class InstructorUser(AbstractUser):
         user_obj.email = email
         user_obj.save()
 
+    def getCourses(self):
+        courses = InstructorAssignments.objects.filter(account_ID=self.model)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
+
 
 class AdminUser(AbstractUser):
 
     def __init__(self, model: TA):
         self.model = model
 
-
     def getPassword(self) -> str:
         return self.model.account_ID.password
+
     def getUsername(self) -> str:
         return self.model.account_ID.username
 
@@ -310,7 +327,7 @@ class AdminUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
-        if self.model.account_ID.first_name == first_name :
+        if self.model.account_ID.first_name == first_name:
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -318,7 +335,7 @@ class AdminUser(AbstractUser):
         user_obj.save()
 
     def setLastName(self, last_name: str):
-        if self.model.account_ID.last_name == last_name :
+        if self.model.account_ID.last_name == last_name:
             return
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
@@ -390,3 +407,7 @@ class AdminUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+
+    def getCourses(self):
+        return []
+

@@ -1,6 +1,8 @@
 {% if user %}
     <div class="mx-auto text-center">
-        <h1>{{ user }}</h1>
+        {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+            <h1>{{ fullname }}'s Profile</h1>
+        {% endwith %}
         <table class="table text-center margTop">
             <thead>
             <tr class="table-primary">
@@ -9,6 +11,8 @@
                 <th scope="col">Type of User</th>
                 <th scope="col">Email</th>
                 <th scope="col">Related Courses</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Home Address</th>
             </tr>
             </thead>
             <tbody>

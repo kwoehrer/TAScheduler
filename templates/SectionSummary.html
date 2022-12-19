@@ -30,32 +30,6 @@
             max-height: 250px;
         }
 
-        .homeContainer {
-            width: 50%;
-            margin: 0;
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .homeButtons {
-            white-space: normal;
-            background-color: dodgerblue;
-            height: 20vh;
-            width: 20vw;
-            font-max-size: 1vw;
-            font-size: 5vh;
-            font-family: Archivo;
-            word-break: keep-all !important;
-            margin: 1vh;
-            border: 2px black solid;
-            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
-        }
-
-        .redButton {
-            background-color: #FF0000 !important;
-        }
 
         label {
             font-size: 24px;
@@ -85,14 +59,14 @@
             opacity: 0.8;
         }
 
-        .smallMargin {
-            margin: 20px;
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        .dangerColor {
-            background-color: #FF0000 !important;
+        h1 {
+            text-align: center;
         }
-
 
     </style>
 </head>
@@ -115,28 +89,45 @@
         <button type="submit" name="check_sections" value="check_sections">Check Sections</button>
     </form>
 
+        {% if selected_course %}
+            <h1>{{ "Sections for " | add:selected_course.get_course_name }}</h1>
+        {% endif %}
     <!-- Table that displays the filtered list of sections -->
-    <table>
+        <table class="table text-center margTop">
         <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Section Number</th>
-                <th>Current TA</th>
-                <th>Meeting Times</th>
-            </tr>
+        <tr>
+            <th>Course Name</th>
+            <th>Section Number</th>
+            <th>Current TA</th>
+            <th>Meeting Times</th>
+        </tr>
         </thead>
         <tbody>
-            {% if sections %}
-                {% for section in sections %}
-                    <tr>
-                        <td>{{ section.getParentCourse.get_course_name }}</td>
-                        <td>{{ section.getSectionNumber }}</td>
-                        <td>{{ section.getTA.getFirstName }}</td>
-                        <td>{{ section.getMeetTime }}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
-        </tbody>
-    </table>
-</body>
-</html>
+        {% if selected_course %}
+            {% for section in sections %}
+                <tr>
+                    <th>{{ selected_course.get_course_name }}</th>
+                    <td>{{ section.getSectionNumber }}</td>
+                    <td>
+                        {% for ta in ta_list %}
+                            {% if ta.getID == section.getTA.account_ID_id %}
+                                {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
+                                    {{ fullname }}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ section.getMeetTime }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+
+    </tbody>
+
+</table>
+<a class="smallMargin" href="/SectionSummary/">
+    <input class="btn btn" type="submit" value="Reset">
+</a>
+<a class="smallMargin" href="/CourseManagement/">
+    <input class="btn btn-outline-primary" type="submit" value="Return To Course Management Page">
+</a>

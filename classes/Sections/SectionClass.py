@@ -53,7 +53,8 @@ class ConcreteSection(AbstractSection):
         self.section = newNumber
 
     def getTA(self):
-        return self.section.ta_account_id
+        ta = TA.objects.get(account_ID=self.section.ta_account_id_id)
+        return UserClass.TAUser(ta)
 
     def setTA(self, newTA: UserClass.AbstractUser):
         if isinstance(newTA, UserClass.TAUser):

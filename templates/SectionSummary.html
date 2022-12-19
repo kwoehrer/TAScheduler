@@ -110,9 +110,9 @@
                     <td>{{ section.getSectionNumber }}</td>
                     <td>
                         {% for ta in ta_list %}
-                            {% if ta.getID == section.getTA.account_ID_id %}
+                            {% if ta.getID == section.getTA.getID %}
                                 {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
-                                    {{ fullname }}
+                                        {{ fullname }}
                                 {% endwith %}
                             {% endif %}
                         {% endfor %}
@@ -128,6 +128,6 @@
 <a class="smallMargin" href="/SectionSummary/">
     <input class="btn btn" type="submit" value="Reset">
 </a>
-<a class="smallMargin" href="/CourseManagement/">
-    <input class="btn btn-outline-primary" type="submit" value="Return To Course Management Page">
+<a class="smallMargin" href="/home/">
+    <input class="btn btn-outline-primary" type="submit" value="Return Home">
 </a>

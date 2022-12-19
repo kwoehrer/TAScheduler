@@ -106,42 +106,9 @@
 </div>
 <div class='d-flex margTop'>
     <div class="homeContainer">
-        {% if query_users %}
-            <div class="mx-auto text-center">
-            <h1>{{ page_state_title }}</h1>
-            <table class="table text-center margTop">
-                <thead>
-                <tr class="table-primary">
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Type of User</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Related Courses</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for user in query_users %}
-                    <tr>
-                        <th scope="row"><a href="{% url 'profile' %}?user={{ user.getID }}">{{ user.getFirstName }}</a></th>
-                        <td><a href="{% url 'profile' %}?user={{ user.getID }}">{{ user.getLastName }}</a></td>
-                        <td><a href="{% url 'profile' %}?user={{ user.getID }}">{{ user.getUserType }}</a></td>
-                        <td><a href="{% url 'profile' %}?user={{ user.getID }}">{{ user.getEmail }}</a></td>
-                        <td>
-                            {% for course in user.getCourses %}
-                                {{ course.name }}
-                                <br>
-                            {% endfor %}
-                        </td>
-                    </tr>
-                    </a>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-        <a class="min-vw-100" href="/search/">
-            <input class="btn btn-danger redButton" type="submit" value="Return To Search Page">
-        </a>
-        </div>
+        {% csrf_token %}
+
+        {% include State %}
     </div>
 </div>
 </body>

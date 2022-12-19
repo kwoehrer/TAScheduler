@@ -162,7 +162,7 @@ class ConcreteCourse(AbstractCourse):
         return result_list
 
 
-    def add_instructor(self, newInstructor: AbstractUser):
+    def add_instructor(self, newInstructor):
         if isinstance(newInstructor, InstructorUser):
             instr_id = newInstructor.getID()
             new_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
@@ -171,21 +171,29 @@ class ConcreteCourse(AbstractCourse):
         else:
             raise TypeError("newInstructor was not an instructor object.")
 
-    def get_tas(self) -> [TAUser]:
+    def remove_instructor(self, instructor):
+        if isinstance(instructor, InstructorUser):
+            instr_id = instructor.getID()
+            old_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
+            row = InstructorAssignments.objects.get(account_ID=old_instructor_model, course_ID=self.course).delete()
+        else:
+            raise TypeError("newInstructor was not an instructor object.")
+
+    def get_tas(self) -> []:
         ta_models = TACourseAssignments.objects.filter(course_ID=self.course.course_ID)
         ta_pk_list = ta_models.values_list('account_ID', flat=True)
         ta_table = TA.objects.filter(account_ID__ta__in=ta_pk_list)
 
-        result_list = [AbstractUser]
+        result_list = []
         for ta in ta_table:
             result_list.append(TAUser(ta))
 
         return result_list
 
-    def add_ta(self, newta: AbstractUser):
+    def add_ta(self, newta):
         if isinstance(newta, TAUser):
             ta_id = newta.getID()
-            row = InstructorAssignments(account_ID=ta_id, course_ID=self.course_ID)
+            row = TACourseAssignments(account_ID=TA.objects.get(account_ID__account_ID=ta_id), course_ID=self.course)
             row.save()
         else:
             raise TypeError("New TA was not a TA_User.")
@@ -216,6 +224,7 @@ class ConcreteCourse(AbstractCourse):
                 raise ValueError("duplicate course section numbers.")
 
         ta_obj = TA.objects.get(account_ID=sectionTA_ID)
+        self.add_ta(TAUser(ta_obj))
 
         newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
                              ta_account_id=ta_obj)
@@ -227,11 +236,3 @@ class ConcreteCourse(AbstractCourse):
             Section.objects.filter(course_ID=self.course.course_ID, section_num=section_id).delete()
         else:
             raise ValueError("Section is not included, cannot be deleted")
-
-    def remove_instructor(self, instructor):
-        if isinstance(instructor, InstructorUser):
-            instr_id = instructor.getID()
-            old_instructor_model = Instructor.objects.get(account_ID__account_ID=instr_id)
-            row = InstructorAssignments.objects.get(account_ID=old_instructor_model, course_ID=self.course).delete()
-        else:
-            raise TypeError("newInstructor was not an instructor object.")

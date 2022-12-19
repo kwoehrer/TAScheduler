@@ -632,7 +632,7 @@ class CourseEditActive(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Course Successfully Edited."})
 
 
@@ -661,7 +661,7 @@ class CourseAddSection(View):
             msg = "Could not add section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section successfully added."})
 
 
@@ -692,7 +692,7 @@ class CourseDeleteSection(View):
             msg = "Could not delete section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section Successfully Deleted."})
 
 
@@ -723,7 +723,7 @@ class CourseAddInstructor(View):
             msg = "Could not assign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course Edit",
                                                    "good_message": "Instructor Successfully Assigned To Course."})
 
 
@@ -753,5 +753,5 @@ class CourseRemoveInstructor(View):
             msg = "Could not unassign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})

@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from TAScheduler.app.models import *
+from app.models import *
 from classes.Courses.CoursesClass import AbstractCourse, ConcreteCourse
 from classes.Users.users import AdminUser
 
@@ -30,7 +30,7 @@ class SuccessfulDeleteCourse(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
         user_model.save()
 
-        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.password})
+        self.dummyClient.post("/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
     def test_deleteCourse(self):
         self.dummyClient.post('/delete_course/', {'Delete Course': 1}, follow=True)

@@ -1,9 +1,8 @@
 import abc
 
-from app.models import User, TA, Instructor, Admin
+from app.models import User, TA, Instructor, Admin, TACourseAssignments, InstructorAssignments, Course
 
 
-# Updated
 class AbstractUser(abc.ABC):
     @abc.abstractmethod
     def getID(self):
@@ -69,13 +68,17 @@ class AbstractUser(abc.ABC):
     def setEmail(self, param):
         pass
 
+    @abc.abstractmethod
+    def getCourses(self):
+        pass
+
 
 class TAUser(AbstractUser):
 
     def __init__(self, model: TA):
         self.model = model
 
-    def getPassword(self):
+    def getPassword(self) -> str:
         return self.model.account_ID.password
 
     def getUsername(self) -> str:
@@ -94,6 +97,7 @@ class TAUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
+
         if self.model.account_ID.first_name == first_name:
             return
         acc_id = self.model.account_ID.account_ID
@@ -102,6 +106,7 @@ class TAUser(AbstractUser):
         user_obj.save()
 
     def setLastName(self, last_name: str):
+
         if self.model.account_ID.last_name == last_name:
             return
         acc_id = self.model.account_ID.account_ID
@@ -140,27 +145,10 @@ class TAUser(AbstractUser):
     def setUserType(self, new_user_type):
         if self.model.account_ID.user_type == new_user_type:
             return
-
-        oldType = self.model.account_ID.user_type
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
-
-        # Need to save the sub table type
-        if (oldType == "Admin"):
-            Admin.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "Instructor"):
-            Instructor.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "TA"):
-            TA.objects.get(account_ID=user_obj).delete()
-
-        if (new_user_type == "Admin"):
-            Admin.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "Instructor"):
-            Instructor.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "TA"):
-            TA.objects.create(account_ID=user_obj).save()
 
     def setPassword(self, new_pass: str):
         if self.model.account_ID.password == new_pass:
@@ -191,6 +179,13 @@ class TAUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+
+    def getCourses(self):
+        courses = TACourseAssignments.objects.filter(account_ID=self.model)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
 
 
 class InstructorUser(AbstractUser):
@@ -198,7 +193,7 @@ class InstructorUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-    def getPassword(self):
+    def getPassword(self) -> str:
         return self.model.account_ID.password
 
     def getUsername(self) -> str:
@@ -217,6 +212,7 @@ class InstructorUser(AbstractUser):
         return self.model.account_ID.last_name
 
     def setFirstName(self, first_name: str):
+
         if self.model.account_ID.first_name == first_name:
             return
         acc_id = self.model.account_ID.account_ID
@@ -225,6 +221,7 @@ class InstructorUser(AbstractUser):
         user_obj.save()
 
     def setLastName(self, last_name: str):
+
         if self.model.account_ID.last_name == last_name:
             return
         acc_id = self.model.account_ID.account_ID
@@ -263,27 +260,10 @@ class InstructorUser(AbstractUser):
     def setUserType(self, new_user_type):
         if self.model.account_ID.user_type == new_user_type:
             return
-
-        oldType = self.model.account_ID.user_type
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
-
-        # Need to save the sub table type
-        if (oldType == "Admin"):
-            Admin.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "Instructor"):
-            Instructor.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "TA"):
-            TA.objects.get(account_ID=user_obj).delete()
-
-        if (new_user_type == "Admin"):
-            Admin.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "Instructor"):
-            Instructor.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "TA"):
-            TA.objects.create(account_ID=user_obj).save()
 
     def setPassword(self, new_pass: str):
         if self.model.account_ID.password == new_pass:
@@ -314,6 +294,13 @@ class InstructorUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+
+    def getCourses(self):
+        courses = InstructorAssignments.objects.filter(account_ID=self.model)
+        course_pk_list = courses.values_list('course_ID', flat=True)
+        course_table = Course.objects.filter(course_ID__in=course_pk_list)
+
+        return list(course_table)
 
 
 class AdminUser(AbstractUser):
@@ -321,7 +308,7 @@ class AdminUser(AbstractUser):
     def __init__(self, model: TA):
         self.model = model
 
-    def getPassword(self):
+    def getPassword(self) -> str:
         return self.model.account_ID.password
 
     def getUsername(self) -> str:
@@ -386,27 +373,10 @@ class AdminUser(AbstractUser):
     def setUserType(self, new_user_type):
         if self.model.account_ID.user_type == new_user_type:
             return
-
-        oldType = self.model.account_ID.user_type
         acc_id = self.model.account_ID.account_ID
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.user_type = new_user_type
         user_obj.save()
-
-        # Need to save the sub table type
-        if (oldType == "Admin"):
-            Admin.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "Instructor"):
-            Instructor.objects.get(account_ID=user_obj).delete()
-        elif (oldType == "TA"):
-            TA.objects.get(account_ID=user_obj).delete()
-
-        if (new_user_type == "Admin"):
-            Admin.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "Instructor"):
-            Instructor.objects.create(account_ID=user_obj).save()
-        elif (new_user_type == "TA"):
-            TA.objects.create(account_ID=user_obj).save()
 
     def setPassword(self, new_pass: str):
         if self.model.account_ID.password == new_pass:
@@ -437,3 +407,7 @@ class AdminUser(AbstractUser):
         user_obj = User.objects.get(account_ID=acc_id)
         user_obj.email = email
         user_obj.save()
+
+    def getCourses(self):
+        return []
+

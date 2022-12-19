@@ -99,7 +99,7 @@ class TestSetAdminLastName(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
-        with self.assertRaises(TypeError, msg="Add ta - one arg is required"):
+        with self.assertRaises(TypeError, msg="Add ta - more than one arg is required"):
             self.admin.setLastName()
 
     def testSetLastName(self):
@@ -126,7 +126,7 @@ class TestGetAdminPhoneNumber(TestCase):
     def testPhoneNumber(self):
         phone_number = self.admin.getPhoneNumber()
         self.assertEqual(phone_number, '4149818000',
-                         "Phone was not set correctly when creating a admin.")
+                         "Phone was not set correctly when creating a Admin.")
 
     def testPhoneNumberTypeInstance(self):
         self.assertIsInstance(self.admin.getPhoneNumber(), str, msg="Invalid Phone Number Type stored in Database")
@@ -147,7 +147,7 @@ class TestSetAdminPhoneNumber(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
-        with self.assertRaises(TypeError, msg="one arg is required"):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
             self.admin.setPhoneNumber()
 
     def testSetPhoneNumber(self):
@@ -189,7 +189,7 @@ class TestSetAdminHomeAddress(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
-        with self.assertRaises(TypeError, msg="one arg is required"):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
             self.admin.setHomeAddress()
 
     def testSetHomeAddress(self):
@@ -226,7 +226,7 @@ class TestSetAdminUserType(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
-        with self.assertRaises(TypeError, msg="one arg is required"):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
             self.admin.setUserType()
 
     def testSetUserType(self):
@@ -272,7 +272,7 @@ class TestSetAdminUserPassword(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testNoArg(self):
-        with self.assertRaises(TypeError, msg="one arg is required"):
+        with self.assertRaises(TypeError, msg="more than one arg is required"):
             self.admin.setPassword()
 
     def testSetUserPassword(self):

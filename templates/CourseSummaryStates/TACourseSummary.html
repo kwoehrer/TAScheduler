@@ -113,6 +113,8 @@
                 <hr>
             </div>
         {% endif %}
+        <!-- TODO confirm if this is needed -->
+
         {% if good_message %}
             <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
                 <hr>
@@ -120,29 +122,33 @@
                 <hr>
             </div>
         {% endif %}
-        {% if user %}
+        <!-- TODO confirm if this is needed -->
+
+        {% if course %}
             <div class="mx-auto text-center">
                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
                     <h1>Your Profile</h1>
                 {% endwith %}
+                <!--
+                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                    <h1>Your Profile</h1>
+                {% endwith %}
+                -->
                 <table class="table text-center margTop">
                     <thead>
                     <tr class="table-primary">
-                        <th scope="col">First Name</th>
-                        <th scope="col">Last Name</th>
-                        <th scope="col">Type of User</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Related Courses</th>
-                        <th scope="col">Phone Number</th>
-                        <th scope="col">Home Address</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Semester</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Credits</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{{ user.getFirstName }}</td>
-                        <td>{{ user.getLastName }}</td>
-                        <td>{{ user.getUserType }}</td>
-                        <td>{{ user.getEmail }}</td>
+                        <td>{{ course.get_course_name }}</td>
+                        <td>{{ course.get_semester }}</td>
+                        <td>{{ course.get_year }}</td>
+                        <td>{{ course.get_credits }}</td>
                         <td>
                             {% for course in user.getCourses %}
                                 <a href="{% url 'course' %}?current_course={{ course.getID }}">
@@ -151,8 +157,6 @@
                                 <br>
                             {% endfor %}
                         </td>
-                        <td>{{ user.getPhoneNumber }}</td>
-                        <td>{{ user.getHomeAddress }}</td>
                     </tr>
                     </tbody>
                 </table>

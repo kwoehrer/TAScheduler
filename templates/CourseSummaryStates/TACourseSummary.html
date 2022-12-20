@@ -129,11 +129,8 @@
                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
                     <h1>Your Profile</h1>
                 {% endwith %}
-                <!--
-                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
-                    <h1>Your Profile</h1>
-                {% endwith %}
-                -->
+                <!-- TODO find out what this needs -->
+
                 <table class="table text-center margTop">
                     <thead>
                     <tr class="table-primary">
@@ -162,14 +159,13 @@
                 </table>
             </div>
         {% endif %}
-        <a class="min-vw-100" href="/editMyProfile/">
-            <input class="btn btn-primary" type="submit" value="Edit my profile">
-        </a>
         <a class="min-vw-100" href="/home/">
             <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
         </a>
     </div>
 </div>
+
 {{ CourseWrapper }}
+
 </body>
 </html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .homeButtons {
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width: 20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family: Archivo;
+            word-break: keep-all !important;
+            margin: 1vh;
+            border: 2px black solid;
+            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
+        }
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+        .smallMargin {
+            margin: 20px;
+        }
+
+        .dangerColor {
+            background-color: #FF0000 !important;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    <div class="homeContainer">
+        {% if bad_message %}
+            <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ bad_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if good_message %}
+            <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ good_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if user %}
+            <div class="mx-auto text-center">
+                <h1>Edit Your Profile</h1>
+                <form method="POST" action="/editMyProfile/">
+                    {% csrf_token %}
+                    <table class="table text-center margTop">
+                        <thead>
+                        <tr class="table-primary">
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Type of User</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Home Address</th>
+                            <th scope="col">New Password</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">
+                                <div class="form-group">
+                                    <input type="text" class="form-control text-center" id="first_name"
+                                           name="first_name"
+                                           placeholder="{{ user.getFirstName }}"
+                                           value="{{ user.getFirstName }}">
+                                </div>
+                            </th>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control text-center" id="last_name"
+                                           name="last_name"
+                                           placeholder="{{ user.getLastName }}"
+                                           value="{{ user.getLastName }}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-select text-center" id="user_type" name="user_type"
+                                            value= {{ user.getUserType }}>
+                                        <option {% if user.getUserType == "TA" %}selected{% endif %}>TA</option>
+                                        <option {% if user.getUserType == "Instructor" %}selected{% endif %}>
+                                            Instructor
+                                        </option>
+                                        <option {% if user.getUserType == "Admin" %}selected{% endif %}>Admin</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="email" class="form-control text-center" id="email" name="email"
+                                           aria-describedby="emailHelp"
+                                           placeholder="{{ user.getEmail }}"
+                                           value="{{ user.getEmail }}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="tel" class="form-control text-center" id="phone_number"
+                                           name="phone_number"
+                                            {% if user.getPhoneNumber %}
+                                           placeholder="{{ user.getPhoneNumber }}"
+                                           value="{{ user.getPhoneNumber }}"
+                                            {% else %}
+                                           placeholder="Enter your phone number"
+                                            {% endif %}
+                                           pattern="[0-9]{3}[0-9]{3}[0-9]{4}"
+                                    >
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control text-center" id="home_address"
+                                           name="home_address"
+                                            {% if user.getHomeAddress %}
+                                           value="{{ user.getHomeAddress }}"
+                                           placeholder="{{ user.getHomeAddress }}"
+                                            {% else %}
+                                           placeholder="Enter an address"
+                                            {% endif %}
+                                    >
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="password" class="form-control text-center" value="" id="password"
+                                           name="password" placeholder="***********">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a class="min-vw-100" href="/editPersonalProfile/">
+                        <input class="btn btn-primary" type="submit" value="Submit Changes">
+                    </a>
+                </form>
+            </div>
+        {% endif %}
+        <a class="min-vw-100" href="/home/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
+        </a>
+    </div>
+</div>
+</body>
+</html>

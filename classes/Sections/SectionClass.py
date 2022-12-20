@@ -1,4 +1,4 @@
-from app.models import Section, TA, Course
+from app.models import Section, TA, Course, TACourseAssignments
 import classes.Courses.CoursesClass as CourseClass
 import classes.Users.users as UserClass
 from abc import ABC, abstractmethod
@@ -61,7 +61,8 @@ class ConcreteSection(AbstractSection):
             ta_id = newTA.getID()
             self.section.ta_account_id = ta_id
             self.section.save()
-
+            course_model = self.section.course_ID
+            TACourseAssignments(course_ID=course_model, ta_id=ta_id).save()
         else:
             raise TypeError("User was not a TA but was assigned to section as a TA.")
 

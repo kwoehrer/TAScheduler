@@ -47,7 +47,7 @@ urlpatterns = [
     path('CourseDeleteSection/', CourseDeleteSection.as_view()),
     path('CourseAddInstructor/', CourseAddInstructor.as_view()),
     path('CourseRemoveInstructor/', CourseRemoveInstructor.as_view()),
-    path('SectionSummary/', SectionSummary.as_view()),
+    path('SectionSummary/', SectionSummary.as_view(), name ="section"),
     path('search/', SearchHome.as_view()),
     path('search/user/', SearchUser.as_view()),
     path('search/course/', SearchCourse.as_view()),

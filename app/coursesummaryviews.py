@@ -24,7 +24,7 @@ class CourseSummary(View):
         if t == None:
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
-            return render(request, "CourseSummary.html", {'State': t})
+            return render(request, "CourseSummary.html", {'State': t, 'course': course_wrapper})
 
     def post(self, request):
         course_model = Course.objects.get(course_ID=request.POST.get('current_course'))
@@ -42,4 +42,4 @@ class CourseSummary(View):
         if t == None:
             return render(request, "login.html", {'message': "An unknown error has occurred."})
         else:
-            return render(request, "CourseSummary.html", {'State': t, 'course_wrapper': course_wrapper})
+            return render(request, "CourseSummary.html", {'State': t, 'course': course_wrapper})

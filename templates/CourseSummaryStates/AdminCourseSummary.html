@@ -3,7 +3,7 @@
         {% if course %}
             <div class="mx-auto text-center">
                 {% with course.get_course_name as course_name %}
-                    <h1>Summary</h1>
+                    <h1>{{ course_name }}'s Course Summary</h1>
                 {% endwith %}
                 <table class="table text-center margTop">
                     <thead>
@@ -25,14 +25,14 @@
                         <td>{{ course.get_credits }}</td>
                         <td>
                             {% for section in course.get_sections %}
-                                <a href="{% url 'section' %}?current_section={{ TODOTODOTODOTODO }}">
-                                    {{ section.name }}
+                                <a href="{% url 'section' %}?current_section={{ section.getSectionNumber }}&current_course={{ course.get_course_id }}">
+                                    {{ section.getSectionNumber }}
                                 </a>
                                 <br>
                             {% endfor %}
                         </td>
                         <td>
-                            {% for instructor in course.get_instructors %}
+                            {% for user in course.get_instructors %}
                                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
                                     <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
                                 {% endwith %}
@@ -40,7 +40,7 @@
                             {% endfor %}
                         </td>
                         <td>
-                            {% for ta in course.get_tas %}
+                            {% for user in course.get_tas %}
                                 {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
                                     <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
                                 {% endwith %}
@@ -55,10 +55,9 @@
         <a class="min-vw-100" href="/EditCourse/">
             <input class="btn btn-primary" type="submit" value="Edit Course">
         </a>
-
+        <br>
         <a class="min-vw-100" href="/home/">
             <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
         </a>
     </div>
 </div>
-</body>

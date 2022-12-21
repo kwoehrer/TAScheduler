@@ -324,8 +324,11 @@ class EditAccount(View):
                 curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(InstructorUser(curr_obj))
             elif user_type_query == "TA":
-                curr_obj = TA.objects.get(account_ID=account_model.account_ID)
-                acc_list.append(TAUser(curr_obj))
+                try:
+                    curr_obj = TA.objects.get(account_ID=account_model.account_ID)
+                    acc_list.append(TAUser(curr_obj))
+                except:
+                    print("SQL TA object error")
 
         if len(acc_list) == 0:
             return render(request, "AccountEdit.html", {"bad_message": "No results found. Try again.",
@@ -347,16 +350,17 @@ class AccountEditActive(View):
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
 
         user_to_edit_id = request.POST.get('acc_id')
-        user_to_edit_type = request.POST.get('acc_type')
-        user_to_edit_wrapper: AbstractUser = None
+        user_to_edit_id = request.POST.get('acc_id')
+        user_to_edit = User.objects.get(account_ID=user_to_edit_id)
 
-        if user_to_edit_type == "Admin":
+
+        if user_to_edit.user_type == "Admin":
             user_to_edit_model = Admin.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = AdminUser(user_to_edit_model)
-        elif user_to_edit_type == "Instructor":
+        elif user_to_edit.user_type == "Instructor":
             user_to_edit_model = Instructor.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = InstructorUser(user_to_edit_model)
-        elif user_to_edit_type == "TA":
+        elif user_to_edit.user_type == "TA":
             user_to_edit_model = TA.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 

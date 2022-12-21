@@ -36,15 +36,15 @@ class MyCourses(View):
             curr_user_model = Instructor.objects.get(account_ID=curr_user_model)
             logged_user = InstructorUser(curr_user_model)
             course_list = logged_user.getCourses()
-            return render(request, "MyCourseAssignments.html", {"my_courses": course_list})
+            concrete_course_list = list()
+
+            for course in course_list:
+                concrete_course_list.append(course)
+            return render(request, "MyCourseAssignments.html", {"my_courses": concrete_course_list})
 
         if logged_user == None:
             return render(request, "login.html",
                           {'message': "Please login to access  your personal course assignments."})
-
-        course_list = logged_user.getCourses()
-
-        return render(request, "MyCourseAssignments.html", {"my_courses": course_list})
 
     def post(self, request):
         pass

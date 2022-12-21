@@ -116,7 +116,9 @@
                     <th scope="col">Semester</th>
                     <th scope="col">Year</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Your Section(s)</th>
+                    {% if my_sections %}
+                        <th scope="col">Your Section(s)</th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -131,18 +133,20 @@
                         <td>{{ course.get_semester }}</td>
                         <td>{{ course.get_year }}</td>
                         <td>{{ course.get_description }}</td>
-                        <td>
-                            {% for key, value in my_sections.items %}
-                                {% if key == course.get_course_id %}
-                                    {% for section in value %}
-                                        <a href="{% url 'section' %}?current_section={{ section }}&current_course={{ course.get_course_id }}">
-                                            {{ section }}
-                                        </a>
-                                        <br>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
+                        {% if my_sections %}
+                            <td>
+                                {% for key, value in my_sections.items %}
+                                    {% if key == course.get_course_id %}
+                                        {% for section in value %}
+                                            <a href="{% url 'section' %}?current_section={{ section }}&current_course={{ course.get_course_id }}">
+                                                {{ section }}
+                                            </a>
+                                            <br>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>

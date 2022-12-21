@@ -56,5 +56,5 @@ urlpatterns = [
     path('profile/', Profile.as_view(), name='profile'),
     path('MyProfile/', PersonalProfile.as_view()),
     path('editMyProfile/', EditMyProfile.as_view()),
-    path('CourseSummary/', CourseSummary.as_view())
+    path('CourseSummary/', CourseSummary.as_view(), name="course")
 ]

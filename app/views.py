@@ -754,40 +754,40 @@ class CourseRemoveInstructor(View):
         return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
 
-    class SectionSummary(View):
-        def get(self, request):
-            courses = Course.objects.all()
+class SectionSummary(View):
+    def get(self, request):
+        courses = Course.objects.all()
 
-            concrete_courses = [ConcreteCourse(course) for course in courses]
+        concrete_courses = [ConcreteCourse(course) for course in courses]
 
-            return render(request, 'SectionSummary.html', {'courses': concrete_courses})
+        return render(request, 'SectionSummary.html', {'courses': concrete_courses})
 
-        def post(self, request):
+    def post(self, request):
 
-            course_id = request.POST.get('course_id')
+        course_id = request.POST.get('course_id')
 
-            try:
-                course = Course.objects.get(course_ID=course_id)
-            except Course.DoesNotExist:
-                return render(request, 'SectionSummary.html')
+        try:
+            course = Course.objects.get(course_ID=course_id)
+        except Course.DoesNotExist:
+            return render(request, 'SectionSummary.html')
 
-            concrete_course = ConcreteCourse(course)
+        concrete_course = ConcreteCourse(course)
 
-            sections = concrete_course.get_sections()
+        sections = concrete_course.get_sections()
 
-            sections_list = []
+        sections_list = []
 
-            for section in sections:
-                sections_list.append(section)
+        for section in sections:
+            sections_list.append(section)
 
-            ta_model_list = TA.objects.all()
-            ta_list = []
+        ta_model_list = TA.objects.all()
+        ta_list = []
 
-            for ta in ta_model_list:
-                ta_list.append(TAUser(ta))
+        for ta in ta_model_list:
+            ta_list.append(TAUser(ta))
 
-            return render(request, 'SectionSummary.html',
-                          {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
+        return render(request, 'SectionSummary.html',
+                      {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
 
 
 
@@ -809,7 +809,7 @@ class SendNotification(View):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type != "Admin" or user_type != "Instructor":
             return render(request, "home.html",
-                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+                          {'message': "User has been logged out due to accessing bad content."})
         else:
             to_field = request.POST.getlist('to')
             cc_field = request.POST.getlist('cc')

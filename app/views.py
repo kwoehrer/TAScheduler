@@ -759,7 +759,7 @@ class SendNotification(View):
 
     def get(self, request):
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
-        if user_type != "Admin":
+        if user_type != "Admin" or user_type != "Instructor":
             return render(request, "login.html",
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
         else:
@@ -771,7 +771,7 @@ class SendNotification(View):
         # If the user is allowed then home is rendered like normal
 
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
-        if user_type != "Admin":
+        if user_type != "Admin" or user_type != "Instructor":
             return render(request, "home.html",
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
         else:

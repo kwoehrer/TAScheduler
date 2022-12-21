@@ -79,6 +79,7 @@
              src="{% static 'custom/course-management-title.svg' %}">
     </a>
 </div>
+<h1 class="margTop">Section for {{ course.name }}</h1>
 <!-- Table that displays the filtered list of sections -->
 <table class="table text-center margTop">
     <thead>
@@ -92,7 +93,11 @@
     <tbody>
     {% if section %}
         <tr>
-            <th>{{ course.name }}</th>
+            <th>
+                <a href="{% url 'course' %}?current_course={{ course.course_ID }}">
+                    {{ course.name }}
+                </a>
+            </th>
             <td>{{ section.getSectionNumber }}</td>
             <td>
                 {% with section.getTA as ta %}

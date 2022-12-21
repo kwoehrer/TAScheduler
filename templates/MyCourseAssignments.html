@@ -107,7 +107,7 @@
 <div class='d-flex margTop'>
     <div class="homeContainer">
         <div class="mx-auto text-center">
-            <h1>{{ page_state_title }}</h1>
+            <h1>Your Course Assignments</h1>
             <table class="table text-center margTop">
                 <thead>
                 <tr class="table-primary">
@@ -120,7 +120,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for course in query_courses %}
+                {% for course in my_courses %}
                     <tr>
                         <th scope="row">{{ course.get_course_id }}</th>
                         <td>
@@ -132,18 +132,15 @@
                         <td>{{ course.get_year }}</td>
                         <td>{{ course.get_description }}</td>
                         <td>
-                            {% for user in course.get_instructors %}
-                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
-                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
-                                {% endwith %}
-                                <br>
-                            {% endfor %}
-
-                        </td>
-                        <td>
-                            {% for section in course.get_sections TODOTODO %}
-                                {{ section.getSectionNumber }}
-                                <br>
+                            {% for key, value in my_sections.items %}
+                                {% if key == course.get_course_id %}
+                                    {% for section in value %}
+                                        <a href="{% url 'section' %}?current_section={{ section }}&current_course={{ course.get_course_id }}">
+                                            {{ section }}
+                                        </a>
+                                        <br>
+                                    {% endfor %}
+                                {% endif %}
                             {% endfor %}
                         </td>
                     </tr>

@@ -755,37 +755,35 @@ class CourseRemoveInstructor(View):
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
 
 
-class SectionSummary(View):
+
+class SendNotification(View):
+
     def get(self, request):
-        courses = Course.objects.all()
-
-        concrete_courses = [ConcreteCourse(course) for course in courses]
-
-        return render(request, 'SectionSummary.html', {'courses': concrete_courses})
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin" or user_type != "Instructor":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "SendNotification.html", {"list of users": "Query For An User To Send Email To"})
 
     def post(self, request):
+        # If the user does not have a valid name, I.E. if they try to manually enter /home in the search bar,
+        # they will fail the userAllowed test and be redirected back to the login page
+        # If the user is allowed then home is rendered like normal
 
-        course_id = request.POST.get('course_id')
-
-        try:
-            course = Course.objects.get(course_ID=course_id)
-        except Course.DoesNotExist:
-            return render(request, 'SectionSummary.html')
-
-        concrete_course = ConcreteCourse(course)
-
-        sections = concrete_course.get_sections()
-
-        sections_list = []
-
-        for section in sections:
-            sections_list.append(section)
-
-        ta_model_list = TA.objects.all()
-        ta_list = []
-
-        for ta in ta_model_list:
-            ta_list.append(TAUser(ta))
-
-        return render(request, 'SectionSummary.html',
-                      {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin" or user_type != "Instructor":
+            return render(request, "home.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            to_field = request.POST.getlist('to')
+            cc_field = request.POST.getlist('cc')
+            subject = request.POST['subject']
+            message = request.POST['message']
+            try:
+                selected_instr_id = request.POST.get('selected_instr')
+                return render(request, "SendNotification.html",
+                              {"users": selected_instr_id})
+            except Exception as e:
+                msg = "Could not send email " + str(e.__str__())
+                return render(request, "SendNotification.html", {"bad_message": msg})

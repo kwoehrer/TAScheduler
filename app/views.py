@@ -790,6 +790,7 @@ class CourseRemoveInstructor(View):
                           {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
 
 
+
 class SendNotification(View):
 
     def get(self, request):

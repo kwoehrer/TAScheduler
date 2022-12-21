@@ -754,6 +754,41 @@ class CourseRemoveInstructor(View):
         return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
 
+    class SectionSummary(View):
+        def get(self, request):
+            courses = Course.objects.all()
+
+            concrete_courses = [ConcreteCourse(course) for course in courses]
+
+            return render(request, 'SectionSummary.html', {'courses': concrete_courses})
+
+        def post(self, request):
+
+            course_id = request.POST.get('course_id')
+
+            try:
+                course = Course.objects.get(course_ID=course_id)
+            except Course.DoesNotExist:
+                return render(request, 'SectionSummary.html')
+
+            concrete_course = ConcreteCourse(course)
+
+            sections = concrete_course.get_sections()
+
+            sections_list = []
+
+            for section in sections:
+                sections_list.append(section)
+
+            ta_model_list = TA.objects.all()
+            ta_list = []
+
+            for ta in ta_model_list:
+                ta_list.append(TAUser(ta))
+
+            return render(request, 'SectionSummary.html',
+                          {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
+
 
 class SendNotification(View):
 

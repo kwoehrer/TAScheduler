@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from app.PersonalCourseViews import MyCourses
 from app.search_views import SearchHome, SearchUser, SearchCourse, SearchUserResults, SearchCourseResults
 from app.section_views import SingleSection
 from app.user_profile_views import Profile, PersonalProfile, EditMyProfile
@@ -59,5 +60,6 @@ urlpatterns = [
     path('editMyProfile/', EditMyProfile.as_view()),
     path('CourseSummary/', CourseSummary.as_view(), name="course"),
     path('SingleSectionSummary/', SingleSection.as_view(), name="section"),
+    path('MyCourses/', MyCourses.as_view())
 
 ]

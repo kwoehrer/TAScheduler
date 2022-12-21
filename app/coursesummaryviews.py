@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 
 from app.models import User, Course
+from classes.Courses.CoursesClass import ConcreteCourse
 
 
 # https://codinggear.blog/how-to-create-superuser-in-django/
@@ -9,7 +10,7 @@ from app.models import User, Course
 class CourseSummary(View):
     def get(self, request):
         course_model = Course.objects.get(course_ID=request.GET.get('current_course'))
-        course_wrapper = Course.ConcreteCourse(course_model)
+        course_wrapper = ConcreteCourse(course_model)
 
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
@@ -27,7 +28,7 @@ class CourseSummary(View):
 
     def post(self, request):
         course_model = Course.objects.get(course_ID=request.POST.get('current_course'))
-        course_wrapper = Course.ConcreteCourse(course_model)
+        course_wrapper = ConcreteCourse(course_model)
 
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type

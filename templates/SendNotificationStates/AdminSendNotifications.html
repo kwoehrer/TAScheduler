@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown a:hover {
+            background-color: #ddd;
+        }
+
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo, serif;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/send-notification-title.svg' %}" alt="">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    <div class="mx-auto">
+        <form class='mx-auto' method="POST" action="/SendNotification/">
+            {% if bad_message %}
+                <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                    <hr>
+                    <h4 class="alert-heading">{{ bad_message }}</h4>
+                    <hr>
+                </div>
+            {% endif %}
+            {% if good_message %}
+                <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                    <hr>
+                    <h4 class="alert-heading">{{ good_message }}</h4>
+                    <hr>
+                </div>
+            {% endif %}
+            {% csrf_token %}
+            {% if user %}
+                <input type="hidden" name="from" value="{{ user.email }}">
+            {% endif %}
+            <div class="form-group">
+                <label for="user">Select Users</label><br>
+                <select name="user" id="email" multiple>
+                    {% for item in items %}
+                        <option value="{{ item.name }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+            <div>
+                 <label for="course">Select Course</label><br>
+                <select name="course" id="name" multiple>
+                    {% for item in items %}
+                        <option value="{{ item.name }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+            <div>
+                <label for="user">Select All Users Within Course</label><br>
+                <select name="user" id="email" multiple>
+                    {% for item in items %}
+                        <option value="{{ item.name }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject"><br>
+            <label for="message">Message:</label><br>
+            <textarea id="message" name="message"></textarea><br>
+            <input type="submit" class="btn btn-primary margTop float-right w-100" value="Send Email">
+        </form>
+        <a class="min-vw-100" href="/home/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
+        </a>
+    </div>
+</div>
+</body>
+</html>

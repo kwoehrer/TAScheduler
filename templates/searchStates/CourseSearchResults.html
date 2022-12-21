@@ -126,17 +126,22 @@
                 {% for course in query_courses %}
                     <tr>
                         <th scope="row">{{ course.get_course_id }}</th>
-                        <td>{{ course.get_course_name }}</td>
+                        <td>
+                            <a href="{% url 'course' %}?current_course={{ course.get_course_id }}">
+                                {{ course.get_course_name }}
+                            </a>
+                        </td>
                         <td>{{ course.get_semester }}</td>
                         <td>{{ course.get_year }}</td>
                         <td>{{ course.get_description }}</td>
                         <td>
-                            {% for instructor in course.get_instructors %}
-                                {% with instructor.getFirstName|add:" "|add:instructor.getLastName as fullname %}
-                                    {{ fullname }}
+                            {% for user in course.get_instructors %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
                                 {% endwith %}
                                 <br>
                             {% endfor %}
+
                         </td>
                         <td>
                             {% for section in course.get_sections %}
@@ -145,9 +150,9 @@
                             {% endfor %}
                         </td>
                         <td>
-                            {% for ta in course.get_tas %}
-                                {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
-                                    {{ fullname }}
+                            {% for user in course.get_tas %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
                                 {% endwith %}
                                 <br>
                             {% endfor %}

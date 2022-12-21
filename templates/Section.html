@@ -98,7 +98,9 @@
                 {% with section.getTA as ta %}
                     {% if ta.getID == section.getTA.getID %}
                         {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
-                            {{ fullname }}
+                            <a href="{% url 'profile' %}?user={{ ta.getID }}">
+                                {{ fullname }}
+                            </a></td>
                         {% endwith %}
                     {% endif %}
                 {% endwith %}

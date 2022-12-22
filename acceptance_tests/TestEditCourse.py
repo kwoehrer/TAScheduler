@@ -114,20 +114,20 @@ class TestEditCourse(TestCase):
         user_model.save()
 
     def test_find_course(self):
-        r = self.client.post("/CourseEdit/", {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
-        # successful login
-        self.assertTrue(r.context is None)
+        # login as the admin user
+        r = self.client.post("/CourseEdit/",
+                             {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
+        self.assertEqual(r.status_code, 200)  # check that the login was successful
+
+        # try to add a new course
         resp = self.client.post("/CourseEdit/",
                                 {"name": "Introduction to Programming",
                                  "semester": "Spring",
                                  "year": "2022",
                                  "description": "Software Principles", "credits": "3"})
-        try:
-            self.assertFalse(resp.context["message"], "No results found. Try again.")
-        except AssertionError as msg:
-            print(msg)
-
-        pass
+        self.assertEqual(resp.status_code, 200)  # check that the course was added successfully
+        self.assertFalse("message" in resp.context,
+                         "No results found. Try again.")  # check that there is no error message
 
     def test_EditCourse(self):
         spring_course_new = Course.objects.create(name="Introduction to Programming", semester="Spring", year="2022",
@@ -354,14 +354,14 @@ class TestAddSection(TestCase):
         new_section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00')
         self.course1 = CourseClass.ConcreteCourse(self.course_model)
         self.section1 = SectionClass.ConcreteSection(new_section)
-        resp = post('/CourseCreate/',
+        resp = self.client.post('/CourseCreate/',
                                 {new_section})
 
         self.assertEqual(resp.context["error"],
                          "Course was not created. Duplicate Section Number already exists")
 
     def test_EmptyTA(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": " ",
                                      "Section Number": "100",
                                      "Description": "Systems Programming"})
@@ -370,7 +370,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def test_EmptySectionNum(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "Luke Adams",
                                      "Section Number": " ",
                                      "Description": "Systems Programming"})
@@ -380,7 +380,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def test_EmptyDescription(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "Luke Adams",
                                      "Section Number": "100",
                                      "Description": " "}, follow=True)
@@ -390,7 +390,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def testInvalidTA(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "123",
                                      "Section Number": "100",
                                      "Description": "Systems Programming"}, follow=True)
@@ -399,7 +399,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def testInvalidSectionNumber(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "Luke Adams",
                                      "Section Number": "one-hundred",
                                      "Description": "Systems Programming"}, follow=True)
@@ -409,7 +409,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def testInvalidDescription(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "123",
                                      "Section Number": "100",
                                      "Description": "123"}, follow=True)
@@ -418,7 +418,7 @@ class TestAddSection(TestCase):
         self.assertEqual(Section.objects.count(), 1, "Database did not change")
 
     def test_addSection(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "Luke Adams",
                                      "Section Number": "100",
                                      "Description": "System Programming"}, follow=True)
@@ -439,7 +439,7 @@ class TestAddSection(TestCase):
                          "Instructor was not created successfully")
 
     def test_deleteSection(self):
-        response = post("/CourseEdit/",
+        response = self.client.post("/CourseEdit/",
                                     {"Assign TA to Section": "Luke Adams",
                                      "Section Number": "100",
                                      "Description": "System Programming"}, follow=True)
@@ -452,7 +452,7 @@ class TestAddSection(TestCase):
         section = Section.objects.create(course_ID=self.course_model, section_num=100, MeetingTimes='1:00',
                                          ta_account_id=self.ta_model)
 
-        post('/CourseEdit/', {'Delete Section': 1}, follow=True)
+        self.client.post('/CourseEdit/', {'Delete Section': 1}, follow=True)
         var = Section.objects.count()
         self.assertEquals(var, 0, "Instructor was successfully deleted")
         UserCount = list(Section.objects.filter(section_num=section))

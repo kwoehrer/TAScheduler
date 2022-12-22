@@ -71,6 +71,8 @@ class Home(View):
             return render(request, "home.html", {'HomeState': t})
 
     def post(self, request):
+
+
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":
@@ -322,8 +324,11 @@ class EditAccount(View):
                 curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(InstructorUser(curr_obj))
             elif user_type_query == "TA":
-                curr_obj = TA.objects.get(account_ID=account_model.account_ID)
-                acc_list.append(TAUser(curr_obj))
+                try:
+                    curr_obj = TA.objects.get(account_ID=account_model.account_ID)
+                    acc_list.append(TAUser(curr_obj))
+                except:
+                    print("SQL TA object error")
 
         if len(acc_list) == 0:
             return render(request, "AccountEdit.html", {"bad_message": "No results found. Try again.",
@@ -345,16 +350,17 @@ class AccountEditActive(View):
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
 
         user_to_edit_id = request.POST.get('acc_id')
-        user_to_edit_type = request.POST.get('acc_type')
-        user_to_edit_wrapper: AbstractUser = None
+        user_to_edit_id = request.POST.get('acc_id')
+        user_to_edit = User.objects.get(account_ID=user_to_edit_id)
 
-        if user_to_edit_type == "Admin":
+
+        if user_to_edit.user_type == "Admin":
             user_to_edit_model = Admin.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = AdminUser(user_to_edit_model)
-        elif user_to_edit_type == "Instructor":
+        elif user_to_edit.user_type == "Instructor":
             user_to_edit_model = Instructor.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = InstructorUser(user_to_edit_model)
-        elif user_to_edit_type == "TA":
+        elif user_to_edit.user_type == "TA":
             user_to_edit_model = TA.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 
@@ -630,7 +636,7 @@ class CourseEditActive(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Course Successfully Edited."})
 
 
@@ -659,7 +665,7 @@ class CourseAddSection(View):
             msg = "Could not add section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section successfully added."})
 
 
@@ -690,7 +696,7 @@ class CourseDeleteSection(View):
             msg = "Could not delete section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section Successfully Deleted."})
 
 
@@ -721,7 +727,7 @@ class CourseAddInstructor(View):
             msg = "Could not assign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course Edit",
                                                    "good_message": "Instructor Successfully Assigned To Course."})
 
 
@@ -751,98 +757,34 @@ class CourseRemoveInstructor(View):
             msg = "Could not unassign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
 
-
-class SendNotification(View):
-
+class SectionSummary(View):
     def get(self, request):
-        t = None
-        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
-        if user_type == "Instructor":
-            t = './homeStates/InstructorHome.html'
-        elif user_type == "Admin":
-            t = './homeStates/AdminHome.html'
+        courses = Course.objects.all()
 
-        if t is None:
-            return render(request, "login.html", {'message': "An unknown error has occurred."})
-        else:
-            return render(request, "SendNotifications.html", {'HomeState': t})
+        concrete_courses = [ConcreteCourse(course) for course in courses]
+
+        return render(request, 'SectionSummary.html', {'courses': concrete_courses})
 
     def post(self, request):
-        # If the user does not have a valid name, I.E. if they try to manually enter /home in the search bar,
-        # they will fail the userAllowed test and be redirected back to the login page
-        # If the user is allowed then home is rendered like normal
 
-        t = None
-        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
-        if user_type == "Instructor":
-            t = './homeStates/InstructorHome.html'
-        elif user_type == "Admin":
-            t = './homeStates/AdminHome.html'
+        course_id = request.POST.get('course_id')
 
-        # if t is None:
-        #   return render(request, "login.html", {'message': "An unknown error has occurred."})
-        if t is not None:
-            return render(request, "SendNotifications.html", {'HomeState': t})
+        try:
+            course = Course.objects.get(course_ID=course_id)
+        except Course.DoesNotExist:
+            return render(request, 'SectionSummary.html')
 
-        selected_user_email = User.objects.get(account_ID__email=request.POST.get('email')).user_type
-        selected_user_course = Course.objects.get(course_ID__name=request.POST.get('name')).course_ID
+        concrete_course = ConcreteCourse(course)
 
-        total_query = None
-        total_course_query = None
-        email_query = request.POST.get('email')
-        # user_name = request.POST.get('acc_id')
-        course_query = request.POST.get('name')
-        if user_type == 'Admin':
-            if selected_user_email == "Instructor":
-                if email_query is not None and email_query != '':
-                    total_query = Instructor.objects.filter(account_ID__user_type=selected_user_email)
-        elif user_type == 'Instructor':
-            if selected_user_email == "TA":
-                if email_query is not None and email_query != '':
-                    total_query = TA.objects.filter(account_ID__email=selected_user_email)
+        sections = concrete_course.get_sections()
 
-        if user_type == 'Admin':
-            if selected_user_course is not None:
-                total_course_query = None
-                if course_query is not None and email_query != '':
-                    total_course_query = Course.objects.filter(course_ID__name=course_query)
-        elif user_type == 'Instructor':
-            if selected_user_email == "TA":
-                total_course_query = None
-                if email_query is not None and email_query != '':
-                    total_course_query = Course.objects.filter(course_ID__name=course_query)
+        sections_list = []
 
-        # GET A LIST OF ALL USERS EMAILS
-        users_list = []
-        if total_query == "Admin":
-            users_list.append(Instructor.objects.all())
-        elif total_query == "Instructor":
-            users_list.append(TA.objects.all())
-
-        # GET A LIST OF ALL USERS
-        course_model_list = list(total_course_query)
-        course_list = []
-        instructor_course_list = []
-        ta_course_list = []
-
-        for crs_model in course_model_list:
-            if total_course_query is not None:
-                course_list.append(ConcreteCourse(crs_model))
-
-        for course in course_list:
-            if total_query == "Admin":
-                instructor_course_list.append(course.get_instructors())
-            elif total_query == "Instructors":
-                ta_course_list.append(course.get_tas())
-
-        instructor_model_list = Instructor.objects.all()
-        instructor_list = []
-
-        for instr in instructor_model_list:
-            instructor_list.append(InstructorUser(instr))
+        for section in sections:
+            sections_list.append(section)
 
         ta_model_list = TA.objects.all()
         ta_list = []
@@ -850,16 +792,39 @@ class SendNotification(View):
         for ta in ta_model_list:
             ta_list.append(TAUser(ta))
 
-        # to_field = request.POST.getlist('to')
-        # cc_field = request.POST.getlist('cc')
-        # subject = request.POST['subject']
-        # message = request.POST['message']
+        return render(request, 'SectionSummary.html',
+                      {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
 
-        try:
-            if len(course_list) == 0 and len(users_list) == 0:
-                return render(request, "SendNotifications.html",
-                          {"Query for Course": course_list, "Select Users": users_list,
-                           "Select All Users within a course": course_list})
-        except Exception as e:
-            msg = "Could not send email " + str(e.__str__())
-            return render(request, "SendNotifications.html", {"bad_message": msg})
+
+
+class SendNotification(View):
+
+    def get(self, request):
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin" or user_type != "Instructor":
+            return render(request, "login.html",
+                          {'message': "User has been logged out due to accessing admin content on non-admin account."})
+        else:
+            return render(request, "SendNotification.html", {"list of users": "Query For An User To Send Email To"})
+
+    def post(self, request):
+        # If the user does not have a valid name, I.E. if they try to manually enter /home in the search bar,
+        # they will fail the userAllowed test and be redirected back to the login page
+        # If the user is allowed then home is rendered like normal
+
+        user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
+        if user_type != "Admin" or user_type != "Instructor":
+            return render(request, "home.html",
+                          {'message': "User has been logged out due to accessing bad content."})
+        else:
+            to_field = request.POST.getlist('to')
+            cc_field = request.POST.getlist('cc')
+            subject = request.POST['subject']
+            message = request.POST['message']
+            try:
+                selected_instr_id = request.POST.get('selected_instr')
+                return render(request, "SendNotification.html",
+                              {"users": selected_instr_id})
+            except Exception as e:
+                msg = "Could not send email " + str(e.__str__())
+                return render(request, "SendNotification.html", {"bad_message": msg})

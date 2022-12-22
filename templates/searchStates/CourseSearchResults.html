@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .homeButtons {
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width: 20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family: Archivo;
+            word-break: keep-all !important;
+            margin: 1vh;
+            border: 2px black solid;
+            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
+        }
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+        .smallMargin {
+            margin: 20px;
+        }
+
+        .dangerColor {
+            background-color: #FF0000 !important;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    <div class="homeContainer">
+        {% if query_courses %}
+            <div class="mx-auto text-center">
+            <h1>{{ page_state_title }}</h1>
+            <table class="table text-center margTop">
+                <thead>
+                <tr class="table-primary">
+                    <th scope="col">Course ID</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Semester</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Instructor(s)</th>
+                    <th scope="col">Sections</th>
+                    <th scope="col">TA's</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for course in query_courses %}
+                    <tr>
+                        <th scope="row">{{ course.get_course_id }}</th>
+                        <td>
+                            <a href="{% url 'course' %}?current_course={{ course.get_course_id }}">
+                                {{ course.get_course_name }}
+                            </a>
+                        </td>
+                        <td>{{ course.get_semester }}</td>
+                        <td>{{ course.get_year }}</td>
+                        <td>{{ course.get_description }}</td>
+                        <td>
+                            {% for user in course.get_instructors %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
+                                {% endwith %}
+                                <br>
+                            {% endfor %}
+
+                        </td>
+                        <td>
+                            {% for section in course.get_sections %}
+                                {{ section.getSectionNumber }}
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for user in course.get_tas %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
+                                {% endwith %}
+                                <br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <a class="min-vw-100" href="/search/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Search Page">
+        </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

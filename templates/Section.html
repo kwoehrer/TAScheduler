@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/course-management-title.svg' %}">
+    </a>
+</div>
+<h1 class="margTop">Section for {{ course.name }}</h1>
+<!-- Table that displays the filtered list of sections -->
+<table class="table text-center margTop">
+    <thead>
+    <tr>
+        <th>Course Name</th>
+        <th>Section Number</th>
+        <th>Current TA</th>
+        <th>Meeting Times</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if section %}
+        <tr>
+            <th>
+                <a href="{% url 'course' %}?current_course={{ course.course_ID }}">
+                    {{ course.name }}
+                </a>
+            </th>
+            <td>{{ section.getSectionNumber }}</td>
+            <td>
+                {% with section.getTA as ta %}
+                    {% if ta.getID == section.getTA.getID %}
+                        {% with ta.getFirstName|add:" "|add:ta.getLastName as fullname %}
+                            <a href="{% url 'profile' %}?user={{ ta.getID }}">
+                                {{ fullname }}
+                            </a></td>
+                        {% endwith %}
+                    {% endif %}
+                {% endwith %}
+            </td>
+            <td>{{ section.getMeetTime }}</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+<a class="smallMargin" href="/home/">
+    <input class="btn btn-outline-primary" type="submit" value="Return Home">
+</a>
+</body>

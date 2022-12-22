@@ -193,7 +193,7 @@ class ConcreteCourse(AbstractCourse):
     def add_ta(self, newta):
         if isinstance(newta, TAUser):
             ta_id = newta.getID()
-            row = TACourseAssignments(account_ID=ta_id, course_ID=self.course_ID)
+            row = TACourseAssignments(account_ID=TA.objects.get(account_ID__account_ID=ta_id), course_ID=self.course)
             row.save()
         else:
             raise TypeError("New TA was not a TA_User.")
@@ -224,6 +224,7 @@ class ConcreteCourse(AbstractCourse):
                 raise ValueError("duplicate course section numbers.")
 
         ta_obj = TA.objects.get(account_ID=sectionTA_ID)
+        self.add_ta(TAUser(ta_obj))
 
         newSection = Section(course_ID=self.course, section_num=sectionNumber, MeetingTimes=MeetingTimes,
                              ta_account_id=ta_obj)

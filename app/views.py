@@ -71,6 +71,8 @@ class Home(View):
             return render(request, "home.html", {'HomeState': t})
 
     def post(self, request):
+
+
         t = None
         user_type = User.objects.get(account_ID=request.session['current_user_account_id']).user_type
         if user_type == "TA":
@@ -322,8 +324,11 @@ class EditAccount(View):
                 curr_obj = Instructor.objects.get(account_ID=account_model.account_ID)
                 acc_list.append(InstructorUser(curr_obj))
             elif user_type_query == "TA":
-                curr_obj = TA.objects.get(account_ID=account_model.account_ID)
-                acc_list.append(TAUser(curr_obj))
+                try:
+                    curr_obj = TA.objects.get(account_ID=account_model.account_ID)
+                    acc_list.append(TAUser(curr_obj))
+                except:
+                    print("SQL TA object error")
 
         if len(acc_list) == 0:
             return render(request, "AccountEdit.html", {"bad_message": "No results found. Try again.",
@@ -345,16 +350,17 @@ class AccountEditActive(View):
                           {'message': "User has been logged out due to accessing admin content on non-admin account."})
 
         user_to_edit_id = request.POST.get('acc_id')
-        user_to_edit_type = request.POST.get('acc_type')
-        user_to_edit_wrapper: AbstractUser = None
+        user_to_edit_id = request.POST.get('acc_id')
+        user_to_edit = User.objects.get(account_ID=user_to_edit_id)
 
-        if user_to_edit_type == "Admin":
+
+        if user_to_edit.user_type == "Admin":
             user_to_edit_model = Admin.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = AdminUser(user_to_edit_model)
-        elif user_to_edit_type == "Instructor":
+        elif user_to_edit.user_type == "Instructor":
             user_to_edit_model = Instructor.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = InstructorUser(user_to_edit_model)
-        elif user_to_edit_type == "TA":
+        elif user_to_edit.user_type == "TA":
             user_to_edit_model = TA.objects.get(account_ID__account_ID=user_to_edit_id)
             user_to_edit_wrapper = TAUser(user_to_edit_model)
 
@@ -630,7 +636,7 @@ class CourseEditActive(View):
             msg = "Could not edit account due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Course Successfully Edited."})
 
 
@@ -659,7 +665,7 @@ class CourseAddSection(View):
             msg = "Could not add section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section successfully added."})
 
 
@@ -690,7 +696,7 @@ class CourseDeleteSection(View):
             msg = "Could not delete section due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Section Successfully Deleted."})
 
 
@@ -721,7 +727,7 @@ class CourseAddInstructor(View):
             msg = "Could not assign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course Edit",
                                                    "good_message": "Instructor Successfully Assigned To Course."})
 
 
@@ -751,8 +757,44 @@ class CourseRemoveInstructor(View):
             msg = "Could not unassign instructor due to " + str(e.__str__())
             return render(request, "CourseEdit.html", {"bad_message": msg})
 
-        return render(request, "CourseEdit.html", {"page_state_title": "Query For An Account To Edit",
+        return render(request, "CourseEdit.html", {"page_state_title": "Query For A Course To Edit",
                                                    "good_message": "Instructor Successfully Unassigned From Course."})
+
+class SectionSummary(View):
+    def get(self, request):
+        courses = Course.objects.all()
+
+        concrete_courses = [ConcreteCourse(course) for course in courses]
+
+        return render(request, 'SectionSummary.html', {'courses': concrete_courses})
+
+    def post(self, request):
+
+        course_id = request.POST.get('course_id')
+
+        try:
+            course = Course.objects.get(course_ID=course_id)
+        except Course.DoesNotExist:
+            return render(request, 'SectionSummary.html')
+
+        concrete_course = ConcreteCourse(course)
+
+        sections = concrete_course.get_sections()
+
+        sections_list = []
+
+        for section in sections:
+            sections_list.append(section)
+
+        ta_model_list = TA.objects.all()
+        ta_list = []
+
+        for ta in ta_model_list:
+            ta_list.append(TAUser(ta))
+
+        return render(request, 'SectionSummary.html',
+                      {'selected_course': concrete_course, 'sections': sections_list, 'ta_list': ta_list})
+
 
 
 class SendNotification(View):
@@ -863,3 +905,4 @@ class SendNotification(View):
         except Exception as e:
             msg = "Could not send email " + str(e.__str__())
             return render(request, "SendNotifications.html", {"bad_message": msg})
+

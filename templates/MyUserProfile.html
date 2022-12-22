@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Scheduling App Home Page</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'Archivo';
+            src: local('Archivo'),
+            url('../static/fonts/Archivo_Narrow_Medium.ttf') format("truetype");
+        }
+
+        .margTop {
+            margin-top: 25px;
+        }
+
+        .fullwidthBar {
+            width: 100vw;
+            height: 26vh;
+            background: dodgerblue;
+        }
+
+
+        .imgMaxHeight {
+            height: 25vh;
+
+            max-height: 250px;
+        }
+
+        .homeContainer {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .homeButtons {
+            white-space: normal;
+            background-color: dodgerblue;
+            height: 20vh;
+            width: 20vw;
+            font-max-size: 1vw;
+            font-size: 5vh;
+            font-family: Archivo;
+            word-break: keep-all !important;
+            margin: 1vh;
+            border: 2px black solid;
+            text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3)
+        }
+
+        .redButton {
+            background-color: #FF0000 !important;
+        }
+
+        label {
+            font-size: 24px;
+            font-family: Archivo;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus {
+            outline: 2px solid dodgerblue;
+        }
+
+        input[type=submit] {
+            background-color: dodgerblue;
+            color: white;
+            font-weight: bold;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input:hover {
+            opacity: 0.8;
+        }
+
+        .smallMargin {
+            margin: 20px;
+        }
+
+        .dangerColor {
+            background-color: #FF0000 !important;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="fullwidthBar">
+    <a href="/home/">
+        {% load static %}
+        <img class="img-fluid rounded mx-auto d-block imgMaxHeight center"
+             src="{% static 'custom/ta-scheduling-app-high-resolution-logo-white-on-transparent-background.svg' %}">
+    </a>
+</div>
+<div class='d-flex margTop'>
+    <div class="homeContainer">
+        {% if bad_message %}
+            <div class="alert alert-danger text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ bad_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if good_message %}
+            <div class="alert alert-success text-center margTop mx-auto w-75" role="alert">
+                <hr>
+                <h4 class="alert-heading">{{ good_message }}</h4>
+                <hr>
+            </div>
+        {% endif %}
+        {% if user %}
+            <div class="mx-auto text-center">
+                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                    <h1>Your Profile</h1>
+                {% endwith %}
+                <table class="table text-center margTop">
+                    <thead>
+                    <tr class="table-primary">
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Type of User</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Related Courses</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Home Address</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ user.getFirstName }}</td>
+                        <td>{{ user.getLastName }}</td>
+                        <td>{{ user.getUserType }}</td>
+                        <td>{{ user.getEmail }}</td>
+                        <td>
+                            {% for course in user.getCourses %}
+                                <a href="{% url 'course' %}?current_course={{ course.course_ID }}">
+                                    {{ course.name }}
+                                </a>
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>{{ user.getPhoneNumber }}</td>
+                        <td>{{ user.getHomeAddress }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <a class="min-vw-100" href="/editMyProfile/">
+            <input class="btn btn-primary" type="submit" value="Edit my profile">
+        </a>
+        <a class="min-vw-100" href="/home/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

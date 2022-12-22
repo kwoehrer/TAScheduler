@@ -26,7 +26,6 @@ class User(models.Model):
     user_type = models.CharField(max_length=50, choices=UserTypes.choices, default='TA', blank=False, null=False,
                                  db_index=True)
 
-
 # Seperate subtypes for extensibility
 class Admin(models.Model):
     account_ID = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
@@ -64,6 +63,7 @@ class Course(models.Model):
                                               MinValueValidator(1,
                                                                 message="Course.credit field must be greater than 1.")])
     UniqueConstraint(fields=[name, semester, year], name="CourseCompPK")
+
 
 
 class Section(models.Model):

@@ -267,7 +267,7 @@
                                                                required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="meeting_times">Description</label>
+                                                        <label for="meeting_times">Meeting times</label>
                                                         <input type="text" class="form-control" id="meeting_times"
                                                                name="meeting_times"
                                                                placeholder="Enter Course Meeting Times"
@@ -425,15 +425,22 @@
                                 </div>
                             </div>
                         </td>
+                    <td>
+                        </td>
                     </tr>
 
                 {% endfor %}
                 </tbody>
             </table>
         </div>
-        <a class="smallMargin" href="/CourseManagement/">
-            <input class="btn btn-outline-primary" type="submit" value="Return To Course Management Page">
-        </a>
+        <div>
+            <a class="smallMargin" href="/SectionSummary/">
+                <input class="btn btn-outline-primary" type="submit" value="Check Section">
+            </a>
+            <a class="smallMargin" href="/CourseManagement/">
+                <input class="btn btn-outline-primary" type="submit" value="Return To Course Management Page">
+            </a>
+        </div>
     {% else %}
         <div class="mx-auto">
             <h1>{{ page_state_title }}</h1>

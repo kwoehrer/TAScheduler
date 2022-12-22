@@ -1,0 +1,60 @@
+<div class='d-flex margTop'>
+    <div class="homeContainer">
+        {% if course %}
+            <div class="mx-auto text-center">
+                {% with course.get_course_name as course_name %}
+                    <h1>{{ course_name }}'s Course Summary</h1>
+                {% endwith %}
+                <table class="table text-center margTop">
+                    <thead>
+                    <tr class="table-primary">
+                        <th scope="col">Name</th>
+                        <th scope="col">Semester</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Credits</th>
+                        <th scope-="col">Sections</th>
+                        <th scope-="col">Instructors</th>
+                        <th scope-="col">Teaching Assistants</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ course.get_course_name }}</td>
+                        <td>{{ course.get_semester }}</td>
+                        <td>{{ course.get_year }}</td>
+                        <td>{{ course.get_credits }}</td>
+                        <td>
+                            {% for section in course.get_sections %}
+                                <a href="{% url 'section' %}?current_section={{ section.getSectionNumber }}&current_course={{ course.get_course_id }}">
+                                    {{ section.getSectionNumber }}
+                                </a>
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for user in course.get_instructors %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
+                                {% endwith %}
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for user in course.get_tas %}
+                                {% with user.getFirstName|add:" "|add:user.getLastName as fullname %}
+                                    <a href="{% url 'profile' %}?user={{ user.getID }}">{{ fullname }}</a>
+                                {% endwith %}
+                                <br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <br>
+        <a class="min-vw-100" href="/home/">
+            <input class="btn btn-danger redButton" type="submit" value="Return To Home Page">
+        </a>
+    </div>
+</div>

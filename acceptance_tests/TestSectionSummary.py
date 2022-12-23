@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from app.models import *
 from classes.Users.users import AdminUser, InstructorUser, TAUser
-from classes.Sections.SectionClass import AbstractSection, ConcreteSection
+import classes.Sections.temp_section_class as SectionClass
+import classes.Sections.temp_course_class as CourseClass
 
 '''
 As an Admin, I want to be able navigate the Section Summary Page
@@ -19,28 +20,35 @@ class TestAdminSectionSummaryPage(TestCase):
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='something', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='something1', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='something2', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        section3.save()
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='something4', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
+
+        section4.save()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -51,7 +59,7 @@ class TestAdminSectionSummaryPage(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def test_ViewCourseCourseSummary(self):
-        courses = [self.course1, self.course2, self.course3, self.course4]
+        courses = [self.course_model1, self.course_model2, self.course_model3, self.course_model4]
         response = self.client.get('/SectionSummary')
         for course in courses:
             self.assertContains(response, course.getParentCourse())
@@ -76,39 +84,46 @@ class TestInstructorSectionSummaryPage(TestCase):
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='something', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='something1', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='something2', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        section3.save()
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='something4', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
+
+        section4.save()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
                             user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_object)
-        self.admin: AdminUser = AdminUser(user_model)
+        user_model = Instructor.objects.create(account_ID=user_object)
+        self.instructor: InstructorUser = InstructorUser(user_model)
 
     def test_ViewCourseCourseSummary(self):
-        courses = [self.course1, self.course2, self.course3, self.course4]
+        courses = [self.course_model1, self.course_model2, self.course_model3, self.course_model4]
         response = self.client.get('/SectionSummary')
         for course in courses:
             self.assertContains(response, course.getParentCourse())
@@ -133,42 +148,46 @@ class TestTASectionSummaryPage(TestCase):
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='something', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='something1', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='something2', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='something4', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        section4.save()
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
                             user_type='Admin',
                             email='johnDoe@aol.com')
         user_object = User.objects.filter(username='John_Doe')[0]
-        user_model = Admin.objects.create(account_ID=user_object)
-        self.admin: AdminUser = AdminUser(user_model)
+        user_model = TA.objects.create(account_ID=user_object)
+        self.ta: TAUser = TAUser(user_model)
 
     def test_ViewCourseCourseSummary(self):
-        courses = [self.course1, self.course2, self.course3, self.course4]
+        courses = [self.course_model1, self.course_model2, self.course_model3, self.course_model4]
         response = self.client.get('/SectionSummary')
         for course in courses:
             self.assertContains(response, course.getParentCourse())
             self.assertContains(response, course.getSectionNumber())
             self.assertContains(response, course.getMeetTime())
-            self.assertContains(response, course.getTA())

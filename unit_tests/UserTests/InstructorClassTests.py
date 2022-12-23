@@ -59,10 +59,15 @@ class TestSetInstructorFirstName(TestCase):
         self.instructor: InstructorUser = InstructorUser(user_model)
 
     def testSetFirstName(self):
-        self.instructor.setFirstName('Steven')
-        name = self.instructor.getFirstName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        new_first_name = "Steven"
+
+        self.instructor.setFirstName(new_first_name)
+
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.first_name, new_first_name, msg="Change was not reflected in Database")
 
 
 class TestGetInstructorLastName(TestCase):
@@ -103,10 +108,15 @@ class TestSetInstructorLastName(TestCase):
             self.instructor.setLastName()
 
     def testSetLastName(self):
-        self.instructor.setLastName('Adams')
-        name = self.instructor.getLastName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        new_last_name = "Adams"
+
+        self.instructor.setLastName(new_last_name)
+
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.last_name, new_last_name, msg="Change was not reflected in Database")
 
 
 class TestGetInstructorPhoneNumber(TestCase):
@@ -151,10 +161,17 @@ class TestSetInstructorPhoneNumber(TestCase):
             self.instructor.setPhoneNumber()
 
     def testSetPhoneNumber(self):
-        self.instructor.setPhoneNumber("4149828002")
-        phone_number = self.instructor.getPhoneNumber()
-        self.assertNotEqual(phone_number, "4149828002",
-                            msg="New changes were not reflected in Database")
+        # Set up the test data
+        new_phone_number = "4149828002"
+
+        # Exercise the system
+        self.instructor.setPhoneNumber(new_phone_number)
+
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.phone_number, new_phone_number, msg="Change was not reflected in Database")
 
 
 class TestGetInstructorAddress(TestCase):
@@ -193,10 +210,13 @@ class TestSetInstructorHomeAddress(TestCase):
             self.instructor.setHomeAddress()
 
     def testSetHomeAddress(self):
-        self.instructor.setHomeAddress("2514 N Brady Ave")
-        home_address = self.instructor.getHomeAddress()
-        self.assertNotEqual(home_address, "2514 N Brady Ave",
-                            msg="New changes were not reflected in Database")
+        new_home_address = "2514 N Brady Ave"
+        self.instructor.setHomeAddress(new_home_address)
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.home_address, new_home_address, msg="Change was not reflected in Database")
 
 
 class TestGetInstructorUserType(TestCase):
@@ -230,10 +250,13 @@ class TestSetInstructorUserType(TestCase):
             self.instructor.setUserType()
 
     def testSetUserType(self):
-        self.instructor.setUserType('TA')
-        user_type = self.instructor.getUserType()
-        self.assertNotEqual(user_type, 'TA',
-                            msg="New changes were not reflected in Database")
+        new_type = "Instructor"
+        self.instructor.setUserType(new_type)
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.user_type, new_type, msg="Change was not reflected in Database")
 
 
 class TestGetInstructorUserPassword(TestCase):
@@ -276,7 +299,10 @@ class TestSetInstructorUserPassword(TestCase):
             self.instructor.setPassword()
 
     def testSetUserPassword(self):
-        self.instructor.setPassword('new_password')
-        new_user_password = self.instructor.getPassword()
-        self.assertNotEqual(new_user_password, 'new_password',
-                            msg="New changes were not reflected in Database")
+        new_password = 'new_password'
+        self.instructor.setPassword(new_password)
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.instructor.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.password, new_password, msg="Change was not reflected in Database")

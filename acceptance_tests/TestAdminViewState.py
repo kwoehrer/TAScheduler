@@ -12,9 +12,22 @@ THEN all profile information should be correctly displayed
 '''
 
 
-class TestCourseSearchAdmin(TestCase):
+class TestAdminViewState(TestCase):
     def setUp(self):
-        self.client = Client()
+        self.client1 = Client()
+
+        User.objects.create(username='Micheal_Owen', password="password123", first_name="Micheal",
+                            last_name='Owen',
+                            phone_number='4149828004', home_address='2513 N Farewell Ave',
+                            user_type='Admin',
+                            email='johnDoe1@aol.com')
+
+        user_object = User.objects.filter(username='John_Doe')[0]
+        user_model = Admin.objects.create(account_ID=user_object)
+        self.instructor: AdminUser = AdminUser(user_model)
+        user_model.save()
+
+        self.client2 = Client()
 
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
@@ -27,21 +40,31 @@ class TestCourseSearchAdmin(TestCase):
         self.instructor: InstructorUser = InstructorUser(user_model)
         user_model.save()
 
-        self.client = Client()
+        self.client3 = Client()
 
-        User.objects.create(username='John_Doe1', password="password123", first_name="John",
-                            last_name='Doe1',
+        User.objects.create(username='Steven_Adams', password="password123", first_name="John",
+                            last_name='Adams',
                             phone_number='4149818008', home_address='2516 N Farewell Ave',
                             user_type='TA',
                             email='johnDoe1@aol.com')
 
-        user_object = User.objects.filter(username='John_Doe1')[0]
+        user_object = User.objects.filter(username='Steven_Adams')[0]
         user_model = TA.objects.create(account_ID=user_object)
         self.ta: TAUser = TAUser(user_model)
         user_model.save()
 
+    def testAdminProfileInfo(self):
+        response = self.client1.get('/ProfileStates/AdminViewState')
+        self.assertContains(response, self.instructor.getFirstName())
+        self.assertContains(response, self.instructor.getLastName())
+        self.assertContains(response, self.instructor.getUserType())
+        self.assertContains(response, self.instructor.getEmail())
+        self.assertContains(response, self.instructor.getCourses())
+        self.assertContains(response, self.instructor.getPhoneNumber())
+        self.assertContains(response, self.instructor.getHomeAddress())
+
     def testInstructorProfileInfo(self):
-        response = self.client.get('/ProfileStates/AdminViewState')
+        response = self.client2.get('/ProfileStates/AdminViewState')
         self.assertContains(response, self.instructor.getFirstName())
         self.assertContains(response, self.instructor.getLastName())
         self.assertContains(response, self.instructor.getUserType())
@@ -51,7 +74,7 @@ class TestCourseSearchAdmin(TestCase):
         self.assertContains(response, self.instructor.getHomeAddress())
 
     def testTAProfileInfo(self):
-        response = self.client.get('/ProfileStates/AdminViewState')
+        response = self.client3.get('/ProfileStates/AdminViewState')
         self.assertContains(response, self.ta.getFirstName())
         self.assertContains(response, self.ta.getLastName())
         self.assertContains(response, self.ta.getUserType())
@@ -62,7 +85,7 @@ class TestCourseSearchAdmin(TestCase):
 
     def test_AdminViewState_to_SearchPage(self):
         # Make a GET request to /searchStates/UserSearch
-        response = self.client.get("/ProfileStates/AdminViewState")
+        response = self.client1.get("/ProfileStates/AdminViewState")
 
         # Check that the response was a redirect to page /searchStates/SearchHome
         self.assertRedirects(response, '/searchStates/UserSearch', status_code=302, target_status_code=200,

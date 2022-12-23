@@ -49,18 +49,18 @@ class TestUserSearchAdmin(TestCase):
         self.client.post("/",
                          {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
-    def test_UserExists(self):
-        Admin.objects.create(self.admin)
-        user_obj = Admin.objects.filter(username='John_Doe')[0]
-        new_user = Admin.objects.create(account_ID=user_obj)
-        self.admin1: AdminUser = AdminUser(new_user)
-        new_user.save()
-
-        self.client.post({"/searchStates/UserSearch",
-                          self.admin1})
-
-        self.assertEqual(self.admin1.getID(), Admin.objects.get(account_ID=self.admin.getID()), "User exists in "
-                                                                                                "Database")
+    # def test_UserExists(self):
+    #     User.objects.create(self.admin)
+    #     user_obj = Admin.objects.filter(username='John_Doe')[0]
+    #     new_user = Admin.objects.create(account_ID=user_obj)
+    #     self.admin1: AdminUser = AdminUser(new_user)
+    #     new_user.save()
+    #
+    #     self.client.post({"/searchStates/UserSearch",
+    #                       self.admin1})
+    #
+    #     self.assertEqual(self.admin1.getID(), User.objects.get(account_ID=self.admin.getID()), "User exists in "
+    #                                                                                             "Database")
 
     def testEmptyUsernameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -69,7 +69,7 @@ class TestUserSearchAdmin(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "admin",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not found. Username should not be left blank")
+        self.assertEqual(response, "User was not found. Username should not be left blank")
 
     def testEmptyFirstNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -78,8 +78,7 @@ class TestUserSearchAdmin(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "admin",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. First name should not be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response, "User was not created. First name should not be left blank")
 
     def testEmptyLastNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -88,8 +87,7 @@ class TestUserSearchAdmin(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "admin",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. Last name should not be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response, "User was not created. Last name should not be left blank")
 
     def testEmptyEmailProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -98,8 +96,7 @@ class TestUserSearchAdmin(TestCase):
                                      "home_address": "", "user_type": "admin",
                                      "email": ""}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created, Email cannot be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response, "User was not created, Email cannot be left blank")
 
 
 class TestUserSearchNavigateAdmin(TestCase):
@@ -170,19 +167,19 @@ class TestUserSearchInstructor(TestCase):
         self.client.post("/",
                          {"username": self.instructor.getUsername(), "password": self.instructor.getPassword()})
 
-    def test_UserExists(self):
-        User.objects.create(self.instructor)
-        user_obj = User.objects.filter(username='John_Doe')[0]
-        new_user = Instructor.objects.create(account_ID=user_obj)
-        self.instructor1: InstructorUser = InstructorUser(new_user)
-        new_user.save()
-
-        self.client.post({"/searchStates/UserSearch",
-                          self.instructor1})
-
-        self.assertEqual(self.instructor1.getID(), Instructor.objects.get(account_ID=self.instructor.getID()),
-                         "User exists in "
-                         "Database")
+    # def test_UserExists(self):
+    #     User.objects.create(self.instructor)
+    #     user_obj = User.objects.filter(username='John_Doe')[0]
+    #     new_user = Instructor.objects.create(account_ID=user_obj)
+    #     self.instructor1: InstructorUser = InstructorUser(new_user)
+    #     new_user.save()
+    #
+    #     self.client.post({"/searchStates/UserSearch",
+    #                       self.instructor1})
+    #
+    #     self.assertEqual(self.instructor1.getID(), User.objects.get(account_ID=self.instructor.getID()),
+    #                      "User exists in "
+    #                      "Database")
 
     def testEmptyUsernameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -191,7 +188,7 @@ class TestUserSearchInstructor(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "instructor",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not found. Username should not be left blank")
+        self.assertEqual(response, "User was not found. Username should not be left blank")
 
     def testEmptyFirstNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -200,8 +197,7 @@ class TestUserSearchInstructor(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "instructor",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. First name should not be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response, "User was not created. First name should not be left blank")
 
     def testEmptyLastNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -210,7 +206,7 @@ class TestUserSearchInstructor(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "instructor",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. Last name should not be left blank")
+        self.assertEqual(response, "User was not created. Last name should not be left blank")
 
     def testEmptyEmailProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -219,7 +215,7 @@ class TestUserSearchInstructor(TestCase):
                                      "home_address": "", "user_type": "instructor",
                                      "email": ""}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created, Email cannot be left blank")
+        self.assertEqual(response, "User was not created, Email cannot be left blank")
 
 
 class TestUserSearchNavigateInstructor(TestCase):
@@ -283,18 +279,18 @@ class TestUserSearchTA(TestCase):
         self.client.post("/",
                          {"username": self.admin.getUsername(), "password": self.admin.getPassword()})
 
-    def test_UserExists(self):
-        User.objects.create(self.admin)
-        user_obj = User.objects.filter(username='John_Doe')[0]
-        new_user = TA.objects.create(account_ID=user_obj)
-        self.ta1: TAUser = TAUser(new_user)
-        new_user.save()
-
-        self.client.post({"/searchStates/UserSearch",
-                          self.ta1})
-
-        self.assertEqual(self.ta1.getID(), TA.objects.get(account_ID=self.ta1.getID()), "User exists in "
-                                                                                        "Database")
+    # def test_UserExists(self):
+    #     User.objects.create(self.admin)
+    #     user_obj = User.objects.filter(username='John_Doe')[0]
+    #     new_user = TA.objects.create(account_ID=user_obj)
+    #     self.ta1: TAUser = TAUser(new_user)
+    #     new_user.save()
+    #
+    #     self.client.post({"/searchStates/UserSearch",
+    #                       self.ta1})
+    #
+    #     self.assertEqual(self.ta1.getID(), User.objects.get(account_ID=self.ta1.getID()), "User exists in "
+    #                                                                                     "Database")
 
     def testEmptyUsernameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -303,7 +299,7 @@ class TestUserSearchTA(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "ta",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not found. Username should not be left blank")
+        self.assertEqual(response, "User was not found. Username should not be left blank")
 
     def testEmptyFirstNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -312,7 +308,7 @@ class TestUserSearchTA(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "ta",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. First name should not be left blank")
+        self.assertEqual(response, "User was not created. First name should not be left blank")
 
     def testEmptyLastNameProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -321,7 +317,7 @@ class TestUserSearchTA(TestCase):
                                      "home_address": "2514 N Farewell Ave", "user_type": "ta",
                                      "email": "stephenDoe@aol.com"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created. Last name should not be left blank")
+        self.assertEqual(response, "User was not created. Last name should not be left blank")
 
     def testEmptyEmailProvided(self):
         response = self.client.post("/searchStates/UserSearch",
@@ -330,7 +326,7 @@ class TestUserSearchTA(TestCase):
                                      "home_address": "", "user_type": "ta",
                                      "email": ""}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not created, Email cannot be left blank")
+        self.assertEqual(response, "User was not created, Email cannot be left blank")
 
 
 class TestUserSearchNavigateTA(TestCase):

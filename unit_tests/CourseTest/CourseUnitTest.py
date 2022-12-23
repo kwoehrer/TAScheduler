@@ -45,9 +45,15 @@ class TestSetCourseName(TestCase):
         self.course = ConcreteCourse(course_model)
 
     def test_set_correct_name(self):
-        self.course.set_course_name('First Course')
-        name = self.course.get_course_name()
-        self.assertEqual(name, "First Course", msg="Course name was not set correctly")
+        new_course_name = 'First Course'
+
+        self.course.set_course_name(new_course_name)
+
+        # Retrieve the updated data from the database
+        updated_course = Course.objects.get(course_ID=self.course.get_course_id())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_course.name, new_course_name, msg="Changes were not correctly added to database")
 
     def test_set_int_name(self):
         with self.assertRaises(TypeError, msg="The name is not string"):
@@ -77,8 +83,15 @@ class TestGetCourseDescription(TestCase):
         self.course = ConcreteCourse(course_model)
 
     def test_set_correct_description(self):
-        self.course.set_description("FIRST")
-        self.assertEqual(self.course.get_description(), "FIRST", msg="Course description is not correct")
+        new_description = 'FIRST'
+
+        self.course.set_description(new_description)
+
+        # Retrieve the updated data from the database
+        updated_course = Course.objects.get(course_ID=self.course.get_course_id())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_course.description, new_description)
 
 
 class TestGetCourseCredits(TestCase):
@@ -100,8 +113,15 @@ class TestSetCourseCredits(TestCase):
         self.course = ConcreteCourse(course_model)
 
     def test_set_correct_Credits(self):
+        new_credits = 5
+
         self.course.set_credits(5)
-        self.assertEqual(self.course.get_credits(), 5, msg="Course description is not correct")
+
+        # Retrieve the updated data from the database
+        updated_course = Course.objects.get(course_ID=self.course.get_course_id())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_course.credits, new_credits)
 
     def test_set_min_Credits(self):
         with self.assertRaises(ValueError, msg="Credits is too small"):
@@ -138,8 +158,15 @@ class TestSetSemester(TestCase):
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
     def test_set_correct_semester(self):
-        self.course.set_semester("Fall")
-        self.assertEqual(self.course.get_semester(), "Fall", msg="Semester was not set correctly")
+        new_semester = 'Fall'
+
+        self.course.set_semester(new_semester)
+
+        # Retrieve the updated data from the database
+        updated_course = Course.objects.get(course_ID=self.course.get_course_id())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_course.semester, new_semester)
 
     def test_set_int_semester(self):
         with self.assertRaises(ValueError, msg="Course name cannot be integers"):
@@ -172,8 +199,15 @@ class TestSetYear(TestCase):
         self.course: AbstractCourse = ConcreteCourse(course_model)
 
     def test_set_correct_year(self):
-        self.course.set_year(2025)
-        self.assertEqual(self.course.get_year(), 2025, msg="Course name was not set correctly")
+        new_year = 2025
+
+        self.course.set_year(new_year)
+
+        # Retrieve the updated data from the database
+        updated_course = Course.objects.get(course_ID=self.course.get_course_id())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_course.year, new_year)
 
     def test_set_str_year(self):
         with self.assertRaises(TypeError, msg="Year is string"):

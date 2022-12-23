@@ -59,10 +59,15 @@ class TestSetTAFirstName(TestCase):
         self.ta: TAUser = TAUser(user_model)
 
     def testSetFirstName(self):
-        self.ta.setFirstName('Steven')
-        name = self.ta.getFirstName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        new_first_name = "Steven"
+
+        self.ta.setFirstName(new_first_name)
+
+        # Retrieve the updated data from the database
+        updated_ta = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_ta.first_name, new_first_name, msg="Change was not reflected in Database")
 
 
 class TestGetTALastName(TestCase):
@@ -103,10 +108,15 @@ class TestSetTALastName(TestCase):
             self.ta.setLastName()
 
     def testSetLastName(self):
-        self.ta.setLastName('Adams')
-        name = self.ta.getLastName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        new_last_name = "Adams"
+
+        self.ta.setLastName(new_last_name)
+
+        # Retrieve the updated data from the database
+        updated_ta = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_ta.last_name, new_last_name, msg="Change was not reflected in Database")
 
 
 class TestGetTAPhoneNumber(TestCase):
@@ -151,10 +161,16 @@ class TestSetTAPhoneNumber(TestCase):
             self.ta.setPhoneNumber()
 
     def testSetPhoneNumber(self):
-        self.ta.setPhoneNumber("4149828002")
-        phone_number = self.ta.getPhoneNumber()
-        self.assertNotEqual(phone_number, "4149828002",
-                            msg="New changes were not reflected in Database")
+        new_phone_number = "4149828002"
+
+        # Exercise the system
+        self.ta.setPhoneNumber(new_phone_number)
+
+        # Retrieve the updated data from the database
+        updated_ta = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_ta.phone_number, new_phone_number, msg="Change was not reflected in Database")
 
 
 class TestGetTAAddress(TestCase):
@@ -193,10 +209,15 @@ class TestSetTAHomeAddress(TestCase):
             self.ta.setHomeAddress()
 
     def testSetHomeAddress(self):
-        self.ta.setHomeAddress("2514 N Brady Ave")
-        home_address = self.ta.getHomeAddress()
-        self.assertNotEqual(home_address, "2514 N Brady Ave",
-                            msg="New changes were not reflected in Database")
+        new_home_address = "2514 N Brady Ave"
+
+        self.ta.setHomeAddress(new_home_address)
+
+        # Retrieve the updated data from the database
+        updated_ta = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_ta.home_address, new_home_address, msg="Change was not reflected in Database")
 
 
 class TestGetTAUserType(TestCase):
@@ -230,10 +251,15 @@ class TestSetTAUserType(TestCase):
             self.ta.setUserType()
 
     def testSetUserType(self):
-        self.ta.setUserType("Instructor")
-        user_type = self.ta.getUserType()
-        self.assertNotEqual(user_type, "Instructor",
-                            msg="New changes were not reflected in Database")
+        new_type = "TA"
+
+        self.ta.setUserType(new_type)
+
+        # Retrieve the updated data from the database
+        updated_instructor = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_instructor.user_type, new_type, msg="Change was not reflected in Database")
 
 
 class TestGetTAUserPassword(TestCase):
@@ -276,7 +302,12 @@ class TestSetTAUserPassword(TestCase):
             self.ta.setPassword()
 
     def testSetUserPassword(self):
-        self.ta.setPassword('new_password')
-        new_user_password = self.ta.getPassword()
-        self.assertNotEqual(new_user_password, 'new_password',
-                            msg="New changes were not reflected in Database")
+        new_password = 'new_password'
+
+        self.ta.setPassword(new_password)
+
+        # Retrieve the updated data from the database
+        updated_ta = User.objects.get(account_ID=self.ta.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_ta.password, new_password, msg="Change was not reflected in Database")

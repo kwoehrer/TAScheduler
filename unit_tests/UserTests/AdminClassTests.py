@@ -59,10 +59,17 @@ class TestSetAdminFirstName(TestCase):
         self.admin: AdminUser = AdminUser(user_model)
 
     def testSetFirstName(self):
-        self.admin.setFirstName('Steven')
-        name = self.admin.getFirstName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        # Set up the test data
+        new_first_name = "Steven"
+
+        # Exercise the system
+        self.admin.setFirstName(new_first_name)
+
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.first_name, new_first_name, msg="Change was not reflected in Database")
 
 
 class TestGetAdminLastName(TestCase):
@@ -103,10 +110,17 @@ class TestSetAdminLastName(TestCase):
             self.admin.setLastName()
 
     def testSetLastName(self):
-        self.admin.setLastName('Adams')
-        name = self.admin.getLastName()
-        self.assertNotEqual(name, 'Adams',
-                            msg="New changes were not reflected in Database")
+        # Set up the test data
+        new_last_name = "Adams"
+
+        # Exercise the system
+        self.admin.setLastName(new_last_name)
+
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.first_name, new_last_name, msg="Change was not reflected in Database")
 
 
 class TestGetAdminPhoneNumber(TestCase):
@@ -151,10 +165,17 @@ class TestSetAdminPhoneNumber(TestCase):
             self.admin.setPhoneNumber()
 
     def testSetPhoneNumber(self):
-        self.admin.setPhoneNumber("4149828002")
-        phone_number = self.admin.getPhoneNumber()
-        self.assertNotEqual(phone_number, "4149828002",
-                            msg="New changes were not reflected in Database")
+        # Set up the test data
+        new_phone_number = "4149828002"
+
+        # Exercise the system
+        self.admin.setPhoneNumber(new_phone_number)
+
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.phone_number, new_phone_number, msg="Change was not reflected in Database")
 
 
 class TestGetAdminAddress(TestCase):
@@ -193,10 +214,13 @@ class TestSetAdminHomeAddress(TestCase):
             self.admin.setHomeAddress()
 
     def testSetHomeAddress(self):
-        self.admin.setHomeAddress("2514 N Brady Ave")
-        home_address = self.admin.getHomeAddress()
-        self.assertNotEqual(home_address, "2514 N Brady Ave",
-                            msg="New changes were not reflected in Database")
+        new_home_address = "2514 N Brady Ave"
+        self.admin.setHomeAddress(new_home_address)
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.home_address, new_home_address, msg="Change was not reflected in Database")
 
 
 class TestGetAdminUserType(TestCase):
@@ -230,10 +254,13 @@ class TestSetAdminUserType(TestCase):
             self.admin.setUserType()
 
     def testSetUserType(self):
-        self.admin.setUserType('TA')
-        user_type = self.admin.getUserType()
-        self.assertNotEqual(user_type, 'TA',
-                            msg="New changes were not reflected in Database")
+        new_type = "Admin"
+        self.admin.setUserType(new_type)
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.user_type, new_type, msg="Change was not reflected in Database")
 
 
 class TestGetAdminUserPassword(TestCase):
@@ -276,7 +303,10 @@ class TestSetAdminUserPassword(TestCase):
             self.admin.setPassword()
 
     def testSetUserPassword(self):
-        self.admin.setPassword('new_password')
-        new_user_password = self.admin.getPassword()
-        self.assertNotEqual(new_user_password, 'new_password',
-                            msg="New changes were not reflected in Database")
+        new_password = 'new_password'
+        self.admin.setPassword(new_password)
+        # Retrieve the updated data from the database
+        updated_admin = User.objects.get(account_ID=self.admin.getID())
+
+        # Verify that the changes were stored in the database
+        self.assertEqual(updated_admin.password, new_password, msg="Change was not reflected in Database")

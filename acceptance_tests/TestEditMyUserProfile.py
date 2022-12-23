@@ -41,11 +41,11 @@ class TestAdminCreateAccount(TestCase):
     def testInvalidPhoneNumber(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "Stephen", "last_name": "Doe", "user_type": "admin",
-                                     "email": "stephenDoe@aol.com", "phone_number": "12345678901",
+                                     "email": "stephenDoe@aol.com", "phone_number": "a234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["message"], 10,
+        self.assertEqual(response.context["message"],
                          "Changes were not submitted. A phone number needs to be 10 digits")
 
     def testInvalidPassword(self):
@@ -53,27 +53,27 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "Stephen", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": 123}, follow=True)
+                                     "password": "123456"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A password needs to be a string")
 
     def testInvalidFirstName(self):
         response = self.client.post("/EditMyUserProfile",
-                                    {"first_name": 123, "last_name": "Doe", "user_type": "admin",
+                                    {"first_name": "123", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A first name needs to be a string")
 
     def testInvalidLastName(self):
         response = self.client.post("/EditMyUserProfile",
-                                    {"first_name": "John", "last_name": 123, "user_type": "admin",
+                                    {"first_name": "John", "last_name": "123", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A last name needs to be a string")
@@ -82,8 +82,8 @@ class TestAdminCreateAccount(TestCase):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
-                                     "home_address": 123,
-                                     "new password": "password"}, follow=True)
+                                     "home_address": "123",
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
@@ -91,9 +91,9 @@ class TestAdminCreateAccount(TestCase):
     def testInvalidEmail(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "admin",
-                                     "email": "stephenDoe@aol.com", "phone_number": "1234567890",
+                                     "email": "123", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
@@ -103,7 +103,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": 123,
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A user type needs to be a string")
@@ -113,7 +113,7 @@ class TestAdminCreateAccount(TestCase):
                          {"first_name": "John", "last_name": "Doe", "user_type": "admin",
                           "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                           "home_address": "2514 N Farewell Ave",
-                          "new password": "password"}, follow=True)
+                          "password": "password"}, follow=True)
 
         self.assertNotEqual("Stephen_Doe", self.admin.getUsername(),
                             "Supervisor was not edit successfully")
@@ -123,7 +123,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. First Name should not be left blank")
 
@@ -132,7 +132,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. Last Name should not be left blank")
 
@@ -141,7 +141,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": "",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. User Type should not be left blank")
 
@@ -150,7 +150,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. Phone Number should not be left blank")
 
@@ -159,7 +159,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": "admin",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
 
@@ -168,7 +168,7 @@ class TestAdminCreateAccount(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": "admin",
                                      "email": "", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
 
@@ -203,6 +203,7 @@ class TestEditMyUserProfile_to_Home(TestCase):
         response = response.follow()
         self.assertEqual(response.url, '/AdminHome')
 
+
 '''
 SCENARIO: As an Instructor, I want to be able navigate the Edit My User Profile Page and Edit my Profile
 -----------------------------------------------------------------------
@@ -236,11 +237,11 @@ class TestInstructorEditMyUserProfile(TestCase):
     def testInvalidPhoneNumber(self):
         response = self.client1.post("/EditMyUserProfile",
                                      {"first_name": "Stephen", "last_name": "Doe", "user_type": "instructor",
-                                      "email": "stephenDoe@aol.com", "phone_number": "12345678901",
+                                      "email": "stephenDoe@aol.com", "phone_number": "a234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["message"], 10,
+        self.assertEqual(response.context["message"],
                          "Changes were not submitted. A phone number needs to be 10 digits")
 
     def testInvalidPassword(self):
@@ -248,27 +249,27 @@ class TestInstructorEditMyUserProfile(TestCase):
                                      {"first_name": "Stephen", "last_name": "Doe", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": 123}, follow=True)
+                                      "password": "123"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A password needs to be a string")
 
     def testInvalidFirstName(self):
         response = self.client1.post("/EditMyUserProfile",
-                                     {"first_name": 123, "last_name": "Doe", "user_type": "instructor",
+                                     {"first_name": "123", "last_name": "Doe", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A first name needs to be a string")
 
     def testInvalidLastName(self):
         response = self.client1.post("/EditMyUserProfile",
-                                     {"first_name": "John", "last_name": 123, "user_type": "instructor",
+                                     {"first_name": "John", "last_name": "123", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A last name needs to be a string")
@@ -277,8 +278,8 @@ class TestInstructorEditMyUserProfile(TestCase):
         response = self.client1.post("/EditMyUserProfile",
                                      {"first_name": "John", "last_name": "Doe", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
-                                      "home_address": 123,
-                                      "new password": "password"}, follow=True)
+                                      "home_address": "123",
+                                      "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
@@ -288,17 +289,17 @@ class TestInstructorEditMyUserProfile(TestCase):
                                      {"first_name": "John", "last_name": "Doe", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
 
     def testInvalidUserType(self):
         response = self.client1.post("/EditMyUserProfile",
-                                     {"first_name": "John", "last_name": "Doe", "user_type": 123,
+                                     {"first_name": "John", "last_name": "Doe", "user_type": "123",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A user type needs to be a string")
@@ -308,7 +309,7 @@ class TestInstructorEditMyUserProfile(TestCase):
                           {"first_name": "John", "last_name": "Doe", "user_type": "instructor",
                            "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                            "home_address": "2514 N Farewell Ave",
-                           "new password": "password"}, follow=True)
+                           "password": "password"}, follow=True)
 
         self.assertNotEqual("Stephen_Doe", self.instructor.getUsername(),
                             "Supervisor was not edit successfully")
@@ -318,20 +319,18 @@ class TestInstructorEditMyUserProfile(TestCase):
                                      {"first_name": "", "last_name": "Doe", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. First Name should not be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["message"], "User was not edited. First Name should not be left blank")
 
     def testEmptyLastNameProvided(self):
         response = self.client1.post("/EditMyUserProfile",
                                      {"first_name": "John", "last_name": "", "user_type": "instructor",
                                       "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                       "home_address": "2514 N Farewell Ave",
-                                      "new password": "password"}, follow=True)
+                                      "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Last Name should not be left blank")
-        self.assertEqual(Admin.objects.count(), 1, "Database did not change")
+        self.assertEqual(response.context["message"], "User was not edited. Last Name should not be left blank")
 
     def testEmptyUserTypeProvided(self):
         response = self.client1.post("/EditMyUserProfile",
@@ -340,7 +339,7 @@ class TestInstructorEditMyUserProfile(TestCase):
                                       "home_address": "2514 N Farewell Ave",
                                       "new password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. User Type should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. User Type should not be left blank")
 
     def testEmptyPhoneNumberProvided(self):
         response = self.client1.post("/EditMyUserProfile",
@@ -349,7 +348,7 @@ class TestInstructorEditMyUserProfile(TestCase):
                                       "home_address": "2514 N Farewell Ave",
                                       "new password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Phone Number should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Phone Number should not be left blank")
 
     def testEmptyHomeAddressProvided(self):
         response = self.client1.post("/EditMyUserProfile",
@@ -358,7 +357,7 @@ class TestInstructorEditMyUserProfile(TestCase):
                                       "home_address": "",
                                       "new password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Home Address should not be left blank")
 
     def testEmptyEmailProvided(self):
         response = self.client1.post("/EditMyUserProfile",
@@ -367,7 +366,7 @@ class TestInstructorEditMyUserProfile(TestCase):
                                       "home_address": "2514 N Farewell Ave",
                                       "new password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Home Address should not be left blank")
 
 
 class TestEditMyUserProfileInstructor_to_Home(TestCase):
@@ -440,39 +439,39 @@ class TestEditMyUserProfileTA(TestCase):
     def testInvalidPhoneNumber(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "Stephen", "last_name": "Doe", "user_type": "ta",
-                                     "email": "stephenDoe@aol.com", "phone_number": "12345678901",
+                                     "email": "stephenDoe@aol.com", "phone_number": "a2345678901",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["message"], 10,
+        self.assertEqual(response.context["message"],
                          "Changes were not submitted. A phone number needs to be 10 digits")
 
     def testInvalidPassword(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "Stephen", "last_name": "Doe", "user_type": "ta",
-                                     "email": "stephenDoe@aol.com", "phone_number": "1234567890",
+                                     "email": "stephenDoe@aol.com", "phone_number": "a234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": 123}, follow=True)
+                                     "password": "123"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A password needs to be a string")
 
     def testInvalidFirstName(self):
         response = self.client.post("/EditMyUserProfile",
-                                    {"first_name": 123, "last_name": "Doe", "user_type": "ta",
+                                    {"first_name": "123", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A first name needs to be a string")
 
     def testInvalidLastName(self):
         response = self.client.post("/EditMyUserProfile",
-                                    {"first_name": "John", "last_name": 123, "user_type": "ta",
+                                    {"first_name": "John", "last_name": "123", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A last name needs to be a string")
@@ -481,8 +480,8 @@ class TestEditMyUserProfileTA(TestCase):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
-                                     "home_address": 123,
-                                     "new password": "password"}, follow=True)
+                                     "home_address": "123",
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
@@ -492,17 +491,17 @@ class TestEditMyUserProfileTA(TestCase):
                                     {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A home address needs to be a string")
 
     def testInvalidUserType(self):
         response = self.client.post("/EditMyUserProfile",
-                                    {"first_name": "John", "last_name": "Doe", "user_type": 123,
+                                    {"first_name": "John", "last_name": "Doe", "user_type": "123",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
         self.assertEqual(response.context["message"],
                          "Changes were not submitted. A user type needs to be a string")
@@ -512,7 +511,7 @@ class TestEditMyUserProfileTA(TestCase):
                          {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                           "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                           "home_address": "2514 N Farewell Ave",
-                          "new password": "password"}, follow=True)
+                          "password": "password"}, follow=True)
 
         self.assertNotEqual("Stephen_Doe", self.ta.getUsername(),
                             "Supervisor was not edit successfully")
@@ -522,54 +521,54 @@ class TestEditMyUserProfileTA(TestCase):
                                     {"first_name": "", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. First Name should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. First Name should not be left blank")
 
     def testEmptyLastNameProvided(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Last Name should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Last Name should not be left blank")
 
     def testEmptyUserTypeProvided(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. User Type should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. User Type should not be left blank")
 
     def testEmptyPhoneNumberProvided(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Phone Number should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Phone Number should not be left blank")
 
     def testEmptyHomeAddressProvided(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                                      "email": "stephenDoe@aol.com", "phone_number": "1234567890",
                                      "home_address": "",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Home Address should not be left blank")
 
     def testEmptyEmailProvided(self):
         response = self.client.post("/EditMyUserProfile",
                                     {"first_name": "John", "last_name": "Doe", "user_type": "ta",
                                      "email": "", "phone_number": "1234567890",
                                      "home_address": "2514 N Farewell Ave",
-                                     "new password": "password"}, follow=True)
+                                     "password": "password"}, follow=True)
 
-        self.assertEqual(response.context["error"], "User was not edited. Home Address should not be left blank")
+        self.assertEqual(response.context["message"], "User was not edited. Home Address should not be left blank")
 
 
 class TestEditMyUserProfileTA_to_Home(TestCase):

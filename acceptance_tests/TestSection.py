@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from app.models import *
 from classes.Users.users import AdminUser, InstructorUser, TAUser
-from classes.Sections.SectionClass import AbstractSection, ConcreteSection
+import classes.Sections.temp_section_class as SectionClass
+import classes.Sections.temp_course_class as CourseClass
 
 '''
 As an Admin, I want to be able to navigate to the Section page
@@ -26,28 +27,36 @@ class TestAdminSectionPage(TestCase):
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='Intro to Programming', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='Intro to Object-Oriented Principles', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='Data Structures', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        section3.save()
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='Intro to Compiler Theory', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
+
+        section4.save()
+
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -61,31 +70,31 @@ class TestAdminSectionPage(TestCase):
 
     def test_ViewCourseSpringCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course1.getParentCourse())
-        self.assertContains(response, self.course1.getSectionNumber())
-        self.assertContains(response, self.course1.getMeetTime())
-        self.assertContains(response, self.course1.getTA())
+        self.assertContains(response, self.course_model1.getParentCourse())
+        self.assertContains(response, self.course_model1.getSectionNumber())
+        self.assertContains(response, self.course_model1.getMeetTime())
+        self.assertContains(response, self.course_model1.getTA())
 
     def test_ViewCourseSummerCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course2.getParentCourse())
-        self.assertContains(response, self.course2.getSectionNumber())
-        self.assertContains(response, self.course2.getMeetTime())
-        self.assertContains(response, self.course2.getTA())
+        self.assertContains(response, self.course_model2.getParentCourse())
+        self.assertContains(response, self.course_model2.getSectionNumber())
+        self.assertContains(response, self.course_model2.getMeetTime())
+        self.assertContains(response, self.course_model2.getTA())
 
     def test_ViewCourseWinterCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course3.getParentCourse())
-        self.assertContains(response, self.course3.getSectionNumber())
-        self.assertContains(response, self.course3.getMeetTime())
-        self.assertContains(response, self.course3.getTA())
+        self.assertContains(response, self.course_model3.getParentCourse())
+        self.assertContains(response, self.course_model3.getSectionNumber())
+        self.assertContains(response, self.course_model3.getMeetTime())
+        self.assertContains(response, self.course_model3.getTA())
 
     def test_ViewCourseSpecialCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course4.getParentCourse())
-        self.assertContains(response, self.course4.getSectionNumber())
-        self.assertContains(response, self.course4.getMeetTime())
-        self.assertContains(response, self.course4.getTA())
+        self.assertContains(response, self.course_model4.getParentCourse())
+        self.assertContains(response, self.course_model4.getSectionNumber())
+        self.assertContains(response, self.course_model4.getMeetTime())
+        self.assertContains(response, self.course_model4.getTA())
 
     def test_Section_to_HomeSearch(self):
         # Make a GET request to /searchStates/UserSearch
@@ -119,32 +128,40 @@ THEN: They will be navigated to the "Search Home"
 
 class TestInstructorSectionPage(TestCase):
     client = None
-    admin = None
+    instructor = None
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='Intro to Programming', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='Intro to Object-Oriented Principles', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='Data Structures', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        section3.save()
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='Intro to Compiler Theory', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
+
+        section4.save()
+
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -158,31 +175,31 @@ class TestInstructorSectionPage(TestCase):
 
     def test_ViewCourseSpringCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course1.getParentCourse())
-        self.assertContains(response, self.course1.getSectionNumber())
-        self.assertContains(response, self.course1.getMeetTime())
-        self.assertContains(response, self.course1.getTA())
+        self.assertContains(response, self.course_model1.getParentCourse())
+        self.assertContains(response, self.course_model1.getSectionNumber())
+        self.assertContains(response, self.course_model1.getMeetTime())
+        self.assertContains(response, self.course_model1.getTA())
 
     def test_ViewCourseSummerCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course2.getParentCourse())
-        self.assertContains(response, self.course2.getSectionNumber())
-        self.assertContains(response, self.course2.getMeetTime())
-        self.assertContains(response, self.course2.getTA())
+        self.assertContains(response, self.course_model2.getParentCourse())
+        self.assertContains(response, self.course_model2.getSectionNumber())
+        self.assertContains(response, self.course_model2.getMeetTime())
+        self.assertContains(response, self.course_model2.getTA())
 
     def test_ViewCourseWinterCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course3.getParentCourse())
-        self.assertContains(response, self.course3.getSectionNumber())
-        self.assertContains(response, self.course3.getMeetTime())
-        self.assertContains(response, self.course3.getTA())
+        self.assertContains(response, self.course_model3.getParentCourse())
+        self.assertContains(response, self.course_model3.getSectionNumber())
+        self.assertContains(response, self.course_model3.getMeetTime())
+        self.assertContains(response, self.course_model3.getTA())
 
     def test_ViewCourseSpecialCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course4.getParentCourse())
-        self.assertContains(response, self.course4.getSectionNumber())
-        self.assertContains(response, self.course4.getMeetTime())
-        self.assertContains(response, self.course4.getTA())
+        self.assertContains(response, self.course_model4.getParentCourse())
+        self.assertContains(response, self.course_model4.getSectionNumber())
+        self.assertContains(response, self.course_model4.getMeetTime())
+        self.assertContains(response, self.course_model4.getTA())
 
     def test_Course_to_HomeSearch(self):
         # Make a GET request to /searchStates/UserSearch
@@ -216,32 +233,40 @@ THEN: They will be navigated to the "Search Home"
 
 class TestTASectionPage(TestCase):
     client = None
-    admin = None
+    ta = None
 
     def setUp(self):
         self.client = Client()
-        spring_course = Section.objects.create(name="Introduction to Programming", section="103",
-                                               TA="Richard White", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course1: AbstractSection = ConcreteSection(spring_course)
-        spring_course.save()
+        self.course_model1 = Course.objects.create(name='Introduction to Programming I', semester='Spring', year=2022,
+                                                   description='Intro to Programming', credits=4)
+        section1 = Section.objects.create(course_ID=self.course_model1, section_num=100, TA="Davidson Peter",
+                                          MeetingTimes="MWF 9:00AM - 9:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model1)
+        self.wrapper = SectionClass.ConcreteSection(section1)
+        section1.save()
 
-        summer_course = Section.objects.create(name="Introduction to Programming II", section="203",
-                                               TA="David Miles", MeetingTimes="MWF 9:00AM - 9:50AM")
-        self.course2: AbstractSection = ConcreteSection(summer_course)
-        summer_course.save()
+        self.course_model2 = Course.objects.create(name='Introduction to Programming II', semester='Spring', year=2022,
+                                                   description='Intro to Object-Oriented Principles', credits=4)
+        section2 = Section.objects.create(course_ID=self.course_model2, section_num=200, TA="David Miles",
+                                          MeetingTimes="MWF 10:00AM - 10:50AM")
+        self.course = CourseClass.ConcreteCourse(self.course_model2)
+        self.wrapper = SectionClass.ConcreteSection(section2)
+        section2.save()
 
-        winter_course = Section.objects.create(name="Introduction to Programming III",
-                                               section="303",
-                                               TA="Jeffrey Adams", MeetingTimes="TF 11:00AM - 11:50AM")
-        self.course3: AbstractSection = ConcreteSection(winter_course)
-        winter_course.save()
+        self.course_model3 = Course.objects.create(name='Introduction to Programming III', semester='Spring', year=2022,
+                                                   description='Data Structures', credits=4)
+        section3 = Section.objects.create(course_ID=self.course_model3, section_num=300, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
 
-        special_course = Section.objects.create(name="Introduction to Compilers",
-                                                section="403",
-                                                TA="Cameroon Davis", MeetingTimes="F 12:30PM - 1:20PM")
+        section3.save()
 
-        self.course4: AbstractSection = ConcreteSection(special_course)
-        special_course.save()
+        self.course_model4 = Course.objects.create(name='Introduction to Compilers', semester='Spring', year=2022,
+                                                   description='Intro to Compiler Theory', credits=4)
+        section4 = Section.objects.create(course_ID=self.course_model4, section_num=400, TA="Jeffrey Adams",
+                                          MeetingTimes="MWF 11:00AM - 11:50AM")
+
+        section4.save()
+
         User.objects.create(username='John_Doe', password="password", first_name="John",
                             last_name='Doe',
                             phone_number='4149818000', home_address='2513 N Farewell Ave',
@@ -255,31 +280,31 @@ class TestTASectionPage(TestCase):
 
     def test_ViewCourseSpringCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course1.getParentCourse())
-        self.assertContains(response, self.course1.getSectionNumber())
-        self.assertContains(response, self.course1.getMeetTime())
-        self.assertContains(response, self.course1.getTA())
+        self.assertContains(response, self.course_model1.getParentCourse())
+        self.assertContains(response, self.course_model1.getSectionNumber())
+        self.assertContains(response, self.course_model1.getMeetTime())
+        self.assertContains(response, self.course_model1.getTA())
 
     def test_ViewCourseSummerCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course2.getParentCourse())
-        self.assertContains(response, self.course2.getSectionNumber())
-        self.assertContains(response, self.course2.getMeetTime())
-        self.assertContains(response, self.course2.getTA())
+        self.assertContains(response, self.course_model2.getParentCourse())
+        self.assertContains(response, self.course_model2.getSectionNumber())
+        self.assertContains(response, self.course_model2.getMeetTime())
+        self.assertContains(response, self.course_model2.getTA())
 
-    def test_ViewCourseWinterCourseSummary(self):
+    def test_ViewCourseWinterCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course3.getParentCourse())
-        self.assertContains(response, self.course3.getSectionNumber())
-        self.assertContains(response, self.course3.getMeetTime())
-        self.assertContains(response, self.course3.getTA())
+        self.assertContains(response, self.course_model3.getParentCourse())
+        self.assertContains(response, self.course_model3.getSectionNumber())
+        self.assertContains(response, self.course_model3.getMeetTime())
+        self.assertContains(response, self.course_model3.getTA())
 
     def test_ViewCourseSpecialCourseSectionSummary(self):
         response = self.client.get('/searchStates/CourseSummary')
-        self.assertContains(response, self.course4.getParentCourse())
-        self.assertContains(response, self.course4.getSectionNumber())
-        self.assertContains(response, self.course4.getMeetTime())
-        self.assertContains(response, self.course4.getTA())
+        self.assertContains(response, self.course_model4.getParentCourse())
+        self.assertContains(response, self.course_model4.getSectionNumber())
+        self.assertContains(response, self.course_model4.getMeetTime())
+        self.assertContains(response, self.course_model4.getTA())
 
     def test_Section_to_HomeSearch(self):
         # Make a GET request to /searchStates/UserSearch

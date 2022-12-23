@@ -6,7 +6,7 @@ from classes.Users.users import AdminUser, InstructorUser, TAUser
 As an Admin, I want to be able to navigate to the Search Home page
 ----------------------------------------------------
 Scenario: Navigate to the User Search Page
-GIVEN: The user is an Admin and is logged in and at the Search Home Page view
+GIVEN: GIVEN: The user is an Admin and is logged in and at the User Search Results Page
 AND: They can click on "Return to Search Page"
 THEN: They will be navigated to the "Search Home"
 ----------------------------------------------------

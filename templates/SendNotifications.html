@@ -106,9 +106,9 @@
                 <input type="hidden" name="from" value="{{ user.email }}">
             {% endif %}
             <div class="form-group">
-                <label for="user">Select Users</label><br>
+                <label for="course">Select Course</label><br>
                 <select name="user" id="email" multiple>
-                    {% for item in items %}
+                    {% for  in items %}
                         <option value="{{ item.name }}">{{ item.name }}</option>
                     {% endfor %}
                 </select><br>
@@ -125,7 +125,7 @@
                 <label for="user">Select All Users Within Course</label><br>
                 <select name="user" id="email" multiple>
                     {% for item in items %}
-                        <option value="{{ item.name }}">{{ item.name }}</option>
+                        <option value="{{ user.name }}">{{ user.name }}</option>
                     {% endfor %}
                 </select><br>
             </div>

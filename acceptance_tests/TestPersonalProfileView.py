@@ -73,7 +73,7 @@ class TestPersonalProfileEdit(TestCase):
                           "Phone Number": self.admin.getPhoneNumber(),
                           "Home Address": self.admin.getHomeAddress(),
                           "Type of User Account": self.admin.getUserType()})
-        self.assertEqual(User.objects.get(email=self.admin.getEmail()), "johnDoe1@aol.com",
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).email, "johnDoe1@aol.com",
                          msg="Email not set correctly")
 
     def test_editUsername(self):
@@ -140,3 +140,26 @@ class TestPersonalProfileEdit(TestCase):
                           "Type of User Account": self.admin.getUserType()})
         self.assertEqual(User.objects.get(email=self.admin.getEmail()).phone_number, "1234567891",
                          msg="Phone number not set correctly")
+
+    def test_editAll(self):
+        self.client.post("/editMyProfile/",
+                         {"Email": "helloworld@gmail.com",
+                          "Username": "helloworld",
+                          "Password": "helloworld",
+                          "First Name": "helloworld",
+                          "Last Name": "helloworld",
+                          "Phone Number": "1234567891",
+                          "Home Address": "helloworld",
+                          "Type of User Account": self.admin.getUserType()})
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).email, "helloworld@gmail.com",
+                         msg="email not set correctly")
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).username, "helloworld",
+                         msg="username not set correctly")
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).first_name, "helloworld",
+                         msg="First name not set correctly")
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).last_name, "helloworld",
+                         msg="Last name not set correctly")
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).phone_number, "1234567891",
+                         msg="Phone number not set correctly")
+        self.assertEqual(User.objects.get(email=self.admin.getEmail()).home_address, "helloworld",
+                         msg="Home address not set correctly")

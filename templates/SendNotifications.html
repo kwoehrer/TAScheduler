@@ -106,16 +106,24 @@
                 <input type="hidden" name="from" value="{{ user.email }}">
             {% endif %}
             <div class="form-group">
-                <label for="to">Select Users</label><br>
-                <select name="to" id="to" multiple>
+                <label for="user">Select Users</label><br>
+                <select name="user" id="email" multiple>
                     {% for item in items %}
                         <option value="{{ item.name }}">{{ item.name }}</option>
                     {% endfor %}
                 </select><br>
             </div>
             <div>
-                <label for="cc">Select All Users Within Course</label><br>
-                <select name="cc" id="cc" multiple>
+                 <label for="course">Select Course</label><br>
+                <select name="course" id="name" multiple>
+                    {% for item in items %}
+                        <option value="{{ item.name }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+            <div>
+                <label for="user">Select All Users Within Course</label><br>
+                <select name="user" id="email" multiple>
                     {% for item in items %}
                         <option value="{{ item.name }}">{{ item.name }}</option>
                     {% endfor %}
